@@ -1,0 +1,100 @@
+{
+  "en": {
+    "brand": "Profile",
+    "greeting": "Good Evening",
+    "settingsHeading": "Management Settings",
+    "logout": "Logout",
+    "languageLabel": "Language",
+    "languageMyanmar": "Myanmar",
+    "languageEnglish": "English",
+    "languagePageTitle": "Language",
+    "settingsRows": {
+      "team": "Team Management",
+      "truck": "Truck Management",
+      "service": "Service Type Management",
+      "security": "Change Password",
+      "language": "Language"
+    },
+    "teamScreen": {
+      "title": "Team Management",
+      "searchPlaceholder": "Search by name...",
+      "advancedTitle": "Advanced Search",
+      "labels": {
+        "fullName": "Full Name",
+        "phoneNumber": "Phone Number",
+        "role": "Role",
+        "email": "Email",
+        "isActive": "Is Active",
+        "isNotLocked": "Is Not Locked"
+      },
+      "placeholders": {
+        "fullName": "Enter full name",
+        "phoneNumber": "Enter phone number",
+        "role": "ADMIN / OWNER / STAFF",
+        "email": "Enter email"
+      },
+      "tri": {
+        "any": "Any",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "reset": "Reset",
+      "apply": "Apply",
+      "active": "Active",
+      "inactive": "Inactive",
+      "locked": "Locked",
+      "unlocked": "Unlocked",
+      "error": "Something went wrong.",
+      "empty": "No users found."
+    }
+  },
+  "mm": {
+    "brand": "ပရိုဖိုင်",
+    "greeting": "မင်္ဂလာညနေခင်းပါ",
+    "settingsHeading": "စီမံမှု ဆက်တင်များ",
+    "logout": "အကောင့်မှထွက်ရန်",
+    "languageLabel": "ဘာသာစကား",
+    "languageMyanmar": "မြန်မာ",
+    "languageEnglish": "အင်္ဂလိပ်",
+    "languagePageTitle": "ဘာသာစကား",
+    "settingsRows": {
+      "team": "အသင်းပြုစု စီမံခန့်ခွဲမှု",
+      "truck": "ထရက်ကား စီမံခန့်ခွဲမှု",
+      "service": "ဝန်ဆောင်မှုအမျိုးအစား စီမံခန့်ခွဲမှု",
+      "security": "စကားဝှက်ပြောင်းရန်",
+      "language": "ဘာသာစကား"
+    },
+    "teamScreen": {
+      "title": "အသင်းပြုစု စီမံခန့်ခွဲမှု",
+      "searchPlaceholder": "အမည်ဖြင့်ရှာဖွေရန်...",
+      "advancedTitle": "အဆင့်မြင့်ရှာဖွေမှု",
+      "labels": {
+        "fullName": "အမည်",
+        "phoneNumber": "ဖုန်းနံပါတ်",
+        "role": "အခန်းကဏ္ဍ",
+        "email": "အီးမေးလ်",
+        "isActive": "တက်ကြွမှု",
+        "isNotLocked": "သော့ဖွင့်ထားမှု"
+      },
+      "placeholders": {
+        "fullName": "အမည် ထည့်ပါ",
+        "phoneNumber": "ဖုန်းနံပါတ် ထည့်ပါ",
+        "role": "ADMIN / OWNER / STAFF",
+        "email": "အီးမေးလ် ထည့်ပါ"
+      },
+      "tri": {
+        "any": "အားလုံး",
+        "yes": "ဟုတ်",
+        "no": "မဟုတ်"
+      },
+      "reset": "ရှင်းလင်းမည်",
+      "apply": "ကျင့်သုံး",
+      "active": "Active",
+      "inactive": "Inactive",
+      "locked": "Locked",
+      "unlocked": "Unlocked",
+      "error": "အမှားတစ်ခု ဖြစ်ပွားခဲ့သည်။",
+      "empty": "အသုံးပြုသူ မတွေ့ရှိပါ။"
+    }
+  }
+}
