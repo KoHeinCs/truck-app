@@ -46,6 +46,24 @@
       "unlocked": "Unlocked",
       "error": "Something went wrong.",
       "empty": "No users found."
+    },
+    "createUserScreen": {
+      "title": "Create User",
+      "infoTitle": "Before you start",
+      "infoBody": "Username must be unique (English letters + 09 + 9 digits). Password: at least 8 characters. Date format: dd/mm/yyyy.",
+      "usernamePlaceholder": "09xxxxxxxxx",
+      "passwordPlaceholder": "Enter password",
+      "fullNamePlaceholder": "Enter full name",
+      "emailPlaceholder": "example@gmail.com",
+      "datePlaceholder": "dd/mm/yyyy",
+      "rolePlaceholder": "Select role",
+      "submit": "Create",
+      "submitting": "Creating...",
+      "successTitle": "Success",
+      "successBody": "User account created successfully.",
+      "errorTitle": "Error",
+      "errorBody": "Unable to create user account.",
+      "dateInvalid": "Invalid date format. Use dd/mm/yyyy."
     }
   },
   "mm": {
@@ -95,6 +113,24 @@
       "unlocked": "Unlocked",
       "error": "အမှားတစ်ခု ဖြစ်ပွားခဲ့သည်။",
       "empty": "အသုံးပြုသူ မတွေ့ရှိပါ။"
+    },
+    "createUserScreen": {
+      "title": "အသင်းပြုစုအသစ် မှတ်ပုံတင်ရန်",
+      "infoTitle": "သတိပြုရန်",
+      "infoBody": "အသုံးပြုသူအမည် ထပ်မံမရှိရပါ (အင်္ဂလိပ်အက္ခရာ + 09 + ဂဏန်း ၉ လုံး)။ စကားဝှက် အနည်းဆုံး ၈ လုံး။ နေ့စွဲပုံစံ dd/mm/yyyy ဖြစ်ရမည်။",
+      "usernamePlaceholder": "09xxxxxxxxx",
+      "passwordPlaceholder": "အနည်းဆုံး ၈ လုံး",
+      "fullNamePlaceholder": "အမည်အပြည့်အစုံ",
+      "emailPlaceholder": "example@gmail.com",
+      "datePlaceholder": "dd/mm/yyyy",
+      "rolePlaceholder": "အခန်းကဏ္ဍ ရွေးပါ",
+      "submit": "မှတ်တမ်းမည်",
+      "submitting": "ဖန်တီးနေသည်...",
+      "successTitle": "အောင်မြင်သည်",
+      "successBody": "အသုံးပြုသူဖန်တီးပြီးပါပြီ။",
+      "errorTitle": "အမှား",
+      "errorBody": "အသုံးပြုသူဖန်တီး၍ မရပါ။",
+      "dateInvalid": "နေ့စွဲပုံစံ dd/mm/yyyy သုံးပါ။"
     }
   }
 }

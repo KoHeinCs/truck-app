@@ -14,7 +14,7 @@ export default function RootLayout() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <HeroUINativeProvider>
           <Stack screenOptions={{ headerShown: false }} />
-          <StatusBar style="auto" />
+          <StatusBar style="dark" />
         </HeroUINativeProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>

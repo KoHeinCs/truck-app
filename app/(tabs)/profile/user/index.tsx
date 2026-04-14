@@ -1,101 +1,124 @@
 import { APP_COLORS } from "@/constants/colors";
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import profileLocale from "@/locale/profile/profile.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
-import type { BoolFilter } from "@/stores/server/user/search-columns";
 import { useUsersInfinite } from "@/stores/server/user/query";
-import type { UserTeamItem } from "@/stores/server/user/typed";
+import type { BoolFilter } from "@/stores/server/user/search-columns";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Card, Input } from "heroui-native";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import { CompactSelect } from "./components/compact-select";
+import { TeamSearchToolbar } from "./components/team-search-toolbar";
+import { TeamUserCard } from "./components/team-user-card";
 import {
   ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-function triValue(current: BoolFilter): BoolFilter {
-  if (current === null) return true;
-  if (current === true) return false;
+type SelectBoolValue = "all" | "true" | "false";
+
+type TeamListUiState = {
+  quickQuery: string;
+  advancedOpen: boolean;
+  fullName: string;
+  phoneNumber: string;
+  role: string;
+  email: string;
+  isActive: SelectBoolValue;
+  isNotLocked: SelectBoolValue;
+};
+
+const initialTeamListUi: TeamListUiState = {
+  quickQuery: "",
+  advancedOpen: false,
+  fullName: "",
+  phoneNumber: "",
+  role: "",
+  email: "",
+  isActive: "all",
+  isNotLocked: "all",
+};
+
+function mapSelectToBoolFilter(value: SelectBoolValue): BoolFilter {
+  if (value === "true") return true;
+  if (value === "false") return false;
   return null;
-}
-
-function UserCard({ item, locale }: { item: UserTeamItem; locale: "en" | "mm" }) {
-  const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? mmTextStyle : undefined;
-
-  return (
-    <Card className="mb-3">
-      <Card.Body className="px-4 py-3">
-        <View className="flex-row items-start justify-between">
-          <View className="max-w-[72%]">
-            <Text className="text-xl font-bold text-slate-900" style={style}>
-              {item.fullName}
-            </Text>
-            <Text className="mt-1 text-sm text-slate-500">{item.phoneNumber || item.username}</Text>
-            <Text className="text-sm text-slate-500">{item.email}</Text>
-          </View>
-          <View className="rounded-full bg-[#EAF1F8] px-2.5 py-1">
-            <Text className="text-xs font-semibold text-[#3F5F87]">{item.role}</Text>
-          </View>
-        </View>
-        <View className="my-3 h-px bg-slate-200" />
-        <View className="flex-row items-center gap-4">
-          <View className="flex-row items-center gap-2">
-            <View
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: item.active ? "#22c55e" : "#94a3b8" }}
-            />
-            <Text className="text-sm text-slate-600">{item.active ? "Active" : "Inactive"}</Text>
-          </View>
-          <View className="flex-row items-center gap-2">
-            <Ionicons
-              name={item.notLocked ? "lock-open-outline" : "lock-closed-outline"}
-              size={16}
-              color={item.notLocked ? "#10b981" : "#ef4444"}
-            />
-            <Text className="text-sm text-slate-600">
-              {item.notLocked ? "Unlocked" : "Locked"}
-            </Text>
-          </View>
-        </View>
-      </Card.Body>
-    </Card>
-  );
 }
 
 export default function TeamManagementScreen() {
   const router = useRouter();
   const locale = useLocaleStore((state) => state.locale);
   const t = profileLocale[locale].teamScreen;
+
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
-  const [quickQuery, setQuickQuery] = useState("");
-  const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [role, setRole] = useState("");
-  const [email, setEmail] = useState("");
-  const [isActive, setIsActive] = useState<BoolFilter>(null);
-  const [isNotLocked, setIsNotLocked] = useState<BoolFilter>(null);
+
+  const [ui, setUi] = useState<TeamListUiState>(initialTeamListUi);
+  const patchUi = useCallback((next: Partial<TeamListUiState>) => {
+    setUi((prev) => ({ ...prev, ...next }));
+  }, []);
+  const debouncedQuickQuery = useDebouncedValue(ui.quickQuery, 500);
+
+  const activeOptions = useMemo(
+    () => [
+      {
+        value: "all",
+        labelEn: t.tri?.any || "Any",
+        labelMm: t.tri?.any || "အားလုံး",
+      },
+      {
+        value: "true",
+        labelEn: "Active",
+        labelMm: "Active",
+      },
+      {
+        value: "false",
+        labelEn: "Inactive",
+        labelMm: "Inactive",
+      },
+    ],
+    [t],
+  );
+
+  const lockOptions = useMemo(
+    () => [
+      {
+        value: "all",
+        labelEn: t.tri?.any || "Any",
+        labelMm: t.tri?.any || "အားလုံး",
+      },
+      {
+        value: "true",
+        labelEn: "Unlocked",
+        labelMm: "Unlocked",
+      },
+      {
+        value: "false",
+        labelEn: "Locked",
+        labelMm: "Locked",
+      },
+    ],
+    [t],
+  );
 
   const filters = useMemo(
     () => ({
-      quickQuery,
-      fullName,
-      phoneNumber,
-      role,
-      email,
-      isActive,
-      isNotLocked,
+      quickQuery: debouncedQuickQuery,
+      fullName: ui.fullName,
+      phoneNumber: ui.phoneNumber,
+      role: ui.role,
+      email: ui.email,
+      isActive: mapSelectToBoolFilter(ui.isActive),
+      isNotLocked: mapSelectToBoolFilter(ui.isNotLocked),
     }),
-    [email, fullName, isActive, isNotLocked, phoneNumber, quickQuery, role],
+    [ui, debouncedQuickQuery],
   );
 
   const {
@@ -114,24 +137,30 @@ export default function TeamManagementScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f5f8fc]">
+    <SafeAreaView className="flex-1 bg-[#f3f7fb]">
       <View className="flex-row items-center px-4 pb-2 pt-1">
         <Pressable
           onPress={() => router.back()}
-          className="h-10 w-10 items-center justify-center rounded-full bg-white"
+          className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
         >
-          <Ionicons name="arrow-back" size={22} color={APP_COLORS.primary} />
+          <Ionicons name="arrow-back" size={22} color="#475569" />
         </Pressable>
-        <Text className="flex-1 px-3 text-center text-xl font-bold text-slate-900" style={style}>
+
+        <Text
+          className="flex-1 px-3 text-center text-[18px] font-bold text-slate-900"
+          style={style}
+        >
           {t.title}
         </Text>
-        <View className="h-10 w-10" />
+
+        <View className="h-11 w-11" />
       </View>
 
       <FlatList
         data={items}
+        className=" px-4"
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <UserCard item={item} locale={locale} />}
+        renderItem={({ item }) => <TeamUserCard item={item} locale={locale} />}
         onEndReachedThreshold={0.2}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
@@ -139,145 +168,153 @@ export default function TeamManagementScreen() {
           }
         }}
         ListHeaderComponent={
-          <View className="px-4 pb-3">
-            <View className="mb-3 flex-row items-center gap-2">
-              <View className="min-h-12 flex-1 flex-row items-center rounded-2xl border border-slate-200 bg-white px-3">
-                <Ionicons name="search" size={20} color="#94a3b8" />
-                <TextInput
-                  value={quickQuery}
-                  onChangeText={setQuickQuery}
-                  placeholder={t.searchPlaceholder}
-                  placeholderTextColor="#94a3b8"
-                  className="ml-2 mr-1 flex-1 py-2 text-base"
-                  style={style}
-                />
-                <Pressable onPress={() => setQuickQuery("")}>
-                  <Ionicons name="close" size={20} color="#94a3b8" />
-                </Pressable>
-                <Pressable
-                  className="ml-2"
-                  onPress={() => setAdvancedOpen((v) => !v)}
-                >
-                  <Ionicons
-                    name="options-outline"
-                    size={20}
-                    color={advancedOpen ? APP_COLORS.primary : "#94a3b8"}
-                  />
-                </Pressable>
-              </View>
-              <Pressable
-                className="h-12 w-12 items-center justify-center rounded-full"
-                style={{ backgroundColor: APP_COLORS.primary }}
-              >
-                <Ionicons name="add" size={24} color="#fff" />
-              </Pressable>
-            </View>
+          <View className=" pb-3">
+            <TeamSearchToolbar
+              quickQuery={ui.quickQuery}
+              placeholder={t.searchPlaceholder}
+              advancedOpen={ui.advancedOpen}
+              onChangeQuickQuery={(quickQuery) => patchUi({ quickQuery })}
+              onClearQuickQuery={() => patchUi({ quickQuery: "" })}
+              onToggleAdvanced={() =>
+                setUi((s) => ({ ...s, advancedOpen: !s.advancedOpen }))
+              }
+              onPressAdd={() => router.push("/(tabs)/profile/user/create")}
+            />
 
-            {advancedOpen ? (
-              <Card>
-                <Card.Body className="gap-3">
-                  <Text className="text-base font-semibold text-slate-800" style={style}>
+            {ui.advancedOpen ? (
+              <Card className="mb-4 p-5 ">
+                <Card.Body className="gap-3 ">
+                  <Text
+                    className="text-sm font-semibold text-slate-900"
+                    style={style}
+                  >
                     {t.advancedTitle}
                   </Text>
-                      <View className="gap-2">
-                        <Text className="text-xs text-slate-400" style={style}>
-                          {t.labels.fullName}
-                        </Text>
-                        <Input
-                          value={fullName}
-                          onChangeText={setFullName}
-                          placeholder={t.placeholders.fullName}
-                        />
-                      </View>
-                      <View className="gap-2">
-                        <Text className="text-xs text-slate-400" style={style}>
-                          {t.labels.phoneNumber}
-                        </Text>
-                        <Input
-                          value={phoneNumber}
-                          onChangeText={setPhoneNumber}
-                          placeholder={t.placeholders.phoneNumber}
-                          keyboardType="phone-pad"
-                        />
-                      </View>
-                      <View className="gap-2">
-                        <Text className="text-xs text-slate-400" style={style}>
-                          {t.labels.role}
-                        </Text>
-                        <Input
-                          value={role}
-                          onChangeText={setRole}
-                          placeholder={t.placeholders.role}
-                          autoCapitalize="characters"
-                        />
-                      </View>
-                      <View className="gap-2">
-                        <Text className="text-xs text-slate-400" style={style}>
-                          {t.labels.email}
-                        </Text>
-                        <Input
-                          value={email}
-                          onChangeText={setEmail}
-                          placeholder={t.placeholders.email}
-                          autoCapitalize="none"
-                          keyboardType="email-address"
-                        />
-                      </View>
+
                   <View className="flex-row gap-2">
-                    <Pressable
-                      onPress={() => setIsActive(triValue(isActive))}
-                      className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2.5"
-                    >
-                      <Text className="text-xs text-slate-400" style={style}>
-                        {t.labels.isActive}
+                    <View className="flex-1 gap-1">
+                      <Text
+                        className="text-[10px] text-slate-500"
+                        style={style}
+                      >
+                        {t.labels?.fullName || "Full Name"}
                       </Text>
-                      <Text className="mt-1 text-sm text-slate-800" style={style}>
-                        {isActive === null
-                          ? t.tri.any
-                          : isActive
-                            ? t.tri.yes
-                            : t.tri.no}
+                      <Input
+                        value={ui.fullName}
+                        onChangeText={(fullName) => patchUi({ fullName })}
+                        placeholder={t.placeholders?.fullName || "Full Name"}
+                        className=" rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                      />
+                    </View>
+                    <View className="flex-1 gap-1">
+                      <Text
+                        className="text-[10px] text-slate-500"
+                        style={style}
+                      >
+                        {t.labels?.phoneNumber || "Phone Number"}
                       </Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={() => setIsNotLocked(triValue(isNotLocked))}
-                      className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2.5"
-                    >
-                      <Text className="text-xs text-slate-400" style={style}>
-                        {t.labels.isNotLocked}
-                      </Text>
-                      <Text className="mt-1 text-sm text-slate-800" style={style}>
-                        {isNotLocked === null
-                          ? t.tri.any
-                          : isNotLocked
-                            ? t.tri.yes
-                            : t.tri.no}
-                      </Text>
-                    </Pressable>
+                      <Input
+                        value={ui.phoneNumber}
+                        onChangeText={(phoneNumber) => patchUi({ phoneNumber })}
+                        placeholder={
+                          t.placeholders?.phoneNumber || "Phone Number"
+                        }
+                        keyboardType="phone-pad"
+                        className=" rounded-xl border  border-slate-200 bg-white  text-xs"
+                      />
+                    </View>
                   </View>
+
                   <View className="flex-row gap-2">
+                    <View className="flex-1 gap-1">
+                      <Text
+                        className="text-[10px] text-slate-500"
+                        style={style}
+                      >
+                        {t.labels?.role || "Role"}
+                      </Text>
+                      <Input
+                        value={ui.role}
+                        onChangeText={(role) => patchUi({ role })}
+                        placeholder={t.placeholders?.role || "Role"}
+                        autoCapitalize="characters"
+                        className=" rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                      />
+                    </View>
+                    <View className="flex-1 gap-1">
+                      <Text
+                        className="text-[10px] text-slate-500"
+                        style={style}
+                      >
+                        {t.labels?.email || "Email"}
+                      </Text>
+                      <Input
+                        value={ui.email}
+                        onChangeText={(email) => patchUi({ email })}
+                        placeholder={t.placeholders?.email || "Email"}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        className=" rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                      />
+                    </View>
+                  </View>
+
+                  <View className="flex-row gap-2">
+                    <CompactSelect
+                      label={t.labels?.isActive || "Active"}
+                      value={ui.isActive}
+                      onChange={(value) =>
+                        patchUi({ isActive: value as SelectBoolValue })
+                      }
+                      locale={locale}
+                      placeholder={t.tri?.any || "Any"}
+                      options={activeOptions}
+                    />
+
+                    <CompactSelect
+                      label={t.labels?.isNotLocked || "Lock"}
+                      value={ui.isNotLocked}
+                      onChange={(value) =>
+                        patchUi({ isNotLocked: value as SelectBoolValue })
+                      }
+                      locale={locale}
+                      placeholder={t.tri?.any || "Any"}
+                      options={lockOptions}
+                    />
+                  </View>
+
+                  <View className="flex-row gap-2 pt-0.5">
                     <Pressable
-                      onPress={() => {
-                        setIsActive(null);
-                        setIsNotLocked(null);
-                        setFullName("");
-                        setPhoneNumber("");
-                        setRole("");
-                        setEmail("");
-                        setQuickQuery("");
-                      }}
-                      className="flex-1 items-center rounded-xl bg-slate-100 py-3"
+                      onPress={() =>
+                        patchUi({
+                          quickQuery: "",
+                          fullName: "",
+                          phoneNumber: "",
+                          role: "",
+                          email: "",
+                          isActive: "all",
+                          isNotLocked: "all",
+                        })
+                      }
+                      className="flex-1 py-3 items-center justify-center rounded-xl bg-slate-100"
                     >
-                      <Text className="font-semibold text-slate-700" style={style}>
+                      <Text
+                        className="text-xs font-semibold text-slate-700"
+                        style={style}
+                      >
                         {t.reset}
                       </Text>
                     </Pressable>
+
                     <Pressable
-                      className="flex-1 items-center rounded-xl py-3"
+                      className=" flex-1 py-3 items-center justify-center rounded-xl"
                       style={{ backgroundColor: APP_COLORS.primary }}
-                      onPress={() => setAdvancedOpen(false)}
+                      onPress={() => patchUi({ advancedOpen: false })}
                     >
-                      <Text className="font-semibold text-white" style={style}>
+                      <Text
+                        className="text-xs font-semibold text-white"
+                        style={style}
+                      >
                         {t.apply}
                       </Text>
                     </Pressable>
@@ -293,7 +330,10 @@ export default function TeamManagementScreen() {
               <ActivityIndicator color={APP_COLORS.primary} />
             </View>
           ) : (
-            <Text className="px-6 py-8 text-center text-slate-500" style={style}>
+            <Text
+              className="px-6 py-8 text-center text-slate-500"
+              style={style}
+            >
               {t.empty}
             </Text>
           )
@@ -305,7 +345,7 @@ export default function TeamManagementScreen() {
             </View>
           ) : null
         }
-        contentContainerStyle={{ paddingBottom: 20, flexGrow: 1 }}
+        contentContainerStyle={{ paddingBottom: 24, flexGrow: 1 }}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching && !isFetchingNextPage}
