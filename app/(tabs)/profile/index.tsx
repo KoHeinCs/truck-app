@@ -145,6 +145,10 @@ export default function ProfileScreen() {
                     router.push("/(tabs)/profile/user");
                     return;
                   }
+                  if (row.key === "truck") {
+                    router.push("/(tabs)/profile/truck");
+                    return;
+                  }
                   if (row.key === "language") {
                     router.push("/(tabs)/profile/language");
                   }

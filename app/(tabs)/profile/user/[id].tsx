@@ -381,12 +381,12 @@ export default function TeamEditUserScreen() {
                       className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
                     >
                       <Text
-                        className={value ? "text-slate-900" : "text-slate-400"}
+                        className={value ? "text-sm text-slate-900" : "text-sm text-slate-400"}
                         style={style}
                       >
                         {value || labels.datePlaceholder}
                       </Text>
-                      <Ionicons name="calendar-outline" size={18} color="#64748b" />
+                      <Ionicons name="calendar-outline" size={16} color="#64748b" />
                     </Pressable>
 
                     {activeDateField === "joinDate" ? (
@@ -442,12 +442,12 @@ export default function TeamEditUserScreen() {
                       className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
                     >
                       <Text
-                        className={value ? "text-slate-900" : "text-slate-400"}
+                        className={value ? "text-sm text-slate-900" : "text-sm text-slate-400"}
                         style={style}
                       >
                         {value || labels.datePlaceholder}
                       </Text>
-                      <Ionicons name="calendar-outline" size={18} color="#64748b" />
+                      <Ionicons name="calendar-outline" size={16} color="#64748b" />
                     </Pressable>
 
                     {activeDateField === "dateOfBirth" ? (
@@ -514,7 +514,10 @@ export default function TeamEditUserScreen() {
                     }}
                   >
                     <Select.Trigger className="rounded-xl border border-slate-200 bg-white px-2.5">
-                      <Select.Value placeholder={labels.rolePlaceholder} style={style} />
+                      <Select.Value
+                        placeholder={labels.rolePlaceholder}
+                        style={[style, { fontSize: 14 }]}
+                      />
                       <Select.TriggerIndicator />
                     </Select.Trigger>
                     <Select.Portal>
@@ -530,7 +533,7 @@ export default function TeamEditUserScreen() {
                             value={role.value}
                             label={locale === "mm" ? role.labelMm : role.labelEn}
                           >
-                            <Select.ItemLabel style={style} />
+                            <Select.ItemLabel style={[style, { fontSize: 14 }]} />
                             <Select.ItemIndicator />
                           </Select.Item>
                         ))}
