@@ -3,14 +3,14 @@ import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import profileLocale from "@/locale/profile/profile.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
-import { useTrucksInfinite } from "@/stores/server/truck/query";
+import { useServiceTypesInfinite } from "@/stores/server/service-type/query";
 import {
-  buildTruckSearchColumns,
-  type TruckAdvancedFilters,
-} from "@/stores/server/truck/search-columns";
+  buildServiceTypeSearchColumns,
+  type ServiceTypeAdvancedFilters,
+} from "@/stores/server/service-type/search-columns";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { Card, Input } from "heroui-native";
+import { Card, Input, Select } from "heroui-native";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -21,39 +21,33 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TruckCardItem } from "./components/truck-card";
-import { TruckSearchToolbar } from "./components/truck-search-toolbar";
+import { ServiceSearchToolbar } from "./components/service-search-toolbar";
+import { ServiceTypeCardItem } from "./components/service-type-card";
 
-type TruckListUiState = {
+type ServiceListUiState = {
   quickQuery: string;
   advancedOpen: boolean;
-  plateNo: string;
-  model: string;
-  modelYear: string;
-  engineNo: string;
-  chassisNo: string;
+  langEng: string;
+  langMy: string;
+  active: ServiceTypeAdvancedFilters["active"];
 };
 
-const initialTruckListUi: TruckListUiState = {
+const initialServiceListUi: ServiceListUiState = {
   quickQuery: "",
   advancedOpen: false,
-  plateNo: "",
-  model: "",
-  modelYear: "",
-  engineNo: "",
-  chassisNo: "",
+  langEng: "",
+  langMy: "",
+  active: true,
 };
 
-export default function TruckManagementScreen() {
+export default function ServiceTypeManagementScreen() {
   const router = useRouter();
   const locale = useLocaleStore((state) => state.locale);
-  const t = profileLocale[locale].truckScreen;
-
+  const t = profileLocale[locale].serviceTypeScreen;
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? mmTextStyle : undefined;
-
-  const [ui, setUi] = useState<TruckListUiState>(initialTruckListUi);
-  const patchUi = useCallback((next: Partial<TruckListUiState>) => {
+  const style = locale === "mm" ? [mmTextStyle, { lineHeight: 0 }] : undefined;
+  const [ui, setUi] = useState<ServiceListUiState>(initialServiceListUi);
+  const patchUi = useCallback((next: Partial<ServiceListUiState>) => {
     setUi((prev) => ({ ...prev, ...next }));
   }, []);
   const debouncedQuickQuery = useDebouncedValue(ui.quickQuery, 500);
@@ -61,16 +55,17 @@ export default function TruckManagementScreen() {
   const filters = useMemo(
     () => ({
       quickQuery: debouncedQuickQuery,
-      plateNo: ui.plateNo,
-      model: ui.model,
-      modelYear: ui.modelYear,
-      engineNo: ui.engineNo,
-      chassisNo: ui.chassisNo,
+      langEng: ui.langEng,
+      langMy: ui.langMy,
+      active: ui.active,
     }),
-    [ui, debouncedQuickQuery],
+    [debouncedQuickQuery, ui.langEng, ui.langMy, ui.active],
   );
 
-  const columns = useMemo(() => buildTruckSearchColumns(filters), [filters]);
+  const columns = useMemo(
+    () => buildServiceTypeSearchColumns(filters),
+    [filters],
+  );
 
   const {
     data,
@@ -78,22 +73,15 @@ export default function TruckManagementScreen() {
     hasNextPage,
     isFetchingNextPage,
     isPending,
-    refetch,
+    isError,
     isRefetching,
-  } = useTrucksInfinite(columns);
+    refetch,
+  } = useServiceTypesInfinite(columns);
 
   const items = useMemo(
     () => data?.pages.flatMap((page) => page.data.data) ?? [],
     [data],
   );
-
-  const advancedKeys: (keyof TruckAdvancedFilters)[] = [
-    "plateNo",
-    "model",
-    "modelYear",
-    "engineNo",
-    "chassisNo",
-  ];
 
   return (
     <SafeAreaView className="flex-1 bg-[#f3f7fb]">
@@ -118,16 +106,28 @@ export default function TruckManagementScreen() {
       <FlatList
         data={items}
         className="px-4"
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <TruckCardItem
+          <ServiceTypeCardItem
             item={item}
             locale={locale}
             labels={{
-              fuelType: t.labels.fuelType,
-              frontTire: t.labels.frontTire,
+              english: t.labels.english,
+              myanmar: t.labels.myanmar,
             }}
-            onPress={() => router.push(`/(tabs)/profile/truck/edit/${item.id}`)}
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/profile/service/edit/[id]",
+                params: {
+                  id: String(item.id),
+                  version: String(item.version ?? 0),
+                  serviceType: item.serviceType ?? "",
+                  langEng: item.langEng ?? "",
+                  langMy: item.langMy ?? "",
+                  active: String(item.active ?? true),
+                },
+              })
+            }
           />
         )}
         onEndReachedThreshold={0.2}
@@ -138,7 +138,7 @@ export default function TruckManagementScreen() {
         }}
         ListHeaderComponent={
           <View className="pb-3">
-            <TruckSearchToolbar
+            <ServiceSearchToolbar
               quickQuery={ui.quickQuery}
               placeholder={t.searchPlaceholder}
               advancedOpen={ui.advancedOpen}
@@ -147,7 +147,7 @@ export default function TruckManagementScreen() {
               onToggleAdvanced={() =>
                 setUi((s) => ({ ...s, advancedOpen: !s.advancedOpen }))
               }
-              onPressAdd={() => router.push("/(tabs)/profile/truck/create")}
+              onPressAdd={() => router.push("/(tabs)/profile/service/create")}
             />
 
             {ui.advancedOpen ? (
@@ -166,12 +166,12 @@ export default function TruckManagementScreen() {
                         className="text-[10px] text-slate-500"
                         style={style}
                       >
-                        {t.labels.plateNo}
+                        {t.labels.english}
                       </Text>
                       <Input
-                        value={ui.plateNo}
-                        onChangeText={(plateNo) => patchUi({ plateNo })}
-                        placeholder={t.placeholders.plateNo}
+                        value={ui.langEng}
+                        onChangeText={(langEng) => patchUi({ langEng })}
+                        placeholder={t.placeholders.english}
                         className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
                       />
                     </View>
@@ -180,44 +180,12 @@ export default function TruckManagementScreen() {
                         className="text-[10px] text-slate-500"
                         style={style}
                       >
-                        {t.labels.model}
+                        {t.labels.myanmar}
                       </Text>
                       <Input
-                        value={ui.model}
-                        onChangeText={(model) => patchUi({ model })}
-                        placeholder={t.placeholders.model}
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
-                      />
-                    </View>
-                  </View>
-
-                  <View className="flex-row gap-2">
-                    <View className="flex-1 gap-1">
-                      <Text
-                        className="text-[10px] text-slate-500"
-                        style={style}
-                      >
-                        {t.labels.modelYear}
-                      </Text>
-                      <Input
-                        value={ui.modelYear}
-                        onChangeText={(modelYear) => patchUi({ modelYear })}
-                        placeholder={t.placeholders.modelYear}
-                        keyboardType="number-pad"
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
-                      />
-                    </View>
-                    <View className="flex-1 gap-1">
-                      <Text
-                        className="text-[10px] text-slate-500"
-                        style={style}
-                      >
-                        {t.labels.engineNo}
-                      </Text>
-                      <Input
-                        value={ui.engineNo}
-                        onChangeText={(engineNo) => patchUi({ engineNo })}
-                        placeholder={t.placeholders.engineNo}
+                        value={ui.langMy}
+                        onChangeText={(langMy) => patchUi({ langMy })}
+                        placeholder={t.placeholders.myanmar}
                         className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
                       />
                     </View>
@@ -225,14 +193,53 @@ export default function TruckManagementScreen() {
 
                   <View className="gap-1">
                     <Text className="text-[10px] text-slate-500" style={style}>
-                      {t.labels.chassisNo}
+                      {t.labels.status}
                     </Text>
-                    <Input
-                      value={ui.chassisNo}
-                      onChangeText={(chassisNo) => patchUi({ chassisNo })}
-                      placeholder={t.placeholders.chassisNo}
-                      className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
-                    />
+                    <Select
+                      value={
+                        ui.active === null
+                          ? { value: "all", label: t.status.all }
+                          : ui.active
+                            ? { value: "active", label: t.status.active }
+                            : { value: "inactive", label: t.status.inactive }
+                      }
+                      onValueChange={(next) => {
+                        if (!next || Array.isArray(next)) return;
+                        if (next.value === "all") patchUi({ active: null });
+                        if (next.value === "active") patchUi({ active: true });
+                        if (next.value === "inactive")
+                          patchUi({ active: false });
+                      }}
+                    >
+                      <Select.Trigger className="rounded-xl border border-slate-200 bg-white px-2.5">
+                        <Select.Value placeholder="" style={style} />
+                        <Select.TriggerIndicator />
+                      </Select.Trigger>
+                      <Select.Portal>
+                        <Select.Overlay />
+                        <Select.Content
+                          className="rounded-2xl border border-slate-200 bg-white"
+                          presentation="popover"
+                          width="trigger"
+                        >
+                          <Select.Item value="all" label={t.status.all}>
+                            <Select.ItemLabel style={style} />
+                            <Select.ItemIndicator />
+                          </Select.Item>
+                          <Select.Item value="active" label={t.status.active}>
+                            <Select.ItemLabel style={style} />
+                            <Select.ItemIndicator />
+                          </Select.Item>
+                          <Select.Item
+                            value="inactive"
+                            label={t.status.inactive}
+                          >
+                            <Select.ItemLabel style={style} />
+                            <Select.ItemIndicator />
+                          </Select.Item>
+                        </Select.Content>
+                      </Select.Portal>
+                    </Select>
                   </View>
 
                   <View className="flex-row gap-2 pt-0.5">
@@ -240,9 +247,9 @@ export default function TruckManagementScreen() {
                       onPress={() =>
                         patchUi({
                           quickQuery: "",
-                          ...Object.fromEntries(
-                            advancedKeys.map((key) => [key, ""]),
-                          ),
+                          langEng: "",
+                          langMy: "",
+                          active: true,
                         })
                       }
                       className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
@@ -283,7 +290,7 @@ export default function TruckManagementScreen() {
               className="px-6 py-8 text-center text-slate-500"
               style={style}
             >
-              {t.empty}
+              {isError ? t.error : t.empty}
             </Text>
           )
         }
@@ -294,7 +301,7 @@ export default function TruckManagementScreen() {
             </View>
           ) : null
         }
-        contentContainerStyle={{ paddingBottom: 24, flexGrow: 1 }}
+        contentContainerStyle={{ paddingBottom: 0, flexGrow: 1 }}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching && !isFetchingNextPage}

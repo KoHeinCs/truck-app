@@ -1,11 +1,12 @@
 import {
   useInfiniteQuery,
+  useQuery,
   type InfiniteData,
   type UseInfiniteQueryResult,
 } from "@tanstack/react-query";
 import { axios } from "../api";
 import type { Column } from "../user/query";
-import type { TruckListResponse } from "./typed";
+import type { TruckDetailResponse, TruckListResponse } from "./typed";
 
 export interface TruckSearchPayload {
   page: number;
@@ -55,3 +56,17 @@ export function useTrucksInfinite(
 }
 
 export { TRUCK_PAGE_SIZE };
+
+const fetchTruckById = async (id: string): Promise<TruckDetailResponse> => {
+  const { data } = await axios.get(`/truck/find/${id}`);
+  return data;
+};
+
+export function useTruckDetail(id: string) {
+  return useQuery({
+    queryKey: ["truck", "detail", id],
+    queryFn: () => fetchTruckById(id),
+    enabled: !!id,
+    staleTime: 60 * 1000,
+  });
+}

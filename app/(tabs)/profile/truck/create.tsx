@@ -11,7 +11,10 @@ import { Input, Select } from "heroui-native";
 import React, { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { z } from "zod";
 
 const YEAR_RE = /^\d{4}$/;
@@ -100,15 +103,37 @@ export default function CreateTruckScreen() {
     );
   };
 
-  const textFields = [
-    { key: "plateNo", required: true },
-    { key: "model", required: true },
-    { key: "modelYear", required: true, keyboardType: "number-pad" as const },
-    { key: "frontTire", required: true },
-    { key: "backTire", required: true },
-    { key: "chassisNo", required: false },
-    { key: "engineNo", required: false },
-  ] as const;
+  const renderTextInput = (
+    key: keyof Omit<FormValues, "fuelType">,
+    options?: { required?: boolean; keyboardType?: "number-pad" },
+  ) => (
+    <View className="gap-1.5">
+      <View className="flex-row items-center gap-1">
+        <Text className="text-sm font-medium text-slate-900" style={style}>
+          {labels.fieldLabels[key]}
+        </Text>
+        {options?.required ? <Text className="text-red-500">*</Text> : null}
+      </View>
+      <Controller
+        control={control}
+        name={key}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            value={String(value ?? "")}
+            onChangeText={onChange}
+            keyboardType={options?.keyboardType}
+            autoCapitalize="none"
+            className="border border-slate-200 bg-white"
+          />
+        )}
+      />
+      {!!errors[key]?.message && (
+        <Text className="text-xs text-red-500">
+          {String(errors[key]?.message)}
+        </Text>
+      )}
+    </View>
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-[#f3f7fb]">
@@ -130,84 +155,115 @@ export default function CreateTruckScreen() {
 
       <ScrollView
         className="px-4"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 80, flexGrow: 1 }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 80,
+          flexGrow: 1,
+        }}
       >
-        <View className="mt-1 rounded-2xl bg-white p-4">
-          <View className="gap-3">
-            {textFields.map((field) => (
-              <View className="gap-1.5" key={field.key}>
-                <View className="flex-row items-center gap-1">
-                  <Text className="text-sm font-medium text-slate-900" style={style}>
-                    {labels.fieldLabels[field.key]}
-                  </Text>
-                  {field.required ? <Text className="text-red-500">*</Text> : null}
+        <View className="mt-1 gap-4">
+          <View className="rounded-2xl bg-white p-4">
+            <View className="gap-3">
+              <Text
+                className="text-[18px] font-bold text-slate-900"
+                style={style}
+              >
+                {labels.basicInfoTitle}
+              </Text>
+              {renderTextInput("plateNo", { required: true })}
+
+              <View className="flex-row gap-2">
+                <View className="flex-1">
+                  {renderTextInput("model", { required: true })}
                 </View>
+                <View className="flex-1">
+                  {renderTextInput("modelYear", {
+                    required: true,
+                    keyboardType: "number-pad",
+                  })}
+                </View>
+              </View>
+
+              <View className="gap-1.5">
+                <View className="flex-row items-center gap-1">
+                  <Text
+                    className="text-sm font-medium text-slate-900"
+                    style={style}
+                  >
+                    {labels.fieldLabels.fuelType}
+                  </Text>
+                  <Text className="text-red-500">*</Text>
+                </View>
+
                 <Controller
                   control={control}
-                  name={field.key}
-                  render={({ field: { onChange, value } }) => (
-                    <Input
-                      value={String(value ?? "")}
-                      onChangeText={onChange}
-                      keyboardType={field.keyboardType}
-                      autoCapitalize="none"
-                      className="border border-slate-200 bg-white"
-                    />
+                  name="fuelType"
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      value={{ value, label: value }}
+                      onValueChange={(next) => {
+                        if (next && !Array.isArray(next)) {
+                          onChange(next.value as FormValues["fuelType"]);
+                        }
+                      }}
+                    >
+                      <Select.Trigger className="rounded-xl border border-slate-200 bg-white px-2.5">
+                        <Select.Value
+                          placeholder={labels.fuelTypePlaceholder}
+                          style={style}
+                        />
+                        <Select.TriggerIndicator />
+                      </Select.Trigger>
+                      <Select.Portal>
+                        <Select.Overlay />
+                        <Select.Content
+                          className="rounded-2xl border border-slate-200 bg-white"
+                          presentation="popover"
+                          width="trigger"
+                        >
+                          {FUEL_TYPES.map((fuelType) => (
+                            <Select.Item
+                              key={fuelType}
+                              value={fuelType}
+                              label={fuelType}
+                            >
+                              <Select.ItemLabel style={style} />
+                              <Select.ItemIndicator />
+                            </Select.Item>
+                          ))}
+                        </Select.Content>
+                      </Select.Portal>
+                    </Select>
                   )}
                 />
-                {!!errors[field.key]?.message && (
+                {!!errors.fuelType?.message && (
                   <Text className="text-xs text-red-500">
-                    {String(errors[field.key]?.message)}
+                    {String(errors.fuelType.message)}
                   </Text>
                 )}
               </View>
-            ))}
+            </View>
+          </View>
 
-            <View className="gap-1.5">
-              <View className="flex-row items-center gap-1">
-                <Text className="text-sm font-medium text-slate-900" style={style}>
-                  {labels.fieldLabels.fuelType}
-                </Text>
-                <Text className="text-red-500">*</Text>
+          <View className="rounded-2xl bg-white p-4">
+            <View className="gap-3">
+              <Text
+                className="text-[18px] font-bold text-slate-900"
+                style={style}
+              >
+                {labels.tireAndExtraTitle}
+              </Text>
+
+              <View className="flex-row gap-2">
+                <View className="flex-1">
+                  {renderTextInput("frontTire", { required: true })}
+                </View>
+                <View className="flex-1">
+                  {renderTextInput("backTire", { required: true })}
+                </View>
               </View>
 
-              <Controller
-                control={control}
-                name="fuelType"
-                render={({ field: { value, onChange } }) => (
-                  <Select
-                    value={{ value, label: value }}
-                    onValueChange={(next) => {
-                      if (next && !Array.isArray(next)) {
-                        onChange(next.value as FormValues["fuelType"]);
-                      }
-                    }}
-                  >
-                    <Select.Trigger className="rounded-xl border border-slate-200 bg-white px-2.5">
-                      <Select.Value placeholder={labels.fuelTypePlaceholder} style={style} />
-                      <Select.TriggerIndicator />
-                    </Select.Trigger>
-                    <Select.Portal>
-                      <Select.Overlay />
-                      <Select.Content
-                        className="rounded-2xl border border-slate-200 bg-white"
-                        presentation="popover"
-                        width="trigger"
-                      >
-                        {FUEL_TYPES.map((fuelType) => (
-                          <Select.Item key={fuelType} value={fuelType} label={fuelType}>
-                            <Select.ItemLabel style={style} />
-                            <Select.ItemIndicator />
-                          </Select.Item>
-                        ))}
-                      </Select.Content>
-                    </Select.Portal>
-                  </Select>
-                )}
-              />
-              {!!errors.fuelType?.message && (
-                <Text className="text-xs text-red-500">{String(errors.fuelType.message)}</Text>
-              )}
+              {renderTextInput("chassisNo")}
+              {renderTextInput("engineNo")}
             </View>
           </View>
         </View>

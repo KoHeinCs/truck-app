@@ -2,13 +2,11 @@ import { APP_COLORS } from "@/constants/colors";
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useAuth } from "@/hooks/use-auth";
 import profileLocale from "@/locale/profile/profile.json";
-import { useAuthStore } from "@/stores/auth-store";
 import { useLocaleStore } from "@/stores/client/locale-store";
-import { useProfileQuery } from "@/stores/server/profile/query";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Avatar, Button, Card } from "heroui-native";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -36,31 +34,14 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { fullName, role, signOut } = useAuth();
   const locale = useLocaleStore((state) => state.locale);
-  const signIn = useAuthStore((state) => state.signIn);
-  const token = useAuthStore((state) => state.token);
-  const { data } = useProfileQuery();
-
-  const serverName = data?.data?.fullName ?? null;
-  const serverRole = data?.data?.role ?? null;
-
-  useEffect(() => {
-    if (!token || !serverName || !serverRole) return;
-    const current = useAuthStore.getState();
-    if (current.fullName === serverName && current.role === serverRole) return;
-    signIn({
-      token,
-      fullName: serverName,
-      role: serverRole,
-    });
-  }, [serverName, serverRole, signIn, token]);
 
   const name = useMemo(
-    () => serverName ?? fullName ?? "Unknown User",
-    [fullName, serverName],
+    () => fullName ?? "Unknown User",
+    [fullName],
   );
   const userRole = useMemo(
-    () => serverRole ?? role ?? "No role",
-    [role, serverRole],
+    () => role ?? "No role",
+    [role],
   );
   const initial = name.charAt(0).toUpperCase();
   const t = profileLocale[locale];
@@ -147,6 +128,10 @@ export default function ProfileScreen() {
                   }
                   if (row.key === "truck") {
                     router.push("/(tabs)/profile/truck");
+                    return;
+                  }
+                  if (row.key === "service") {
+                    router.push("/(tabs)/profile/service");
                     return;
                   }
                   if (row.key === "language") {

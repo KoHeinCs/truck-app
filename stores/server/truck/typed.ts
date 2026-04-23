@@ -15,11 +15,21 @@ export interface TruckData {
 
 export interface TruckItem {
   id: string;
+  version?: number;
   plateNo: string;
   model: string;
+  make?: string;
   modelYear: string | number;
   engineNo?: string;
   chassisNo?: string;
   fuelType?: string;
   frontTireSize?: string;
+  frontTire?: string;
+  backTire?: string;
+}
+
+export interface TruckDetailResponse {
+  data: TruckItem;
+  httpStatus: number;
+  message: string;
 }

@@ -105,8 +105,73 @@
       "apply": "Apply",
       "empty": "No trucks found."
     },
+    "serviceTypeScreen": {
+      "title": "Service Type Management",
+      "searchPlaceholder": "Search by service type...",
+      "advancedTitle": "Advanced Search",
+      "labels": {
+        "english": "English",
+        "myanmar": "Myanmar",
+        "status": "Status"
+      },
+      "placeholders": {
+        "english": "Enter English name",
+        "myanmar": "Enter Myanmar name"
+      },
+      "status": {
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "addComingSoonTitle": "Coming Soon",
+      "addComingSoonBody": "Create service type is not added yet.",
+      "reset": "Reset",
+      "apply": "Apply",
+      "empty": "No service types found.",
+      "error": "Something went wrong."
+    },
+    "createServiceTypeScreen": {
+      "title": "Create Service Type",
+      "basicInfoTitle": "Basic Information",
+      "submit": "Create",
+      "submitting": "Creating...",
+      "successTitle": "Success",
+      "successBody": "Service type created successfully.",
+      "errorTitle": "Error",
+      "errorBody": "Unable to create service type.",
+      "requiredField": "This field is required",
+      "maxLength": "Maximum length exceeded",
+      "fieldLabels": {
+        "serviceType": "Service Type",
+        "langEng": "English",
+        "langMy": "Myanmar"
+      },
+      "placeholders": {
+        "serviceType": "Ex: TIRE_SERVICE",
+        "langEng": "Ex: Tire Service",
+        "langMy": "မြန်မာအမည် ထည့်ပါ"
+      }
+    },
+    "editServiceTypeScreen": {
+      "title": "Edit Service Type",
+      "activeLabel": "Active",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "submit": "Update",
+      "submitting": "Updating...",
+      "cancel": "Cancel",
+      "successTitle": "Success",
+      "successBody": "Service type updated successfully.",
+      "errorTitle": "Error",
+      "errorBody": "Unable to update service type.",
+      "invalidItem": "Invalid service type."
+    },
     "createTruckScreen": {
       "title": "Create Truck",
+      "basicInfoTitle": "Basic Information",
+      "tireAndExtraTitle": "Tire and Additional Details",
       "submit": "Create",
       "submitting": "Creating...",
       "successTitle": "Success",
@@ -126,6 +191,31 @@
         "chassisNo": "Chassis Number",
         "engineNo": "Engine Number"
       }
+    },
+    "truckDetailScreen": {
+      "title": "Truck Detail",
+      "edit": "Update",
+      "cancel": "Cancel",
+      "fieldLabels": {
+        "plateNo": "Plate Number",
+        "model": "Model",
+        "modelYear": "Model Year",
+        "fuelType": "Fuel Type",
+        "frontTire": "Front Tire",
+        "backTire": "Back Tire",
+        "chassisNo": "Chassis Number",
+        "engineNo": "Engine Number"
+      }
+    },
+    "editTruckScreen": {
+      "title": "Edit Truck",
+      "submit": "Update",
+      "submitting": "Updating...",
+      "cancel": "Cancel",
+      "successTitle": "Success",
+      "successBody": "Truck updated successfully.",
+      "errorTitle": "Error",
+      "errorBody": "Unable to update truck."
     }
   },
   "mm": {
@@ -221,7 +311,7 @@
         "engineNo": "အင်ဂျင်နံပါတ်",
         "chassisNo": "ရှာစီနံပါတ်",
         "fuelType": "ဆီအမျိုးအစား",
-        "frontTire": "ရှေ့ဘီး"
+        "frontTire": "ရှေ့တာယာ"
       },
       "placeholders": {
         "plateNo": "ကားနံပါတ် ထည့်ပါ",
@@ -234,8 +324,73 @@
       "apply": "ကျင့်သုံး",
       "empty": "ထရက်ကား မတွေ့ရှိပါ။"
     },
+    "serviceTypeScreen": {
+      "title": "ဝန်ဆောင်မှုအမျိုးအစား စီမံခန့်ခွဲမှု",
+      "searchPlaceholder": "ဝန်ဆောင်မှုအမျိုးအစားဖြင့် ရှာဖွေရန်...",
+      "advancedTitle": "အဆင့်မြင့်ရှာဖွေမှု",
+      "labels": {
+        "english": "English",
+        "myanmar": "မြန်မာ",
+        "status": "အခြေအနေ"
+      },
+      "placeholders": {
+        "english": "English အမည် ထည့်ပါ",
+        "myanmar": "မြန်မာအမည် ထည့်ပါ"
+      },
+      "status": {
+        "all": "အားလုံး",
+        "active": "အသုံးပြုနေသည်",
+        "inactive": "မအသုံးပြု"
+      },
+      "addComingSoonTitle": "မကြာမီ",
+      "addComingSoonBody": "ဝန်ဆောင်မှုအမျိုးအစား အသစ်ထည့်ရန် မရသေးပါ။",
+      "reset": "ရှင်းလင်းမည်",
+      "apply": "ကျင့်သုံး",
+      "empty": "ဝန်ဆောင်မှုအမျိုးအစား မတွေ့ရှိပါ။",
+      "error": "အမှားတစ်ခု ဖြစ်ပွားခဲ့သည်။"
+    },
+    "createServiceTypeScreen": {
+      "title": "ဝန်ဆောင်မှုအမျိုးအစား အသစ်ထည့်ရန်",
+      "basicInfoTitle": "အခြေခံအချက်အလက်",
+      "submit": "မှတ်တမ်းမည်",
+      "submitting": "ဖန်တီးနေသည်...",
+      "successTitle": "အောင်မြင်သည်",
+      "successBody": "ဝန်ဆောင်မှုအမျိုးအစား ဖန်တီးပြီးပါပြီ။",
+      "errorTitle": "အမှား",
+      "errorBody": "ဝန်ဆောင်မှုအမျိုးအစား ဖန်တီး၍ မရပါ။",
+      "requiredField": "ဤအကွက် လိုအပ်သည်",
+      "maxLength": "စာလုံးရေ ကန့်သတ်ချက် ကျော်လွန်နေသည်",
+      "fieldLabels": {
+        "serviceType": "ဝန်ဆောင်မှု အမျိုးအစား",
+        "langEng": "English",
+        "langMy": "မြန်မာ"
+      },
+      "placeholders": {
+        "serviceType": "ဥပမာ: TIRE_SERVICE",
+        "langEng": "ဥပမာ: Tire Service",
+        "langMy": "မြန်မာအမည် ထည့်ပါ"
+      }
+    },
+    "editServiceTypeScreen": {
+      "title": "ဝန်ဆောင်မှုအမျိုးအစား ပြင်ဆင်ရန်",
+      "activeLabel": "အသုံးပြုမှု",
+      "status": {
+        "active": "အသုံးပြုနေသည်",
+        "inactive": "မအသုံးပြု"
+      },
+      "submit": "သိမ်းမည်",
+      "submitting": "ပြင်ဆင်နေသည်...",
+      "cancel": "မလုပ်တော့ပါ",
+      "successTitle": "အောင်မြင်သည်",
+      "successBody": "ဝန်ဆောင်မှုအမျိုးအစား ပြင်ဆင်ပြီးပါပြီ။",
+      "errorTitle": "အမှား",
+      "errorBody": "ဝန်ဆောင်မှုအမျိုးအစား မပြင်ဆင်နိုင်ပါ။",
+      "invalidItem": "ဝန်ဆောင်မှုအမျိုးအစား မမှန်ကန်ပါ။"
+    },
     "createTruckScreen": {
       "title": "ထရက်ကားအသစ်ထည့်ရန်",
+      "basicInfoTitle": "ယာဉ်အချက်အလက်",
+      "tireAndExtraTitle": "တာယာနှင့် နောက်ထပ်အချက်အလက်",
       "submit": "မှတ်တမ်းမည်",
       "submitting": "ဖန်တီးနေသည်...",
       "successTitle": "အောင်မြင်သည်",
@@ -250,11 +405,36 @@
         "model": "မော်ဒယ်",
         "modelYear": "မော်ဒယ်နှစ်",
         "fuelType": "ဆီအမျိုးအစား",
-        "frontTire": "ရှေ့ဘီး",
-        "backTire": "နောက်ဘီး",
+        "frontTire": "ရှေ့တာယာ",
+        "backTire": "နောက်တာယာ",
         "chassisNo": "ရှာစီနံပါတ်",
         "engineNo": "အင်ဂျင်နံပါတ်"
       }
+    },
+    "truckDetailScreen": {
+      "title": "ထရက်ကားအသေးစိတ်",
+      "edit": "ပြင်ဆင်ရန်",
+      "cancel": "မလုပ်တော့ပါ",
+      "fieldLabels": {
+        "plateNo": "ကားနံပါတ်",
+        "model": "မော်ဒယ်",
+        "modelYear": "မော်ဒယ်နှစ်",
+        "fuelType": "ဆီအမျိုးအစား",
+        "frontTire": "ရှေ့တာယာ",
+        "backTire": "နောက်တာယာ",
+        "chassisNo": "ရှာစီနံပါတ်",
+        "engineNo": "အင်ဂျင်နံပါတ်"
+      }
+    },
+    "editTruckScreen": {
+      "title": "ထရက်ကားအချက်အလက် ပြင်ဆင်ရန်",
+      "submit": "သိမ်းမည်",
+      "submitting": "ပြင်ဆင်နေသည်...",
+      "cancel": "မလုပ်တော့ပါ",
+      "successTitle": "အောင်မြင်သည်",
+      "successBody": "ထရက်ကားအချက်အလက် ပြင်ဆင်ပြီးပါပြီ။",
+      "errorTitle": "အမှား",
+      "errorBody": "ထရက်ကားအချက်အလက် မပြင်ဆင်နိုင်ပါ။"
     }
   }
 }
