@@ -1,6 +1,7 @@
 import { APP_COLORS } from "@/constants/colors";
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import proposalLocale from "@/locale/proposal/proposal.json";
 import { useAuthStore } from "@/stores/auth-store";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useProposalsInfinite } from "@/stores/server/proposal/query";
@@ -60,6 +61,7 @@ export default function ProposalScreen() {
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
+  const t = proposalLocale[locale].list;
   const upperRole = (role || "").toUpperCase();
   const showOwnerId = upperRole === "ADMIN";
   const showCreatedBy = upperRole === "ADMIN" || upperRole === "OWNER";
@@ -94,11 +96,6 @@ export default function ProposalScreen() {
     () => data?.pages.flatMap((page) => page.data.data) ?? [],
     [data],
   );
-
-  const title = locale === "mm" ? "အဆိုပြုချက်များ" : "Proposals";
-  const emptyText = locale === "mm" ? "အချက်အလက် မတွေ့ပါ" : "No proposals found";
-  const searchPlaceholder =
-    locale === "mm" ? "အဆိုပြုချက်ရှာရန်..." : "Search proposal...";
 
   const onRefresh = useCallback(() => {
     refetch();
@@ -135,9 +132,9 @@ export default function ProposalScreen() {
         ListHeaderComponent={
           <View className="pb-3 pt-1">
             <ProposalHeader
-              title={title}
+              title={t.title}
+              welcomeLabel={t.welcome}
               fullName={fullName || "-"}
-              locale={locale}
               style={style}
             />
             <ProposalTabs
@@ -149,7 +146,7 @@ export default function ProposalScreen() {
             />
             <ProposalSearchToolbar
               quickQuery={ui.quickQuery}
-              placeholder={searchPlaceholder}
+              placeholder={t.searchPlaceholder}
               advancedOpen={ui.advancedOpen}
               onChangeQuickQuery={(quickQuery) => patchUi({ quickQuery })}
               onClearQuickQuery={() => patchUi({ quickQuery: "" })}
@@ -195,7 +192,7 @@ export default function ProposalScreen() {
             </View>
           ) : (
             <Text className="px-6 py-8 text-center text-slate-500" style={style}>
-              {emptyText}
+              {t.empty}
             </Text>
           )
         }

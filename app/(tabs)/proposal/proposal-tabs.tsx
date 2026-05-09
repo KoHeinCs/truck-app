@@ -1,4 +1,5 @@
 import { APP_COLORS } from "@/constants/colors";
+import proposalLocale from "@/locale/proposal/proposal.json";
 import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalTabStatus } from "@/stores/server/proposal/search-columns";
 import React from "react";
@@ -13,18 +14,6 @@ type ProposalTabsProps = {
   style?: StyleProp<TextStyle>;
 };
 
-const MM_LABELS: Record<ProposalTabStatus, string> = {
-  INFORM: "စောင့်ဆိုင်းဆဲ",
-  APPROVED: "အတည်ပြု",
-  TERMINATED: "ပယ်ဖျက်",
-};
-
-const EN_LABELS: Record<ProposalTabStatus, string> = {
-  INFORM: "Pending",
-  APPROVED: "Approved",
-  TERMINATED: "Cancelled",
-};
-
 export function ProposalTabs({
   value,
   onChange,
@@ -32,7 +21,7 @@ export function ProposalTabs({
   locale,
   style,
 }: ProposalTabsProps) {
-  const labels = locale === "mm" ? MM_LABELS : EN_LABELS;
+  const labels = proposalLocale[locale].list.tabs;
 
   return (
     <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-1">

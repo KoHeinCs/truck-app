@@ -1,5 +1,6 @@
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import proposalLocale from "@/locale/proposal/proposal.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useCreateProposal } from "@/stores/server/proposal/create-mutation";
 import { buildServiceTypeSearchColumns } from "@/stores/server/service-type/search-columns";
@@ -42,56 +43,7 @@ type FormValues = {
   description: string;
 };
 
-const labels = {
-  en: {
-    title: "Create Proposal",
-    required: "Required field",
-    invalidAmount: "Amount must be a valid number",
-    invalidDate: "Use DD/MM/YYYY HH:mm",
-    truck: "Truck",
-    truckPlaceholder: "Select truck...",
-    truckSearch: "Search...",
-    amount: "Proposal Amount",
-    serviceType: "Service Type",
-    serviceTypePlaceholder: "Select service...",
-    serviceShop: "Service Shop",
-    serviceDate: "Service Date",
-    description: "Description",
-    descriptionPlaceholder: "For tire maintenance",
-    cancel: "Cancel",
-    submit: "Submit",
-    submitting: "Submitting...",
-    successTitle: "Success",
-    successBody: "Proposal created successfully.",
-    errorTitle: "Error",
-    errorBody: "Could not create proposal.",
-  },
-  mm: {
-    title: "အဆိုပြုချက်အသစ်",
-    required: "လိုအပ်သောအချက်အလက်ဖြစ်သည်",
-    invalidAmount: "ပမာဏမှန်ကန်စွာထည့်ပါ",
-    invalidDate: "DD/MM/YYYY HH:mm ပုံစံဖြင့်ထည့်ပါ",
-    truck: "ထရပ်ကား",
-    truckPlaceholder: "ထရပ်ကားရွေးချယ်ရန်...",
-    truckSearch: "ရှာရန်...",
-    amount: "အဆိုပြုငွေ",
-    serviceType: "ဝန်ဆောင်မှုအမျိုးအစား",
-    serviceTypePlaceholder: "ရွေးချယ်ပါ...",
-    serviceShop: "ဝန်ဆောင်မှုဆိုင်",
-    serviceDate: "ဝန်ဆောင်မှုရက်",
-    description: "ဖော်ပြချက်",
-    descriptionPlaceholder: "For tire maintenance",
-    cancel: "မလုပ်တော့ပါ",
-    submit: "ထည့်သွင်းမည်",
-    submitting: "ထည့်သွင်းနေသည်...",
-    successTitle: "အောင်မြင်ပါသည်",
-    successBody: "အဆိုပြုချက်အသစ်ထည့်ပြီးပါပြီ။",
-    errorTitle: "အမှားရှိပါသည်",
-    errorBody: "အဆိုပြုချက်ထည့်၍မရပါ။",
-  },
-};
-
-function buildSchema(t: (typeof labels)["en"]) {
+function buildSchema(t: (typeof proposalLocale)["en"]["create"]) {
   return z.object({
     truckId: z.string().min(1, t.required),
     proposalAmount: z
@@ -185,7 +137,7 @@ export default function CreateProposalScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const locale = useLocaleStore((state) => state.locale);
-  const t = labels[locale];
+  const t = proposalLocale[locale].create;
   const { mutate, isPending } = useCreateProposal();
   const [truckQuery, setTruckQuery] = useState("");
   const [truckPickerOpen, setTruckPickerOpen] = useState(false);
@@ -372,7 +324,7 @@ export default function CreateProposalScreen() {
               control={control}
               name="proposalAmount"
               label={t.amount}
-              placeholder="5000"
+              placeholder={t.amountPlaceholder}
               keyboardType="decimal-pad"
               required
               error={errors.proposalAmount?.message}
@@ -430,7 +382,7 @@ export default function CreateProposalScreen() {
               control={control}
               name="serviceShop"
               label={t.serviceShop}
-              placeholder="Zaw Star Car Workshop"
+              placeholder={t.serviceShopPlaceholder}
               required
               error={errors.serviceShop?.message}
               style={style}
@@ -450,7 +402,7 @@ export default function CreateProposalScreen() {
                       className={value ? "text-slate-900" : "text-slate-400"}
                       style={style}
                     >
-                      {value || "dd/mm/yyyy, --:-- --"}
+                      {value || t.serviceDatePlaceholder}
                     </Text>
                     <Ionicons name="calendar-outline" size={18} color="#e2e8f0" />
                   </Pressable>
@@ -484,7 +436,7 @@ export default function CreateProposalScreen() {
                             className="text-xs font-semibold text-slate-700"
                             style={style}
                           >
-                            {locale === "mm" ? "ပြီးပါပြီ" : "Done"}
+                            {t.done}
                           </Text>
                         </Pressable>
                       ) : null}

@@ -1,4 +1,5 @@
 import { APP_COLORS } from "@/constants/colors";
+import proposalLocale from "@/locale/proposal/proposal.json";
 import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
 import { Card, Input } from "heroui-native";
@@ -17,37 +18,6 @@ type ProposalAdvancedFiltersProps = {
   onApply: () => void;
 };
 
-const labels = {
-  en: {
-    title: "Advanced Filters",
-    proposalNo: "Proposal No",
-    ownerId: "Owner ID",
-    plateNo: "Plate No",
-    proposalDateFrom: "Proposal Date From",
-    proposalDateTo: "Proposal Date To",
-    serviceTypeCsv: "Service Type",
-    serviceDateFrom: "Service Date From",
-    serviceDateTo: "Service Date To",
-    createdByCsv: "Created By",
-    reset: "Reset",
-    apply: "Apply",
-  },
-  mm: {
-    title: "အသေးစိတ်ရှာဖွေမှု",
-    proposalNo: "အဆိုပြုချက်အမှတ်",
-    ownerId: "Owner ID",
-    plateNo: "ကားနံပါတ်",
-    proposalDateFrom: "အဆိုပြုရက် မှ",
-    proposalDateTo: "အဆိုပြုရက် ထိ",
-    serviceTypeCsv: "ဝန်ဆောင်မှုအမျိုးအစား",
-    serviceDateFrom: "ဝန်ဆောင်မှုရက် မှ",
-    serviceDateTo: "ဝန်ဆောင်မှုရက် ထိ",
-    createdByCsv: "Created By",
-    reset: "ရှင်းမည်",
-    apply: "ရှာမည်",
-  },
-};
-
 export function ProposalAdvancedFilters({
   filters,
   locale,
@@ -58,7 +28,7 @@ export function ProposalAdvancedFilters({
   onReset,
   onApply,
 }: ProposalAdvancedFiltersProps) {
-  const t = labels[locale];
+  const t = proposalLocale[locale].advanced;
 
   return (
     <Card className="mb-4 p-5">
@@ -88,14 +58,14 @@ export function ProposalAdvancedFilters({
           <FilterInput
             label={t.proposalDateFrom}
             value={filters.proposalDateFrom}
-            placeholder="DD/MM/YYYY"
+            placeholder={t.datePlaceholder}
             style={style}
             onChangeText={(proposalDateFrom) => onChange({ proposalDateFrom })}
           />
           <FilterInput
             label={t.proposalDateTo}
             value={filters.proposalDateTo}
-            placeholder="DD/MM/YYYY"
+            placeholder={t.datePlaceholder}
             style={style}
             onChangeText={(proposalDateTo) => onChange({ proposalDateTo })}
           />
@@ -112,7 +82,7 @@ export function ProposalAdvancedFilters({
           <FilterInput
             label={t.serviceDateFrom}
             value={filters.serviceDateFrom}
-            placeholder="DD/MM/YYYY"
+            placeholder={t.datePlaceholder}
             style={style}
             onChangeText={(serviceDateFrom) => onChange({ serviceDateFrom })}
           />
@@ -122,7 +92,7 @@ export function ProposalAdvancedFilters({
           <FilterInput
             label={t.serviceDateTo}
             value={filters.serviceDateTo}
-            placeholder="DD/MM/YYYY"
+            placeholder={t.datePlaceholder}
             style={style}
             onChangeText={(serviceDateTo) => onChange({ serviceDateTo })}
           />
