@@ -145,6 +145,7 @@ export default function ProposalScreen() {
               style={style}
             />
             <ProposalSearchToolbar
+              locale={locale}
               quickQuery={ui.quickQuery}
               placeholder={t.searchPlaceholder}
               advancedOpen={ui.advancedOpen}

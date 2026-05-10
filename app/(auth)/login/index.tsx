@@ -1,3 +1,4 @@
+import { useTranslation } from "@/hooks/use-translation";
 import { useLogin } from "@/stores/server/login/mutation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, Input, Spinner } from "heroui-native";
@@ -6,7 +7,6 @@ import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, Platform, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
-import {useTranslation} from '@/hooks/use-translation';
 
 const formSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -16,7 +16,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function LoginScreen() {
-  const t  = useTranslation('login');
+  const t = useTranslation("login");
   const { mutate, isPending } = useLogin();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
@@ -59,15 +59,17 @@ export default function LoginScreen() {
       >
         <Card className="gap-4">
           <Card.Header className="pb-0">
-            <Card.Title>{t.title}</Card.Title>
-            <Card.Description>
+            <Card.Title className=" leading-0">{t.title}</Card.Title>
+            <Card.Description className=" text-sm leading-0">
               {t.description}
             </Card.Description>
           </Card.Header>
 
           <Card.Body className="gap-3">
             <View className="gap-2">
-              <Text className="text-sm text-slate-600">{t.username}</Text>
+              <Text className="text-sm leading-0 text-slate-600">
+                {t.username}
+              </Text>
               <Controller
                 control={control}
                 name="username"
@@ -75,26 +77,30 @@ export default function LoginScreen() {
                   <Input
                     value={value}
                     onChangeText={onChange}
+                    className=" leading-0"
                     placeholder="Enter username"
                     autoCapitalize="none"
                   />
                 )}
               />
               {errors.username?.message ? (
-                <Text className="text-sm text-red-600">
+                <Text className="text-sm leading-0 text-red-600">
                   {errors.username.message}
                 </Text>
               ) : null}
             </View>
 
             <View className="gap-2">
-              <Text className="text-sm text-slate-600">{t.password}</Text>
+              <Text className="text-sm leading-0 text-slate-600">
+                {t.password}
+              </Text>
               <Controller
                 control={control}
                 name="password"
                 render={({ field: { onChange, value } }) => (
                   <Input
                     value={value}
+                    className=" leading-0"
                     onChangeText={onChange}
                     placeholder="Enter password"
                     secureTextEntry
@@ -109,7 +115,9 @@ export default function LoginScreen() {
             </View>
 
             {errorMessage ? (
-              <Text className="text-sm text-red-600">{errorMessage}</Text>
+              <Text className="text-sm leading-0 text-red-600">
+                {errorMessage}
+              </Text>
             ) : null}
           </Card.Body>
 
@@ -117,9 +125,13 @@ export default function LoginScreen() {
             <Button
               onPress={handleSubmit(onSubmit)}
               isDisabled={isPending}
-              className="w-full"
+              className="w-full leading-0"
             >
-              {isPending ? <Spinner size="sm" color="default" /> : t.login}
+              {isPending ? (
+                <Spinner size="sm" color="white" />
+              ) : (
+                <Text className=" leading-0 text-white">{t.login}</Text>
+              )}
             </Button>
           </Card.Footer>
         </Card>

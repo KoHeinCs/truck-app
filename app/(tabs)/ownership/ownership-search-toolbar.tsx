@@ -1,12 +1,11 @@
 import { APP_COLORS } from "@/constants/colors";
-import { compactLineInputTextStyle } from "@/constants/compact-input";
 import type { AppLocale } from "@/stores/client/locale-store";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Input, TextField } from "heroui-native";
-import React, { useMemo } from "react";
-import { Pressable, View, type StyleProp, type TextStyle } from "react-native";
+import { Input } from "heroui-native";
+import React from "react";
+import { Pressable, View } from "react-native";
 
-type ProposalSearchToolbarProps = {
+type OwnershipSearchToolbarProps = {
   locale: AppLocale;
   quickQuery: string;
   placeholder: string;
@@ -17,7 +16,7 @@ type ProposalSearchToolbarProps = {
   onPressAdd: () => void;
 };
 
-export function ProposalSearchToolbar({
+export function OwnershipSearchToolbar({
   locale,
   quickQuery,
   placeholder,
@@ -26,27 +25,20 @@ export function ProposalSearchToolbar({
   onClearQuickQuery,
   onToggleAdvanced,
   onPressAdd,
-}: ProposalSearchToolbarProps) {
-  const inputTextStyle = useMemo(
-    () => compactLineInputTextStyle(locale) as StyleProp<TextStyle>,
-    [locale],
-  );
-
+}: OwnershipSearchToolbarProps) {
   return (
     <View className="mb-4 flex-row items-center gap-2">
-      <TextField className=" flex-1">
-        <Input
-          value={quickQuery}
-          onChangeText={onChangeQuickQuery}
-          placeholder={placeholder}
-          className={`flex-1 border border-slate-200 bg-white `}
-        />
-      </TextField>
+      <Input
+        value={quickQuery}
+        onChangeText={onChangeQuickQuery}
+        placeholder={placeholder}
+        className={`flex-1 border border-slate-200 bg-white `}
+      />
 
       {!!quickQuery && (
         <Pressable
           onPress={onClearQuickQuery}
-          className="items-center h-11 justify-center rounded-lg border border-slate-200 bg-white p-2.5"
+          className="items-center justify-center h-11 rounded-lg border border-slate-200 bg-white p-2.5"
         >
           <Ionicons name="close" size={18} color={APP_COLORS.primary} />
         </Pressable>
@@ -54,7 +46,7 @@ export function ProposalSearchToolbar({
 
       <Pressable
         onPress={onToggleAdvanced}
-        className="items-center justify-center rounded-lg  h-11 border border-slate-200 bg-white p-2.5"
+        className="items-center justify-center rounded-lg h-11 border border-slate-200 bg-white p-2.5"
       >
         <Ionicons
           name={advancedOpen ? "funnel" : "funnel-outline"}

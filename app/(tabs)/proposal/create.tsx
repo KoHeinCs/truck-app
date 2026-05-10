@@ -1,7 +1,13 @@
+import { CompactTextInput } from "@/components/compact-text-input";
+import {
+  COMPACT_LINE_INPUT_CLASSNAME,
+  compactLineInputTextStyle,
+  compactMultilineInputTextStyle,
+} from "@/constants/compact-input";
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import proposalLocale from "@/locale/proposal/proposal.json";
-import { useLocaleStore } from "@/stores/client/locale-store";
+import { useLocaleStore, type AppLocale } from "@/stores/client/locale-store";
 import { useCreateProposal } from "@/stores/server/proposal/create-mutation";
 import { buildServiceTypeSearchColumns } from "@/stores/server/service-type/search-columns";
 import { useServiceTypesInfinite } from "@/stores/server/service-type/query";
@@ -16,7 +22,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
 import { useRouter } from "expo-router";
-import { Input, Select } from "heroui-native";
+import { Select } from "heroui-native";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -266,7 +272,8 @@ export default function CreateProposalScreen() {
               render={() => (
                 <View className="gap-2">
                   <RequiredLabel label={t.truck} style={style} />
-                  <Input
+                  <CompactTextInput
+                    locale={locale}
                     value={truckQuery}
                     onChangeText={(next) => {
                       setTruckQuery(next);
@@ -275,7 +282,7 @@ export default function CreateProposalScreen() {
                     }}
                     onFocus={() => setTruckPickerOpen(true)}
                     placeholder={t.truckPlaceholder}
-                    className={`border bg-white ${truckPickerOpen ? "border-blue-500" : "border-slate-200"}`}
+                    className={`border bg-white ${COMPACT_LINE_INPUT_CLASSNAME} ${truckPickerOpen ? "border-blue-500" : "border-slate-200"}`}
                   />
                   {!!errors.truckId?.message && (
                     <Text className="text-xs text-red-500">
@@ -284,14 +291,15 @@ export default function CreateProposalScreen() {
                   )}
                   {truckPickerOpen ? (
                     <View className="rounded-2xl border border-slate-200 bg-white p-3">
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
                         value={truckQuery}
                         onChangeText={(next) => {
                           setTruckQuery(next);
                           setValue("truckId", "");
                         }}
                         placeholder={t.truckSearch}
-                        className="mb-2 border border-slate-100 bg-slate-50"
+                        className={`mb-2 border border-slate-100 bg-slate-50 ${COMPACT_LINE_INPUT_CLASSNAME}`}
                       />
                       {trucks.slice(0, 5).map((truck) => (
                         <Pressable
@@ -325,6 +333,7 @@ export default function CreateProposalScreen() {
               name="proposalAmount"
               label={t.amount}
               placeholder={t.amountPlaceholder}
+              locale={locale}
               keyboardType="decimal-pad"
               required
               error={errors.proposalAmount?.message}
@@ -345,8 +354,11 @@ export default function CreateProposalScreen() {
                       }
                     }}
                   >
-                    <Select.Trigger className="rounded-xl border border-slate-200 bg-white px-2.5">
-                      <Select.Value placeholder={t.serviceTypePlaceholder} style={style} />
+                    <Select.Trigger className="h-10 max-h-10 flex-row items-center rounded-xl border border-slate-200 bg-white px-2.5">
+                      <Select.Value
+                        placeholder={t.serviceTypePlaceholder}
+                        style={compactLineInputTextStyle(locale)}
+                      />
                       <Select.TriggerIndicator />
                     </Select.Trigger>
                     <Select.Portal>
@@ -383,6 +395,7 @@ export default function CreateProposalScreen() {
               name="serviceShop"
               label={t.serviceShop}
               placeholder={t.serviceShopPlaceholder}
+              locale={locale}
               required
               error={errors.serviceShop?.message}
               style={style}
@@ -396,7 +409,7 @@ export default function CreateProposalScreen() {
                   <RequiredLabel label={t.serviceDate} style={style} />
                   <Pressable
                     onPress={() => setShowServiceDatePicker(true)}
-                    className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
+                    className="min-h-10 flex-row items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2"
                   >
                     <Text
                       className={value ? "text-slate-900" : "text-slate-400"}
@@ -467,6 +480,7 @@ export default function CreateProposalScreen() {
                     multiline
                     textAlignVertical="top"
                     className="min-h-[126px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900"
+                    style={compactMultilineInputTextStyle(locale)}
                   />
                 </View>
               )}
@@ -524,6 +538,7 @@ type FormInputProps = {
   name: keyof FormValues;
   label: string;
   placeholder: string;
+  locale: AppLocale;
   keyboardType?: "decimal-pad";
   required?: boolean;
   error?: string;
@@ -535,6 +550,7 @@ function FormInput({
   name,
   label,
   placeholder,
+  locale,
   keyboardType,
   required,
   error,
@@ -553,12 +569,13 @@ function FormInput({
               {label}
             </Text>
           )}
-          <Input
+          <CompactTextInput
             value={String(value ?? "")}
             onChangeText={onChange}
             placeholder={placeholder}
             keyboardType={keyboardType}
-            className="border border-slate-200 bg-white"
+            locale={locale}
+            className={`border border-slate-200 bg-white ${COMPACT_LINE_INPUT_CLASSNAME}`}
           />
           {!!error && <Text className="text-xs text-red-500">{String(error)}</Text>}
         </View>

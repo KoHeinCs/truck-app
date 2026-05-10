@@ -123,7 +123,7 @@ export default function ChangePasswordScreen() {
   const textStyle = useMemo(
     () =>
       locale === "mm"
-        ? { ...mmTextStyle, lineHeight: 22, includeFontPadding: false }
+        ? { ...mmTextStyle, lineHeight: 22 }
         : undefined,
     [locale, mmTextStyle],
   );

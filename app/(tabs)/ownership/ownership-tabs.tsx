@@ -1,31 +1,27 @@
 import { APP_COLORS } from "@/constants/colors";
-import proposalLocale from "@/locale/proposal/proposal.json";
-import type { AppLocale } from "@/stores/client/locale-store";
-import type { ProposalTabStatus } from "@/stores/server/proposal/search-columns";
+import type { OwnershipTruckStatus } from "@/stores/server/ownership/search-columns";
 import React from "react";
 import type { StyleProp, TextStyle } from "react-native";
 import { Pressable, Text, View } from "react-native";
 
-type ProposalTabsProps = {
-  value: ProposalTabStatus;
-  onChange: (next: ProposalTabStatus) => void;
-  tabs: ProposalTabStatus[];
-  locale: AppLocale;
+type OwnershipTabsProps = {
+  value: OwnershipTruckStatus;
+  onChange: (next: OwnershipTruckStatus) => void;
+  labels: Record<OwnershipTruckStatus, string>;
   style?: StyleProp<TextStyle>;
 };
 
-export function ProposalTabs({
+const TABS: OwnershipTruckStatus[] = ["ACTIVE", "SOLD_OUT"];
+
+export function OwnershipTabs({
   value,
   onChange,
-  tabs,
-  locale,
+  labels,
   style,
-}: ProposalTabsProps) {
-  const labels = proposalLocale[locale].list.tabs;
-
+}: OwnershipTabsProps) {
   return (
     <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-1">
-      {tabs.map((tab) => {
+      {TABS.map((tab) => {
         const active = tab === value;
         return (
           <Pressable
@@ -35,7 +31,7 @@ export function ProposalTabs({
             style={active ? { backgroundColor: APP_COLORS.primary } : undefined}
           >
             <Text
-              className={`text-sm font-semibold leading-0! ${active ? "text-white" : "text-slate-500"}`}
+              className={`text-sm font-semibold leading-0 ${active ? "text-white" : "text-slate-500"}`}
               numberOfLines={1}
               style={style}
             >

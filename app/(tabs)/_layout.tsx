@@ -32,7 +32,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="records/index"
+        name="ownership/index"
         options={{
           title: "Record",
           tabBarLabel: "Record",
