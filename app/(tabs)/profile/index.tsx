@@ -46,10 +46,10 @@ export default function ProfileScreen() {
         [role],
     );
     const initial = name.charAt(0).toUpperCase();
-    const t = profileLocale[locale];
     const tProfile = useTranslation('profile');
     const tCommon = useTranslation('common');
     const tLookup = useTranslation('lookup');
+    const tLogout = useTranslation('logout');
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const textStyle = locale === "mm" ? mmTextStyle : undefined;
     const mmLeadingClass = locale === "mm" ? "leading-0" : "";
@@ -162,7 +162,7 @@ export default function ProfileScreen() {
                                             className={`text-sm font-medium text-slate-900 ${mmLeadingClass}`}
                                             style={locale === "mm" ? mmBodyStyle : undefined}
                                         >
-                                            {tProfile.settingsRows[row.key as keyof typeof t.settingsRows]}
+                                            {tProfile.settingsRows[row.key as keyof typeof tProfile.settingsRows]}
                                         </Text>
                                         {row.key === "language" ? (
                                             <Text
@@ -194,7 +194,7 @@ export default function ProfileScreen() {
                                 className={mmLeadingClass}
                                 style={locale === "mm" ? mmBodyStyle : undefined}
                             >
-                                {t.logout}
+                                {tLogout.title}
                             </Text>
                         </Button>
                     </Card.Body>
