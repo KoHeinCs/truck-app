@@ -34,7 +34,7 @@ export default function EditServiceTypeScreen() {
   const labels = profileLocale[locale].editServiceTypeScreen;
   const createLabels = profileLocale[locale].createServiceTypeScreen;
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? [mmTextStyle, { lineHeight: 0 }] : undefined;
+  const style = locale === "mm" ? mmTextStyle : undefined;
   const { mutate, isPending } = useUpdateServiceType();
   const params = useLocalSearchParams<{
     id?: string;

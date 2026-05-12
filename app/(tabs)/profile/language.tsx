@@ -19,7 +19,7 @@ export default function LanguageScreen() {
   const locale = useLocaleStore((state) => state.locale);
   const setLocale = useLocaleStore((state) => state.setLocale);
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const mmLeadingClass = locale === "mm" ? "leading-0" : "";
+  const textStyle = locale === "mm" ? mmTextStyle : undefined;
   const t = profileLocale[locale];
 
   return (
@@ -34,8 +34,8 @@ export default function LanguageScreen() {
             <Ionicons name="chevron-back" size={20} color="#0f172a" />
           </View>
           <Text
-            className={`text-lg font-bold text-slate-900 ${mmLeadingClass}`}
-            style={locale === "mm" ? mmTextStyle : undefined}
+            className="text-lg font-bold text-slate-900"
+            style={textStyle}
           >
             {t.languagePageTitle}
           </Text>
@@ -60,22 +60,24 @@ export default function LanguageScreen() {
                   <View className="flex-row items-center gap-3 px-4 py-3">
                     <View className="h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
                       <Text
-                        className={`text-sm leading-0 font-bold text-slate-700 ${mmLeadingClass}`}
+                        className="text-sm font-bold text-slate-700"
+                        style={textStyle}
                       >
                         {item.short}
                       </Text>
                     </View>
                     <View className="flex-1">
                       <Text
-                        className={`text-sm font-semibold leading-0 text-slate-900 ${mmLeadingClass}`}
-                        style={item.key === "mm" ? mmTextStyle : mmTextStyle}
+                        className="text-sm font-semibold text-slate-900"
+                        style={textStyle}
                       >
                         {item.key === "mm"
                           ? t.languageMyanmar
                           : t.languageEnglish}
                       </Text>
                       <Text
-                        className={`text-sm text-slate-500 leading-0 ${mmLeadingClass}`}
+                        className="text-sm text-slate-500"
+                        style={textStyle}
                       >
                         {item.english}
                       </Text>

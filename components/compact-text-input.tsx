@@ -1,10 +1,12 @@
-import type { AppLocale } from "@/stores/client/locale-store";
 import {
   compactAdvancedInputTextStyle,
   compactLineInputTextStyle,
 } from "@/constants/compact-input";
+import type { AppLocale } from "@/stores/client/locale-store";
+import { Input } from "heroui-native";
 import React, { forwardRef, useMemo } from "react";
 import {
+  Platform,
   TextInput,
   type TextInputProps,
   type TextStyle,
@@ -31,13 +33,29 @@ export const CompactTextInput = forwardRef<TextInput, CompactTextInputProps>(
         : compactLineInputTextStyle(locale);
     }, [locale, compactVariant]);
 
+    const { includeFontPadding: includeFontPaddingProp, ...inputRest } = rest;
+
+    const includeFontPadding =
+      Platform.OS === "android" && locale === "mm"
+        ? false
+        : includeFontPaddingProp;
+
     return (
-      <TextInput
+      <Input
         ref={ref}
         className={className}
-        style={[textStyle, style]}
+        style={[
+          textStyle,
+          {
+            height: 46,
+            paddingVertical: 0,
+            paddingLeft: 5,
+          },
+          style,
+        ]}
         placeholderTextColor="#94a3b8"
-        {...rest}
+        {...inputRest}
+        {...(Platform.OS === "android" ? { includeFontPadding } : {})}
       />
     );
   },

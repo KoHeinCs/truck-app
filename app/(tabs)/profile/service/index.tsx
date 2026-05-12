@@ -1,4 +1,6 @@
+import { CompactTextInput } from "@/components/compact-text-input";
 import { APP_COLORS } from "@/constants/colors";
+import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import profileLocale from "@/locale/profile/profile.json";
@@ -10,7 +12,7 @@ import {
 } from "@/stores/server/service-type/search-columns";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { Card, Input, Select } from "heroui-native";
+import { Card, Select } from "heroui-native";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -45,7 +47,7 @@ export default function ServiceTypeManagementScreen() {
   const locale = useLocaleStore((state) => state.locale);
   const t = profileLocale[locale].serviceTypeScreen;
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? [mmTextStyle, { lineHeight: 0 }] : undefined;
+  const style = locale === "mm" ? mmTextStyle : undefined;
   const [ui, setUi] = useState<ServiceListUiState>(initialServiceListUi);
   const patchUi = useCallback((next: Partial<ServiceListUiState>) => {
     setUi((prev) => ({ ...prev, ...next }));
@@ -139,6 +141,7 @@ export default function ServiceTypeManagementScreen() {
         ListHeaderComponent={
           <View className="pb-3">
             <ServiceSearchToolbar
+              locale={locale}
               quickQuery={ui.quickQuery}
               placeholder={t.searchPlaceholder}
               advancedOpen={ui.advancedOpen}
@@ -168,11 +171,13 @@ export default function ServiceTypeManagementScreen() {
                       >
                         {t.labels.english}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.langEng}
                         onChangeText={(langEng) => patchUi({ langEng })}
                         placeholder={t.placeholders.english}
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                     <View className="flex-1 gap-1">
@@ -182,11 +187,13 @@ export default function ServiceTypeManagementScreen() {
                       >
                         {t.labels.myanmar}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.langMy}
                         onChangeText={(langMy) => patchUi({ langMy })}
                         placeholder={t.placeholders.myanmar}
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                   </View>

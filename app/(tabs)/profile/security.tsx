@@ -120,13 +120,7 @@ export default function ChangePasswordScreen() {
   const labels =
     profileCopy.changePasswordScreen ?? FALLBACK_CHANGE_PASSWORD_LABELS[locale];
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const textStyle = useMemo(
-    () =>
-      locale === "mm"
-        ? { ...mmTextStyle, lineHeight: 22 }
-        : undefined,
-    [locale, mmTextStyle],
-  );
+  const textStyle = locale === "mm" ? mmTextStyle : undefined;
   const { mutate, isPending } = useChangePassword();
 
   const [showOld, setShowOld] = useState(false);

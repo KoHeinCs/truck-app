@@ -1,21 +1,24 @@
-import { Platform } from "react-native";
 import type { TextStyle } from "react-native";
+import { Platform } from "react-native";
 
-export const MYANMAR_UI_FONT_STACK =
-  'system-ui, -apple-system, "Segoe UI", "Noto Sans Myanmar", "Pyidaungsu", "Myanmar MN", "Myanmar Text", Roboto, Arial, sans-serif';
-
-export function myanmarUITextStyle(): TextStyle {
+/**
+ * Single Myanmar UI face per platform (no mixed font stacks).
+ * Use the same `fontSize` / `lineHeight` as English; only `fontFamily` changes for `mm`.
+ */
+export function getMyanmarFontFamily(): string {
   if (Platform.OS === "web") {
-    return { fontFamily: MYANMAR_UI_FONT_STACK, lineHeight: 0 };
+    return "Noto Sans Myanmar";
   }
-
-  // Native: do not force lineHeight — `lineHeight: 0` breaks Myanmar metrics and
-  // makes glyphs look pinned to the top of rows, tabs, and inputs.
-  return {
-    fontFamily: Platform.select({
+  return (
+    Platform.select({
       ios: "Myanmar Sangam MN",
       android: "Noto Sans Myanmar",
       default: "sans-serif",
-    }),
-  };
+    }) ?? "sans-serif"
+  );
+}
+
+/** Myanmar text: `fontFamily` only — match English sizing via className or shared metrics. */
+export function myanmarUITextStyle(): TextStyle {
+  return { fontFamily: getMyanmarFontFamily() };
 }

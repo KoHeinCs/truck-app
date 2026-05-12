@@ -34,7 +34,7 @@ export default function CreateServiceTypeScreen() {
   const labels = profileLocale[locale].createServiceTypeScreen;
   const { mutate, isPending } = useCreateServiceType();
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? [mmTextStyle, { lineHeight: 0 }] : undefined;
+  const style = locale === "mm" ? mmTextStyle : undefined;
 
   const schema = useMemo(
     () => buildSchema(labels.requiredField, labels.maxLength),

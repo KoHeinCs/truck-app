@@ -15,7 +15,7 @@ type Props = {
 
 export function ServiceTypeCardItem({ item, locale, labels, onPress }: Props) {
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? [mmTextStyle, { lineHeight: 0 }] : undefined;
+  const style = locale === "mm" ? mmTextStyle : undefined;
   const code = (item.serviceType ?? "").trim() || "—";
   const eng = (item.langEng ?? "").trim() || "—";
   const my = (item.langMy ?? "").trim() || "—";
@@ -29,10 +29,10 @@ export function ServiceTypeCardItem({ item, locale, labels, onPress }: Props) {
         >
           {code}
         </Text>
-        <Text className="mt-1.5 text-sm leading-0 text-slate-600" style={style}>
+        <Text className="mt-1.5 text-sm text-slate-600" style={style}>
           {labels.english}: {eng}
         </Text>
-        <Text className="mt-1 text-sm leading-0 text-slate-600" style={style}>
+        <Text className="mt-1 text-sm text-slate-600" style={style}>
           {labels.myanmar}: {my}
         </Text>
       </View>

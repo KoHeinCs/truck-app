@@ -6,17 +6,27 @@ import {
   type CreateUserRole,
   useCreateUser,
 } from "@/stores/server/user/create-mutation";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { Input, Select } from "heroui-native";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { z } from "zod";
 
 const ROLE_OPTIONS: {
@@ -84,7 +94,10 @@ function buildSchema(locale: "en" | "mm") {
       ),
     password: z
       .string()
-      .min(8, locale === "mm" ? "စကားဝှက် အနည်းဆုံး ၈ လုံး" : "Min 8 characters"),
+      .min(
+        8,
+        locale === "mm" ? "စကားဝှက် အနည်းဆုံး ၈ လုံး" : "Min 8 characters",
+      ),
     fullName: z
       .string()
       .min(1, locale === "mm" ? "အမည်လိုအပ်သည်" : "Full name is required"),
@@ -96,7 +109,9 @@ function buildSchema(locale: "en" | "mm") {
       .min(1, locale === "mm" ? "မွေးသက္ကရာဇ်လိုအပ်သည်" : "Date is required")
       .refine((value) => !!toIsoDate(value), {
         message:
-          locale === "mm" ? "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ" : "Use dd/mm/yyyy",
+          locale === "mm"
+            ? "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ"
+            : "Use dd/mm/yyyy",
       }),
     role: z.enum(["ADMIN", "OWNER", "WORKER", "VIEWER"]),
   });
@@ -192,7 +207,7 @@ export default function TeamCreateUserScreen() {
           <Ionicons name="arrow-back" size={22} color="#475569" />
         </Pressable>
         <Text
-          className="flex-1 px-3 text-center text-[24px] font-bold text-slate-900"
+          className="flex-1 px-3 text-center text-lg leading-0 font-bold text-slate-900"
           style={style}
         >
           {labels.title}
@@ -202,16 +217,29 @@ export default function TeamCreateUserScreen() {
 
       <ScrollView
         className="px-4"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 80, flexGrow: 1 }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 80,
+          flexGrow: 1,
+        }}
       >
         <View className="rounded-2xl border border-[#c8dbf7] bg-[#ecf4ff] p-3">
           <View className="flex-row items-start gap-2">
-            <Ionicons name="information-circle-outline" size={18} color="#325f99" />
+            <Ionicons
+              name="information-circle-outline"
+              size={18}
+              color="#325f99"
+            />
             <View className="flex-1">
-              <Text className="text-sm font-semibold text-[#325f99]" style={style}>
+              <Text
+                className="text-sm  font-semibold leading-0 text-[#325f99]"
+                style={style}
+              >
                 {labels.infoTitle}
               </Text>
-              <Text className="mt-0.5 text-xs text-[#325f99]" style={style}>
+              <Text
+                className="mt-0.5 text-xs leading-0 text-[#325f99]"
+                style={style}
+              >
                 {labels.infoBody}
               </Text>
             </View>
@@ -222,224 +250,287 @@ export default function TeamCreateUserScreen() {
           <View className="gap-3">
             <View className="gap-1.5">
               <View className="flex-row items-center gap-1">
-                <Text className="text-sm font-medium text-slate-900" style={style}>
+                <Text
+                  className="text-sm leading-0 font-medium text-slate-900"
+                  style={style}
+                >
                   {fieldLabels.username}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
-            <Controller
-              control={control}
-              name="username"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder={labels.usernamePlaceholder}
-                  keyboardType="phone-pad"
-                  className="border border-slate-200 bg-white"
-                />
+              <Controller
+                control={control}
+                name="username"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={labels.usernamePlaceholder}
+                    keyboardType="phone-pad"
+                    className="border py-0 h-11 leading-0 border-slate-200 bg-white"
+                    {...(Platform.OS === "android" && locale === "mm"
+                      ? { includeFontPadding: false }
+                      : {})}
+                  />
+                )}
+              />
+              {!!errors.username?.message && (
+                <Text className="text-xs text-red-500" style={style}>
+                  {errors.username.message}
+                </Text>
               )}
-            />
-            {!!errors.username?.message && (
-              <Text className="text-xs text-red-500">{errors.username.message}</Text>
-            )}
             </View>
 
             <View className="gap-1.5">
               <View className="flex-row items-center gap-1">
-                <Text className="text-sm font-medium text-slate-900" style={style}>
+                <Text
+                  className="text-sm leading-0 font-medium text-slate-900"
+                  style={style}
+                >
                   {fieldLabels.password}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder={labels.passwordPlaceholder}
-                  secureTextEntry={!showPassword}
-                  className="border border-slate-200 bg-white"
-                />
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={labels.passwordPlaceholder}
+                    secureTextEntry={!showPassword}
+                    className="border h-11 leading-0 py-0 border-slate-200 bg-white"
+                    {...(Platform.OS === "android" && locale === "mm"
+                      ? { includeFontPadding: false }
+                      : {})}
+                  />
+                )}
+              />
+              <Pressable
+                onPress={() => setShowPassword((prev) => !prev)}
+                className="self-end rounded-md bg-slate-100 px-2.5 py-1"
+              >
+                <Text
+                  className="text-xs leading-0 text-slate-600"
+                  // style={style}
+                >
+                  {showPassword
+                    ? locale === "mm"
+                      ? "ဖျောက်ရန်"
+                      : "Hide"
+                    : locale === "mm"
+                      ? "ပြရန်"
+                      : "Show"}
+                </Text>
+              </Pressable>
+              {!!errors.password?.message && (
+                <Text className="text-xs text-red-500" style={style}>
+                  {errors.password.message}
+                </Text>
               )}
-            />
-            <Pressable
-              onPress={() => setShowPassword((prev) => !prev)}
-              className="self-end rounded-md bg-slate-100 px-2.5 py-1"
-            >
-              <Text className="text-xs text-slate-600" style={style}>
-                {showPassword ? (locale === "mm" ? "ဖျောက်ရန်" : "Hide") : locale === "mm" ? "ပြရန်" : "Show"}
-              </Text>
-            </Pressable>
-            {!!errors.password?.message && (
-              <Text className="text-xs text-red-500">{errors.password.message}</Text>
-            )}
             </View>
 
             <View className="gap-1.5">
               <View className="flex-row items-center gap-1">
-                <Text className="text-sm font-medium text-slate-900" style={style}>
+                <Text
+                  className="text-sm font-medium leading-0 text-slate-900"
+                  style={style}
+                >
                   {fieldLabels.fullName}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
-            <Controller
-              control={control}
-              name="fullName"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder={labels.fullNamePlaceholder}
-                  className="border border-slate-200 bg-white"
-                />
+              <Controller
+                control={control}
+                name="fullName"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={labels.fullNamePlaceholder}
+                    className="border h-11 py-0 leading-0 border-slate-200 bg-white"
+                    {...(Platform.OS === "android" && locale === "mm"
+                      ? { includeFontPadding: false }
+                      : {})}
+                  />
+                )}
+              />
+              {!!errors.fullName?.message && (
+                <Text className="text-xs leading-0 text-red-500" style={style}>
+                  {errors.fullName.message}
+                </Text>
               )}
-            />
-            {!!errors.fullName?.message && (
-              <Text className="text-xs text-red-500">{errors.fullName.message}</Text>
-            )}
             </View>
 
             <View className="gap-1.5">
               <View className="flex-row items-center gap-1">
-                <Text className="text-sm font-medium text-slate-900" style={style}>
+                <Text
+                  className="text-sm leading-0 font-medium text-slate-900"
+                  style={style}
+                >
                   {fieldLabels.email}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  value={value}
-                  onChangeText={onChange}
-                  placeholder={labels.emailPlaceholder}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  className="border border-slate-200 bg-white"
-                />
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={labels.emailPlaceholder}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    className="border h-11 py-0 leading-0 border-slate-200 bg-white"
+                    {...(Platform.OS === "android" && locale === "mm"
+                      ? { includeFontPadding: false }
+                      : {})}
+                  />
+                )}
+              />
+              {!!errors.email?.message && (
+                <Text className="text-xs leading-0 text-red-500" style={style}>
+                  {errors.email.message}
+                </Text>
               )}
-            />
-            {!!errors.email?.message && (
-              <Text className="text-xs text-red-500">{errors.email.message}</Text>
-            )}
             </View>
 
             <View className="gap-1.5">
               <View className="flex-row items-center gap-1">
-                <Text className="text-sm font-medium text-slate-900" style={style}>
+                <Text className="text-xs leading-0 font-medium text-slate-900">
                   {fieldLabels.dateOfBirth}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
-            <Controller
-              control={control}
-              name="dateOfBirth"
-              render={({ field: { onChange, value } }) => (
-                <View>
-                  <Pressable
-                    onPress={() => setShowDateOfBirthPicker(true)}
-                    className="flex-row items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
-                  >
-                    <Text
-                      className={value ? "text-slate-900" : "text-slate-400"}
-                      style={style}
+              <Controller
+                control={control}
+                name="dateOfBirth"
+                render={({ field: { onChange, value } }) => (
+                  <View>
+                    <Pressable
+                      onPress={() => setShowDateOfBirthPicker(true)}
+                      className="flex-row items-center h-11 justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
                     >
-                      {value || labels.datePlaceholder}
-                    </Text>
-                    <Ionicons name="calendar-outline" size={18} color="#64748b" />
-                  </Pressable>
-
-                  {showDateOfBirthPicker ? (
-                    <View className="mt-2 rounded-xl border border-slate-200 bg-white p-2">
-                      <DateTimePicker
-                        value={parseDmyToDate(value) ?? new Date()}
-                        mode="date"
-                        display={Platform.OS === "ios" ? "spinner" : "default"}
-                        maximumDate={new Date()}
-                        onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
-                          if (Platform.OS !== "ios") {
-                            setShowDateOfBirthPicker(false);
-                          }
-                          if (event.type === "set" && selectedDate) {
-                            onChange(toDmyDate(selectedDate));
-                          }
-                        }}
+                      <Text
+                        className={value ? "text-slate-900" : "text-slate-400"}
+                        style={style}
+                      >
+                        {value || labels.datePlaceholder}
+                      </Text>
+                      <Ionicons
+                        name="calendar-outline"
+                        size={18}
+                        color="#64748b"
                       />
-                      {Platform.OS === "ios" ? (
-                        <Pressable
-                          onPress={() => setShowDateOfBirthPicker(false)}
-                          className="mt-2 self-end rounded-lg bg-slate-100 px-3 py-1.5"
-                        >
-                          <Text className="text-xs font-semibold text-slate-700" style={style}>
-                            {locale === "mm" ? "ပြီးပါပြီ" : "Done"}
-                          </Text>
-                        </Pressable>
-                      ) : null}
-                    </View>
-                  ) : null}
-                </View>
+                    </Pressable>
+
+                    {showDateOfBirthPicker ? (
+                      <View className="mt-2 rounded-xl border border-slate-200 bg-white p-2">
+                        <DateTimePicker
+                          value={parseDmyToDate(value) ?? new Date()}
+                          mode="date"
+                          display={
+                            Platform.OS === "ios" ? "spinner" : "default"
+                          }
+                          maximumDate={new Date()}
+                          onChange={(
+                            event: DateTimePickerEvent,
+                            selectedDate?: Date,
+                          ) => {
+                            if (Platform.OS !== "ios") {
+                              setShowDateOfBirthPicker(false);
+                            }
+                            if (event.type === "set" && selectedDate) {
+                              onChange(toDmyDate(selectedDate));
+                            }
+                          }}
+                        />
+                        {Platform.OS === "ios" ? (
+                          <Pressable
+                            onPress={() => setShowDateOfBirthPicker(false)}
+                            className="mt-2 self-end rounded-lg bg-slate-100 px-3 py-1.5"
+                          >
+                            <Text
+                              className="text-xs leading-0 font-semibold text-slate-700"
+                              style={style}
+                            >
+                              {locale === "mm" ? "ပြီးပါပြီ" : "Done"}
+                            </Text>
+                          </Pressable>
+                        ) : null}
+                      </View>
+                    ) : null}
+                  </View>
+                )}
+              />
+              {!!errors.dateOfBirth?.message && (
+                <Text className="text-xs leading-0 text-red-500" style={style}>
+                  {errors.dateOfBirth.message}
+                </Text>
               )}
-            />
-            {!!errors.dateOfBirth?.message && (
-              <Text className="text-xs text-red-500">{errors.dateOfBirth.message}</Text>
-            )}
             </View>
 
             <View className="gap-1.5">
               <View className="flex-row items-center gap-1">
-                <Text className="text-sm font-medium text-slate-900" style={style}>
+                <Text
+                  className="text-sm leading-0 font-medium text-slate-900"
+                  style={style}
+                >
                   {fieldLabels.role}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
-            <Controller
-              control={control}
-              name="role"
-              render={({ field: { value, onChange } }) => (
-                <Select
-                  value={{
-                    value,
-                    label:
-                      locale === "mm"
-                        ? `${value} - ${(ROLE_OPTIONS.find((r) => r.value === value)?.labelMm ?? value)}`
-                        : value,
-                  }}
-                  onValueChange={(next) => {
-                    if (next && !Array.isArray(next)) {
-                      onChange(next.value as CreateUserRole);
-                    }
-                  }}
-                >
-                  <Select.Trigger className="rounded-xl border border-slate-200 bg-white px-2.5">
-                    <Select.Value placeholder={labels.rolePlaceholder} style={style} />
-                    <Select.TriggerIndicator />
-                  </Select.Trigger>
-                  <Select.Portal>
-                    <Select.Overlay />
-                    <Select.Content
-                      className="rounded-2xl border border-slate-200 bg-white"
-                      presentation="popover"
-                      width="trigger"
-                    >
-                      {ROLE_OPTIONS.map((role) => (
-                        <Select.Item
-                          key={role.value}
-                          value={role.value}
-                          label={locale === "mm" ? role.labelMm : role.labelEn}
-                        >
-                          <Select.ItemLabel style={style} />
-                          <Select.ItemIndicator />
-                        </Select.Item>
-                      ))}
-                    </Select.Content>
-                  </Select.Portal>
-                </Select>
-              )}
-            />
+              <Controller
+                control={control}
+                name="role"
+                render={({ field: { value, onChange } }) => (
+                  <Select
+                    value={{
+                      value,
+                      label:
+                        locale === "mm"
+                          ? `${value} - ${ROLE_OPTIONS.find((r) => r.value === value)?.labelMm ?? value}`
+                          : value,
+                    }}
+                    onValueChange={(next) => {
+                      if (next && !Array.isArray(next)) {
+                        onChange(next.value as CreateUserRole);
+                      }
+                    }}
+                  >
+                    <Select.Trigger className="rounded-xl h-11 py-0 leading-0 border border-slate-200 bg-white px-2.5">
+                      <Select.Value
+                        placeholder={labels.rolePlaceholder}
+                        className=" py-0 leading-0"
+                      />
+                      <Select.TriggerIndicator />
+                    </Select.Trigger>
+                    <Select.Portal>
+                      <Select.Overlay />
+                      <Select.Content
+                        className="rounded-2xl border border-slate-200 bg-white"
+                        presentation="popover"
+                        width="trigger"
+                      >
+                        {ROLE_OPTIONS.map((role) => (
+                          <Select.Item
+                            key={role.value}
+                            value={role.value}
+                            label={
+                              locale === "mm" ? role.labelMm : role.labelEn
+                            }
+                          >
+                            <Select.ItemLabel style={style} />
+                            <Select.ItemIndicator />
+                          </Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select.Portal>
+                  </Select>
+                )}
+              />
             </View>
           </View>
         </View>
@@ -447,7 +538,7 @@ export default function TeamCreateUserScreen() {
         <Pressable
           onPress={handleSubmit(onSubmit)}
           disabled={isPending}
-          className="mb-2 mt-5 items-center justify-center rounded-xl py-3.5"
+          className="mb-2 mt-5 items-center justify-center rounded-xl py-3 leading-0"
           style={{
             backgroundColor: APP_COLORS.primary,
             opacity: isPending ? 0.7 : 1,

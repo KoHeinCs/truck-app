@@ -1,4 +1,6 @@
+import { CompactTextInput } from "@/components/compact-text-input";
 import { APP_COLORS } from "@/constants/colors";
+import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import profileLocale from "@/locale/profile/profile.json";
@@ -7,11 +9,8 @@ import { useUsersInfinite } from "@/stores/server/user/query";
 import type { BoolFilter } from "@/stores/server/user/search-columns";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { Card, Input } from "heroui-native";
+import { Card } from "heroui-native";
 import React, { useCallback, useMemo, useState } from "react";
-import { CompactSelect } from "./components/compact-select";
-import { TeamSearchToolbar } from "./components/team-search-toolbar";
-import { TeamUserCard } from "./components/team-user-card";
 import {
   ActivityIndicator,
   FlatList,
@@ -21,6 +20,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CompactSelect } from "./components/compact-select";
+import { TeamSearchToolbar } from "./components/team-search-toolbar";
+import { TeamUserCard } from "./components/team-user-card";
 
 type SelectBoolValue = "all" | "true" | "false";
 
@@ -189,6 +191,7 @@ export default function TeamManagementScreen() {
         ListHeaderComponent={
           <View className=" pb-3">
             <TeamSearchToolbar
+              locale={locale}
               quickQuery={ui.quickQuery}
               placeholder={t.searchPlaceholder}
               advancedOpen={ui.advancedOpen}
@@ -218,11 +221,13 @@ export default function TeamManagementScreen() {
                       >
                         {t.labels?.fullName || "Full Name"}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.fullName}
                         onChangeText={(fullName) => patchUi({ fullName })}
                         placeholder={t.placeholders?.fullName || "Full Name"}
-                        className=" rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                     <View className="flex-1 gap-1">
@@ -232,14 +237,16 @@ export default function TeamManagementScreen() {
                       >
                         {t.labels?.phoneNumber || "Phone Number"}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.phoneNumber}
                         onChangeText={(phoneNumber) => patchUi({ phoneNumber })}
                         placeholder={
                           t.placeholders?.phoneNumber || "Phone Number"
                         }
                         keyboardType="phone-pad"
-                        className=" rounded-xl border  border-slate-200 bg-white  text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                   </View>
@@ -252,12 +259,14 @@ export default function TeamManagementScreen() {
                       >
                         {t.labels?.role || "Role"}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.role}
                         onChangeText={(role) => patchUi({ role })}
                         placeholder={t.placeholders?.role || "Role"}
                         autoCapitalize="characters"
-                        className=" rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                     <View className="flex-1 gap-1">
@@ -267,13 +276,15 @@ export default function TeamManagementScreen() {
                       >
                         {t.labels?.email || "Email"}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.email}
                         onChangeText={(email) => patchUi({ email })}
                         placeholder={t.placeholders?.email || "Email"}
                         autoCapitalize="none"
                         keyboardType="email-address"
-                        className=" rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                   </View>

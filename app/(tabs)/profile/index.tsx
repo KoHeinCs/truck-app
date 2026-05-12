@@ -47,11 +47,6 @@ export default function ProfileScreen() {
   const t = profileLocale[locale];
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
-  const mmLeadingClass = locale === "mm" ? "leading-0" : "";
-  const mmBodyStyle = useMemo(
-    () => [mmTextStyle, { lineHeight: 0, fontWeight: "400" as const }],
-    [mmTextStyle],
-  );
 
   return (
     <SafeAreaView style={{ flex: 1 }} className="flex-1 bg-[#f5f8fc]">
@@ -65,18 +60,20 @@ export default function ProfileScreen() {
         <View className="mb-4 flex-row justify-between items-center ">
           <View>
             <Text
-              className={`text-xs text-slate-500 leading-0 ${mmLeadingClass}`}
+              className="text-xs text-slate-500"
+              style={textStyle}
             >
               {t.greeting}
             </Text>
             <Text
-              className={`mt-1 text-base font-bold text-slate-900 ${mmLeadingClass}`}
+              className="mt-1 text-base font-bold text-slate-900"
+              style={textStyle}
             >
               {name}
             </Text>
           </View>
           <Text
-            className={`text-lg font-bold text-slate-900 ${mmLeadingClass}`}
+            className="text-lg font-bold text-slate-900"
             style={textStyle}
           >
             {t.brand}
@@ -89,9 +86,7 @@ export default function ProfileScreen() {
               <Avatar.Fallback>{initial}</Avatar.Fallback>
             </Avatar>
             <View className="flex-1">
-              <Text
-                className={`text-base font-semibold text-slate-900 ${mmLeadingClass}`}
-              >
+              <Text className="text-base font-semibold text-slate-900" style={textStyle}>
                 {name}
               </Text>
               <View className="mt-1 flex-row items-center gap-2">
@@ -99,9 +94,7 @@ export default function ProfileScreen() {
                   className="h-2 w-2 rounded-full"
                   style={{ backgroundColor: APP_COLORS.primary }}
                 />
-                <Text
-                  className={`text-base text-slate-600 font-semibold ${mmLeadingClass}`}
-                >
+                <Text className="text-base font-semibold text-slate-600" style={textStyle}>
                   {userRole}
                 </Text>
               </View>
@@ -110,7 +103,7 @@ export default function ProfileScreen() {
         </Card>
 
         <Text
-          className={`mb-3 px-1 text-sm font-semibold text-slate-500 ${mmLeadingClass}`}
+          className="mb-3 px-1 text-sm font-semibold text-slate-500"
           style={textStyle}
         >
           {t.settingsHeading}
@@ -154,15 +147,15 @@ export default function ProfileScreen() {
                   </View>
                   <View className="flex-1">
                     <Text
-                      className={`text-sm font-medium text-slate-900 ${mmLeadingClass}`}
-                      style={locale === "mm" ? mmBodyStyle : undefined}
+                      className="text-sm font-medium text-slate-900"
+                      style={textStyle}
                     >
                       {t.settingsRows[row.key as keyof typeof t.settingsRows]}
                     </Text>
                     {row.key === "language" ? (
                       <Text
-                        className={`text-xs text-slate-500 ${mmLeadingClass}`}
-                        style={locale === "mm" ? mmBodyStyle : undefined}
+                        className="text-xs text-slate-500"
+                        style={textStyle}
                       >
                         {locale === "mm" ? "မြန်မာ (Myanmar)" : "English"}
                       </Text>
@@ -185,10 +178,7 @@ export default function ProfileScreen() {
                 router.replace("/(auth)/login");
               }}
             >
-              <Text
-                className={mmLeadingClass}
-                style={locale === "mm" ? mmBodyStyle : undefined}
-              >
+              <Text style={textStyle}>
                 {t.logout}
               </Text>
             </Button>

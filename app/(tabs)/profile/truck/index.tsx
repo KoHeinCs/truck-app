@@ -1,4 +1,6 @@
+import { CompactTextInput } from "@/components/compact-text-input";
 import { APP_COLORS } from "@/constants/colors";
+import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
 import { myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import profileLocale from "@/locale/profile/profile.json";
@@ -10,7 +12,7 @@ import {
 } from "@/stores/server/truck/search-columns";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { Card, Input } from "heroui-native";
+import { Card } from "heroui-native";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -139,6 +141,7 @@ export default function TruckManagementScreen() {
         ListHeaderComponent={
           <View className="pb-3">
             <TruckSearchToolbar
+              locale={locale}
               quickQuery={ui.quickQuery}
               placeholder={t.searchPlaceholder}
               advancedOpen={ui.advancedOpen}
@@ -168,11 +171,13 @@ export default function TruckManagementScreen() {
                       >
                         {t.labels.plateNo}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.plateNo}
                         onChangeText={(plateNo) => patchUi({ plateNo })}
                         placeholder={t.placeholders.plateNo}
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                     <View className="flex-1 gap-1">
@@ -182,11 +187,13 @@ export default function TruckManagementScreen() {
                       >
                         {t.labels.model}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.model}
                         onChangeText={(model) => patchUi({ model })}
                         placeholder={t.placeholders.model}
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                   </View>
@@ -199,12 +206,14 @@ export default function TruckManagementScreen() {
                       >
                         {t.labels.modelYear}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.modelYear}
                         onChangeText={(modelYear) => patchUi({ modelYear })}
                         placeholder={t.placeholders.modelYear}
                         keyboardType="number-pad"
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                     <View className="flex-1 gap-1">
@@ -214,11 +223,13 @@ export default function TruckManagementScreen() {
                       >
                         {t.labels.engineNo}
                       </Text>
-                      <Input
+                      <CompactTextInput
+                        locale={locale}
+                        compactVariant="advanced"
                         value={ui.engineNo}
                         onChangeText={(engineNo) => patchUi({ engineNo })}
                         placeholder={t.placeholders.engineNo}
-                        className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                       />
                     </View>
                   </View>
@@ -227,11 +238,13 @@ export default function TruckManagementScreen() {
                     <Text className="text-[10px] text-slate-500" style={style}>
                       {t.labels.chassisNo}
                     </Text>
-                    <Input
+                    <CompactTextInput
+                      locale={locale}
+                      compactVariant="advanced"
                       value={ui.chassisNo}
                       onChangeText={(chassisNo) => patchUi({ chassisNo })}
                       placeholder={t.placeholders.chassisNo}
-                      className="rounded-xl border border-slate-200 bg-white px-2.5 text-xs"
+                      className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                     />
                   </View>
 

@@ -35,7 +35,7 @@ export function ProposalTabs({
             style={active ? { backgroundColor: APP_COLORS.primary } : undefined}
           >
             <Text
-              className={`text-sm font-semibold leading-0! ${active ? "text-white" : "text-slate-500"}`}
+              className={`text-sm font-semibold ${active ? "text-white" : "text-slate-500"}`}
               numberOfLines={1}
               style={style}
             >

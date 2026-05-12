@@ -63,7 +63,7 @@ export function CompactSelect({
          rounded-xl border border-slate-200 bg-white px-2.5"
         >
           <Select.Value
-            className="text-xs leading-0 text-slate-900"
+            className="text-xs text-slate-900"
             placeholder={placeholder}
             style={style}
           />
