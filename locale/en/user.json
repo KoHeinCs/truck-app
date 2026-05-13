@@ -1,0 +1,25 @@
+{
+  "user": {
+    "master": {
+      "title": "Users",
+      "advancedTitle": "Advanced Search",
+      "searchPlaceholder": "Search by name..."
+    },
+    "search": {
+      "fullName": "Full Name",
+      "phoneNumber": "Phone Number",
+      "role": "Role",
+      "email": "Email",
+      "isActive": "Is Active",
+      "isNotLocked": "Is Not Locked",
+      "placeholders": {
+        "fullName": "Enter full name",
+        "phoneNumber": "Enter phone number",
+        "role": "ADMIN / OWNER / STAFF",
+        "email": "Enter email"
+      }
+    },
+    "createUser": {
+    }
+  }
+}
