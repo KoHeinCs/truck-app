@@ -11,8 +11,8 @@
       "phoneNumber": "Phone Number",
       "role": "Role",
       "email": "Email",
-      "isActive": "Is Active",
-      "isNotLocked": "Is Not Locked",
+      "isActive": "Account Status",
+      "isNotLocked": "Account Control",
       "placeholders": {
         "fullName": "Enter full name",
         "phoneNumber": "Enter phone number",

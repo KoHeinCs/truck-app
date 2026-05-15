@@ -9,10 +9,10 @@
       "advancedTitle": "အဆင့်မြင့်ရှာဖွေမှု",
       "fullName": "အမည်",
       "phoneNumber": "ဖုန်းနံပါတ်",
-      "role": "အခန်းကဏ္ဍ",
+      "role": "ရာထူး",
       "email": "အီးမေးလ်",
-      "isActive": "တက်ကြွမှု",
-      "isNotLocked": "သော့ဖွင့်ထားမှု",
+      "isActive": "အကောင့် အခြေအနေ",
+      "isNotLocked": "အကောင့် စီမံမှု",
       "placeholders": {
         "fullName": "အမည် ထည့်ပါ",
         "phoneNumber": "ဖုန်းနံပါတ် ထည့်ပါ",

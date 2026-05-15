@@ -136,26 +136,18 @@ export default function TeamManagementScreen() {
     patchUi,
   ]);
 
-  const activeOptions = useMemo(
-    () => [
-      {
-        value: "all",
-        labelEn: t.tri?.any || "Any",
-        labelMm: t.tri?.any || "အားလုံး",
-      },
-      {
-        value: "true",
-        labelEn: "Active",
-        labelMm: "Active",
-      },
-      {
-        value: "false",
-        labelEn: "Inactive",
-        labelMm: "Inactive",
-      },
-    ],
-    [t],
-  );
+  const activeOptions =  useMemo(()=>{
+    return [
+      {value: "",labelEn: tCommon.anyLabel , labelMm:tCommon.anyLabel},
+        ...Object.entries(tLookup.accountStatus || {}).map(([key, localizedValue]) => ({
+          value:key,
+          labelEn:localizedValue,
+          labelMm: localizedValue,
+        }))
+    ]
+  },[tLookup.accountStatus])
+
+
 
   const lockOptions = useMemo(
     () => [
