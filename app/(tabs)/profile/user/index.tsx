@@ -145,30 +145,19 @@ export default function TeamManagementScreen() {
           labelMm: localizedValue,
         }))
     ]
-  },[tLookup.accountStatus])
+  },[tLookup.accountStatus,tCommon.anyLabel])
 
+  const lockOptions =  useMemo(()=>{
+    return [
+      {value: "",labelEn: tCommon.anyLabel , labelMm:tCommon.anyLabel},
+      ...Object.entries(tLookup.accountControl || {}).map(([key, localizedValue]) => ({
+        value:key,
+        labelEn:localizedValue,
+        labelMm: localizedValue,
+      }))
+    ]
+  },[tLookup.accountControl,tCommon.anyLabel])
 
-
-  const lockOptions = useMemo(
-    () => [
-      {
-        value: "all",
-        labelEn: t.tri?.any || "Any",
-        labelMm: t.tri?.any || "အားလုံး",
-      },
-      {
-        value: "true",
-        labelEn: "Unlocked",
-        labelMm: "Unlocked",
-      },
-      {
-        value: "false",
-        labelEn: "Locked",
-        labelMm: "Locked",
-      },
-    ],
-    [t],
-  );
 
   /** Advanced role filter: empty string = any (no API constraint). */
 
@@ -181,7 +170,7 @@ export default function TeamManagementScreen() {
         labelMm: val
       }))
     ];
-  },[tLookup.roles])
+  },[tLookup.roles,tCommon.anyLabel])
 
 
   const advancedInputClass = `border border-slate-200 text-sm ${getMyanmarLeadingClass(locale)} bg-white py-0 h-11`;
