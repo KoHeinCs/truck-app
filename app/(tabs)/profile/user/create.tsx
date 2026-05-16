@@ -3,7 +3,6 @@ import {
   getMyanmarLeadingClass,
   myanmarUITextStyle,
 } from "@/constants/myanmar-font";
-import profileLocale from "@/locale/profile/profile.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import {
   type CreateUserRole,
@@ -31,6 +30,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { z } from "zod";
+import {useTranslation} from "@/hooks/use-translation";
 
 const ROLE_OPTIONS: {
   value: CreateUserRole;
@@ -136,10 +136,10 @@ function buildSchema(locale: "en" | "mm") {
 type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 export default function TeamCreateUserScreen() {
+  const {createUser:t} = useTranslation("user")
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const locale = useLocaleStore((state) => state.locale);
-  const t = profileLocale[locale];
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
   const [showPassword, setShowPassword] = useState(false);
@@ -167,32 +167,10 @@ export default function TeamCreateUserScreen() {
 
   const selectedRole = watch("role");
 
-  const labels = t.createUserScreen;
-  const fieldLabels =
-    locale === "mm"
-      ? {
-          username: "အသုံးပြုသူအကောင့်",
-          password: "စကားဝှက်",
-          fullName: "အမည်အပြည့်အစုံ",
-          email: "အီးမေးလ်လိပ်စာ",
-          dateOfBirth: "မွေးနေ့သက္ကရာဇ်",
-          role: "အခန်းကဏ္ဍ",
-          parentOwnerId: "မိဘ Owner ID",
-        }
-      : {
-          username: "Username",
-          password: "Password",
-          fullName: "Full Name",
-          email: "Email",
-          dateOfBirth: "Date of Birth",
-          role: "Role",
-          parentOwnerId: "Parent Owner ID",
-        };
-
   const onSubmit = (values: FormValues) => {
     const dateOfBirthIso = toIsoDate(values.dateOfBirth);
     if (!dateOfBirthIso) {
-      Alert.alert(labels.errorTitle, labels.dateInvalid);
+      Alert.alert(t.errorTitle, t.dateInvalid);
       return;
     }
 
@@ -213,11 +191,11 @@ export default function TeamCreateUserScreen() {
       },
       {
         onSuccess: () => {
-          Alert.alert(labels.successTitle, labels.successBody);
+          Alert.alert(t.successTitle, t.successBody);
           router.back();
         },
         onError: () => {
-          Alert.alert(labels.errorTitle, labels.errorBody);
+          Alert.alert(t.errorTitle, t.errorBody);
         },
       },
     );
@@ -236,7 +214,7 @@ export default function TeamCreateUserScreen() {
           className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)}  font-bold text-slate-900  `}
           style={style}
         >
-          {labels.title}
+          {t.title}
         </Text>
         <View className="h-11 w-11" />
       </View>
@@ -260,13 +238,13 @@ export default function TeamCreateUserScreen() {
                 className={`text-sm  font-semibold ${getMyanmarLeadingClass(locale)}  text-[#325f99]`}
                 style={style}
               >
-                {labels.infoTitle}
+                {t.infoTitle}
               </Text>
               <Text
                 className={`mt-0.5 text-xs ${getMyanmarLeadingClass(locale)}  text-[#325f99]`}
                 style={style}
               >
-                {labels.infoBody}
+                {t.infoBody}
               </Text>
             </View>
           </View>
@@ -280,7 +258,7 @@ export default function TeamCreateUserScreen() {
                   className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
                   style={style}
                 >
-                  {fieldLabels.username}
+                  {t.labels.username}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
@@ -291,7 +269,7 @@ export default function TeamCreateUserScreen() {
                   <Input
                     value={value}
                     onChangeText={onChange}
-                    placeholder={labels.usernamePlaceholder}
+                    placeholder={t.placeholders.username}
                     className={`border py-0 h-11 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
                     {...(Platform.OS === "android" && locale === "mm"
                       ? { includeFontPadding: false }
@@ -312,7 +290,7 @@ export default function TeamCreateUserScreen() {
                   className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
                   style={style}
                 >
-                  {fieldLabels.password}
+                  {t.labels.password}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
@@ -323,7 +301,7 @@ export default function TeamCreateUserScreen() {
                   <Input
                     value={value}
                     onChangeText={onChange}
-                    placeholder={labels.passwordPlaceholder}
+                    placeholder={t.placeholders.password}
                     secureTextEntry={!showPassword}
                     className={`border h-11 ${getMyanmarLeadingClass(locale)}  py-0 border-slate-200 bg-white`}
                     {...(Platform.OS === "android" && locale === "mm"
@@ -362,7 +340,7 @@ export default function TeamCreateUserScreen() {
                   className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}  text-slate-900`}
                   style={style}
                 >
-                  {fieldLabels.fullName}
+                  {t.labels.fullName}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
@@ -373,7 +351,7 @@ export default function TeamCreateUserScreen() {
                   <Input
                     value={value}
                     onChangeText={onChange}
-                    placeholder={labels.fullNamePlaceholder}
+                    placeholder={t.placeholders.fullName}
                     className={`border h-11 py-0 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
                     {...(Platform.OS === "android" && locale === "mm"
                       ? { includeFontPadding: false }
@@ -397,7 +375,7 @@ export default function TeamCreateUserScreen() {
                   className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
                   style={style}
                 >
-                  {fieldLabels.email}
+                  {t.labels.email}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
@@ -408,7 +386,7 @@ export default function TeamCreateUserScreen() {
                   <Input
                     value={value}
                     onChangeText={onChange}
-                    placeholder={labels.emailPlaceholder}
+                    placeholder={t.placeholders.email}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     className={`border h-11 py-0 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
@@ -434,7 +412,7 @@ export default function TeamCreateUserScreen() {
                   className={`text-sm ${getMyanmarLeadingClass(locale)} font-semibold  text-slate-900`}
                   style={style}
                 >
-                  {fieldLabels.dateOfBirth}
+                  {t.labels.dateOfBirth}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
@@ -451,7 +429,7 @@ export default function TeamCreateUserScreen() {
                         className={value ? "text-slate-900" : "text-slate-400"}
                         style={style}
                       >
-                        {value || labels.datePlaceholder}
+                        {value || t.placeholders.dateOfBirth}
                       </Text>
                       <Ionicons
                         name="calendar-outline"
@@ -515,7 +493,7 @@ export default function TeamCreateUserScreen() {
                   className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
                   style={style}
                 >
-                  {fieldLabels.role}
+                  {t.labels.role}
                 </Text>
                 <Text className="text-red-500">*</Text>
               </View>
@@ -541,7 +519,7 @@ export default function TeamCreateUserScreen() {
                       className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)}  border border-slate-200 bg-white px-2.5`}
                     >
                       <Select.Value
-                        placeholder={labels.rolePlaceholder}
+                        placeholder={t.placeholders.role}
                         className={` py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
                       />
                       <Select.TriggerIndicator />
@@ -579,7 +557,7 @@ export default function TeamCreateUserScreen() {
                     className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
                     style={style}
                   >
-                    {fieldLabels.parentOwnerId}
+                    {t.labels.parentOwner}
                   </Text>
                   <Text className="text-red-500">*</Text>
                 </View>
@@ -590,7 +568,7 @@ export default function TeamCreateUserScreen() {
                     <Input
                       value={value ?? ""}
                       onChangeText={onChange}
-                      placeholder={labels.parentOwnerPlaceholder}
+                      placeholder={t.placeholders.parentOwner}
                       autoCapitalize="none"
                       className={`border h-11 py-0 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
                       {...(Platform.OS === "android" && locale === "mm"
@@ -622,7 +600,7 @@ export default function TeamCreateUserScreen() {
           }}
         >
           <Text className="text-base font-semibold text-white" style={style}>
-            {isPending ? labels.submitting : labels.submit}
+            {isPending ? t.submitting : t.submit}
           </Text>
         </Pressable>
       </ScrollView>

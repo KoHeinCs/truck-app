@@ -23,6 +23,35 @@
       "search": "Search"
     },
     "createUser": {
+      "title": "Create User",
+      "infoTitle": "Before you start",
+      "infoBody": "Username must be unique (English letters + 09 + 9 digits). Password: at least 8 characters. Date format: dd/mm/yyyy. VIEWER role requires a Parent Owner ID.",
+      "labels": {
+        "username": "Username",
+        "password": "Password",
+        "fullName": "Full Name",
+        "email": "Email",
+        "dateOfBirth": "Date of Birth",
+        "role": "Role",
+        "parentOwner": "Owner"
+      },
+      "placeholders": {
+        "username": "ABC09xxxxxxxxx",
+        "password": "Enter password",
+        "fullName": "Enter full name",
+        "email": "example@gmail.com",
+        "dateOfBirth": "dd/mm/yyyy",
+        "role": "Select role",
+        "parentOwner": "Select owner"
+
+      },
+      "submit": "Create",
+      "submitting": "Creating...",
+      "successTitle": "Success",
+      "successBody": "User account created successfully.",
+      "errorTitle": "Error",
+      "errorBody": "Unable to create user account.",
+      "dateInvalid": "Invalid date format. Use dd/mm/yyyy."
     }
   }
 }
