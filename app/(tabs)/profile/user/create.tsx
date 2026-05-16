@@ -79,11 +79,13 @@ function buildSchema(locale: "en" | "mm") {
         username: z
             .string()
             .min(1, locale === "mm" ? "အကောင့်လိုအပ်သည်" : "Username is required")
+            .max(100, locale === "mm" ? "အကောင့်အမည်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Username cannot exceed 100 characters")
+            // Rules: Starts with capital letters ([A-Z]+), followed by 09, followed by exactly 9 digits (\d{9})
             .regex(
-                /^09\d{7,13}$/,
+                /^[A-Z]+09\d{9}$/,
                 locale === "mm"
-                    ? "09 ဖြင့်စပြီး ဖုန်းနံပါတ်မှန်ကန်ရမည်"
-                    : "Must be a valid phone style username",
+                    ? "အကောင့်အမည်သည် စာလုံးများဖြင့်စပြီး ၀၉ နှင့် ဂဏန်း ၉ လုံး ဆက်တိုက်ဖြစ်ရမည် (ဥပမာ- ABC09111222333)"
+                    : "Username must start with letters, followed by 09 and exactly 9 digits (e.g., ABC09111222333)",
             ),
         password: z
             .string()
@@ -93,9 +95,11 @@ function buildSchema(locale: "en" | "mm") {
             ),
         fullName: z
             .string()
-            .min(1, locale === "mm" ? "အမည်လိုအပ်သည်" : "Full name is required"),
+            .min(1, locale === "mm" ? "အမည်လိုအပ်သည်" : "Full name is required")
+            .max(100, locale === "mm" ? "အမည်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Full name cannot exceed 100 characters"),
         email: z
             .string()
+            .max(100, locale === "mm" ? "အီးမေးလ်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Email cannot exceed 100 characters")
             .email(locale === "mm" ? "အီးမေးလ်မှန်ကန်ရမည်" : "Invalid email"),
         dateOfBirth: z
             .string()
