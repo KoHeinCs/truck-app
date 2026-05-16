@@ -25,7 +25,7 @@
     "createUser": {
       "title": "Create User",
       "infoTitle": "Before you start",
-      "infoBody": "Username must be unique (English letters + 09 + 9 digits). Password: at least 8 characters. Date format: dd/mm/yyyy. VIEWER role requires a Parent Owner ID.",
+      "infoBody": "Username must be unique (English letters + 09 + 9 digits). Password: at least 8 characters. Date format: dd/mm/yyyy. VIEWER role requires an OWNER",
       "labels": {
         "username": "Username",
         "password": "Password",
