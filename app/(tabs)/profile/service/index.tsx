@@ -42,6 +42,12 @@ const initialServiceListUi: ServiceListUiState = {
   active: true,
 };
 
+const defaultServiceAdvancedApplied: ServiceTypeAdvancedFilters = {
+  langEng: "",
+  langMy: "",
+  active: true,
+};
+
 export default function ServiceTypeManagementScreen() {
   const router = useRouter();
   const locale = useLocaleStore((state) => state.locale);
@@ -49,6 +55,10 @@ export default function ServiceTypeManagementScreen() {
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
   const [ui, setUi] = useState<ServiceListUiState>(initialServiceListUi);
+  const [appliedAdvanced, setAppliedAdvanced] =
+    useState<ServiceTypeAdvancedFilters>(() => ({
+      ...defaultServiceAdvancedApplied,
+    }));
   const patchUi = useCallback((next: Partial<ServiceListUiState>) => {
     setUi((prev) => ({ ...prev, ...next }));
   }, []);
@@ -57,11 +67,11 @@ export default function ServiceTypeManagementScreen() {
   const filters = useMemo(
     () => ({
       quickQuery: debouncedQuickQuery,
-      langEng: ui.langEng,
-      langMy: ui.langMy,
-      active: ui.active,
+      langEng: appliedAdvanced.langEng,
+      langMy: appliedAdvanced.langMy,
+      active: appliedAdvanced.active,
     }),
-    [debouncedQuickQuery, ui.langEng, ui.langMy, ui.active],
+    [debouncedQuickQuery, appliedAdvanced],
   );
 
   const columns = useMemo(
@@ -264,14 +274,15 @@ export default function ServiceTypeManagementScreen() {
 
                   <View className="flex-row gap-2 pt-0.5">
                     <Pressable
-                      onPress={() =>
+                      onPress={() => {
+                        setAppliedAdvanced({ ...defaultServiceAdvancedApplied });
                         patchUi({
                           quickQuery: "",
                           langEng: "",
                           langMy: "",
                           active: true,
-                        })
-                      }
+                        });
+                      }}
                       className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
                     >
                       <Text
@@ -285,7 +296,14 @@ export default function ServiceTypeManagementScreen() {
                     <Pressable
                       className="flex-1 items-center justify-center rounded-xl py-3"
                       style={{ backgroundColor: APP_COLORS.primary }}
-                      onPress={() => patchUi({ advancedOpen: false })}
+                      onPress={() => {
+                        setAppliedAdvanced({
+                          langEng: ui.langEng,
+                          langMy: ui.langMy,
+                          active: ui.active,
+                        });
+                        patchUi({ advancedOpen: false });
+                      }}
                     >
                       <Text
                         className="text-xs font-semibold text-white"

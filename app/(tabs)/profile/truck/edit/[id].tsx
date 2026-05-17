@@ -3,6 +3,8 @@ import {
   getMyanmarLeadingClass,
   myanmarUITextStyle,
 } from "@/constants/myanmar-font";
+import { useTranslation } from "@/hooks/use-translation";
+import { getApiErrorAlertCopy } from "@/lib/api-error-alert";
 import profileLocale from "@/locale/profile/profile.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useTruckDetail } from "@/stores/server/truck/query";
@@ -53,6 +55,7 @@ export default function EditTruckScreen() {
   const locale = useLocaleStore((state) => state.locale);
   const labels = profileLocale[locale].editTruckScreen;
   const createLabels = profileLocale[locale].createTruckScreen;
+  const errorCatalog = useTranslation("error");
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
   const schema = useMemo(
@@ -125,8 +128,12 @@ export default function EditTruckScreen() {
           Alert.alert(labels.successTitle, labels.successBody);
           router.replace("/(tabs)/profile/truck");
         },
-        onError: () => {
-          Alert.alert(labels.errorTitle, labels.errorBody);
+        onError: (err: unknown) => {
+          const { title, message } = getApiErrorAlertCopy(err, errorCatalog, {
+            title: labels.errorTitle,
+            message: labels.errorBody,
+          });
+          Alert.alert(title, message);
         },
       },
     );

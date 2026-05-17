@@ -46,6 +46,14 @@ const initialTruckListUi: TruckListUiState = {
   chassisNo: "",
 };
 
+const emptyTruckAdvancedApplied: TruckAdvancedFilters = {
+  plateNo: "",
+  model: "",
+  modelYear: "",
+  engineNo: "",
+  chassisNo: "",
+};
+
 export default function TruckManagementScreen() {
   const router = useRouter();
   const locale = useLocaleStore((state) => state.locale);
@@ -55,6 +63,9 @@ export default function TruckManagementScreen() {
   const style = locale === "mm" ? mmTextStyle : undefined;
 
   const [ui, setUi] = useState<TruckListUiState>(initialTruckListUi);
+  const [appliedAdvanced, setAppliedAdvanced] = useState<TruckAdvancedFilters>(
+    () => ({ ...emptyTruckAdvancedApplied }),
+  );
   const patchUi = useCallback((next: Partial<TruckListUiState>) => {
     setUi((prev) => ({ ...prev, ...next }));
   }, []);
@@ -63,13 +74,13 @@ export default function TruckManagementScreen() {
   const filters = useMemo(
     () => ({
       quickQuery: debouncedQuickQuery,
-      plateNo: ui.plateNo,
-      model: ui.model,
-      modelYear: ui.modelYear,
-      engineNo: ui.engineNo,
-      chassisNo: ui.chassisNo,
+      plateNo: appliedAdvanced.plateNo,
+      model: appliedAdvanced.model,
+      modelYear: appliedAdvanced.modelYear,
+      engineNo: appliedAdvanced.engineNo,
+      chassisNo: appliedAdvanced.chassisNo,
     }),
-    [ui, debouncedQuickQuery],
+    [debouncedQuickQuery, appliedAdvanced],
   );
 
   const columns = useMemo(() => buildTruckSearchColumns(filters), [filters]);
@@ -250,14 +261,15 @@ export default function TruckManagementScreen() {
 
                   <View className="flex-row gap-2 pt-0.5">
                     <Pressable
-                      onPress={() =>
+                      onPress={() => {
+                        setAppliedAdvanced({ ...emptyTruckAdvancedApplied });
                         patchUi({
                           quickQuery: "",
                           ...Object.fromEntries(
                             advancedKeys.map((key) => [key, ""]),
                           ),
-                        })
-                      }
+                        });
+                      }}
                       className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
                     >
                       <Text
@@ -271,7 +283,16 @@ export default function TruckManagementScreen() {
                     <Pressable
                       className="flex-1 items-center justify-center rounded-xl py-3"
                       style={{ backgroundColor: APP_COLORS.primary }}
-                      onPress={() => patchUi({ advancedOpen: false })}
+                      onPress={() => {
+                        setAppliedAdvanced({
+                          plateNo: ui.plateNo,
+                          model: ui.model,
+                          modelYear: ui.modelYear,
+                          engineNo: ui.engineNo,
+                          chassisNo: ui.chassisNo,
+                        });
+                        patchUi({ advancedOpen: false });
+                      }}
                     >
                       <Text
                         className="text-xs font-semibold text-white"

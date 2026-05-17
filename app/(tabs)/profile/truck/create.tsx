@@ -3,12 +3,13 @@ import {
   getMyanmarLeadingClass,
   myanmarUITextStyle,
 } from "@/constants/myanmar-font";
+import { useTranslation } from "@/hooks/use-translation";
+import { getApiErrorAlertCopy } from "@/lib/api-error-alert";
 import profileLocale from "@/locale/profile/profile.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useCreateTruck } from "@/stores/server/truck/create-mutation";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isAxiosError } from "axios";
 import { useRouter } from "expo-router";
 import { Input, Select } from "heroui-native";
 import React, { useMemo } from "react";
@@ -46,6 +47,7 @@ export default function CreateTruckScreen() {
   const insets = useSafeAreaInsets();
   const locale = useLocaleStore((state) => state.locale);
   const labels = profileLocale[locale].createTruckScreen;
+  const errorCatalog = useTranslation("error");
   const { mutate, isPending } = useCreateTruck();
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
@@ -92,15 +94,11 @@ export default function CreateTruckScreen() {
           router.back();
         },
         onError: (err: unknown) => {
-          const data = isAxiosError(err) ? err.response?.data : undefined;
-          const msgFromString =
-            data &&
-            typeof data === "object" &&
-            "message" in data &&
-            typeof (data as { message?: unknown }).message === "string"
-              ? (data as { message: string }).message
-              : "";
-          Alert.alert(labels.errorTitle, msgFromString || labels.errorBody);
+          const { title, message } = getApiErrorAlertCopy(err, errorCatalog, {
+            title: labels.errorTitle,
+            message: labels.errorBody,
+          });
+          Alert.alert(title, message);
         },
       },
     );

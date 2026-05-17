@@ -3,6 +3,8 @@ import {
   getMyanmarLeadingClass,
   myanmarUITextStyle,
 } from "@/constants/myanmar-font";
+import { useTranslation } from "@/hooks/use-translation";
+import { getApiErrorAlertCopy } from "@/lib/api-error-alert";
 import profileLocale from "@/locale/profile/profile.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import type { CreateUserRole } from "@/stores/server/user/create-mutation";
@@ -172,6 +174,7 @@ export default function TeamEditUserScreen() {
   const locale = useLocaleStore((state) => state.locale);
   const t = profileLocale[locale];
   const labels = t.editUserScreen;
+  const errorCatalog = useTranslation("error");
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
   const { mutate, isPending } = useUpdateUser();
@@ -250,8 +253,12 @@ export default function TeamEditUserScreen() {
           Alert.alert(labels.successTitle, labels.successBody);
           router.back();
         },
-        onError: () => {
-          Alert.alert(labels.errorTitle, labels.errorBody);
+        onError: (err: unknown) => {
+          const { title, message } = getApiErrorAlertCopy(err, errorCatalog, {
+            title: labels.errorTitle,
+            message: labels.errorBody,
+          });
+          Alert.alert(title, message);
         },
       },
     );

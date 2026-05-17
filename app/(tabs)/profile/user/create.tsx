@@ -31,6 +31,7 @@ import {
 } from "react-native-safe-area-context";
 import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
+import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 
 
 function toIsoDate(dmy: string): string | null {
@@ -145,6 +146,7 @@ type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 export default function TeamCreateUserScreen() {
     const {createUser: t} = useTranslation("user")
     const tLookup = useTranslation("lookup")
+    const errorCatalog = useTranslation("error")
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
@@ -214,8 +216,12 @@ export default function TeamCreateUserScreen() {
                     Alert.alert(t.successTitle, t.successBody);
                     router.back();
                 },
-                onError: () => {
-                    Alert.alert(t.errorTitle, t.errorBody);
+                onError: (err: unknown) => {
+                    const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
+                        title: t.errorTitle,
+                        message: t.errorBody,
+                    });
+                    Alert.alert(title, message);
                 },
             },
         );
