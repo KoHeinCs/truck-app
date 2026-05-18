@@ -27,16 +27,6 @@ import {Alert, Platform, Pressable, ScrollView, Text, View} from "react-native";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {z} from "zod";
 
-const ROLE_OPTIONS: {
-    value: CreateUserRole;
-    labelEn: string;
-    labelMm: string;
-}[] = [
-    {value: "ADMIN", labelEn: "ADMIN", labelMm: "စီမံ"},
-    {value: "OWNER", labelEn: "OWNER", labelMm: "ပိုင်ရှင်"},
-    {value: "WORKER", labelEn: "WORKER", labelMm: "ဝန်ထမ်း"},
-    {value: "VIEWER", labelEn: "VIEWER", labelMm: "ကြည့်ရှုသူ"},
-];
 
 function toIsoDate(dmy: string): string | null {
     const value = dmy.trim();
@@ -120,7 +110,13 @@ function buildSchema(locale: "en" | "mm") {
             .min(1, locale === "mm" ? "အီးမေးလ်လိုအပ်သည်" : "Email is required")
             .max(100, locale === "mm" ? "အီးမေးလ်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Email cannot exceed 100 characters")
             .email(locale === "mm" ? "အီးမေးလ်မှန်ကန်ရမည်" : "Invalid email"),
-        role: z.enum(["ADMIN", "OWNER", "WORKER", "VIEWER"]),
+        role: z
+            .string()
+            .min(1, locale === "mm" ? "ရာထူး ရွေးချယ်ရန် လိုအပ်သည်" : "Role is required")
+            .refine((val) => val !== "-", {
+                message: locale === "mm" ? "ရာထူး ရွေးချယ်ရန် လိုအပ်သည်" : "Please select a valid role",
+            })
+            .pipe(z.enum(["ADMIN", "OWNER", "WORKER", "VIEWER"])),
         joinDate: z
             .string()
             .min(1, locale === "mm" ? "စတင်ဝင်ရောက်သည့်ရက်စွဲလိုအပ်သည်" : "Join date is required")
@@ -161,13 +157,28 @@ function buildSchema(locale: "en" | "mm") {
             .max(50, locale === "mm" ? "မှတ်ပုံတင်နံပါတ်သည် စာလုံး ၅၀ ထက်မကျော်ရပါ" : "Full ID number cannot exceed 50 characters")
             .optional(),
         parentOwnerId: z.string().optional(),
-    });
+    })
+        .superRefine((data,ctx) => {
+            if (data.role === "VIEWER" && !String(data.parentOwnerId ?? "").trim()) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message:
+                        locale === "mm"
+                            ? "ကြည့်ရှုသူ ရာထူးအတွက် ယာဉ်ပိုင်ရှင်ကို ရွေးချယ်ပေးပါ။"
+                            : "VIEWER role requires to select Owner",
+                    path: ["parentOwnerId"],
+                });
+            }
+        })
 }
 
 type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 export default function TeamEditUserScreen() {
+
     const {updateUser: t} = useTranslation('user')
+    const tLookup = useTranslation('lookup')
+
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const params = useLocalSearchParams<{
@@ -200,7 +211,7 @@ export default function TeamEditUserScreen() {
         String(params.notLocked ?? "true").toLowerCase() === "true",
     );
 
-    const roleFromParams = isRole(String(params.role ?? "")) ? params.role : "OWNER";
+    const roleFromParams = isRole(String(params.role ?? "")) ? params.role : "-";
     const schema = useMemo(() => buildSchema(locale), [locale]);
     const {
         control,
@@ -223,6 +234,17 @@ export default function TeamEditUserScreen() {
     });
 
     const selectedRole = watch("role");
+    const roleFilterOptions = useMemo(() => {
+        return [
+            {value: "", label: "-"},
+            ...Object.entries(tLookup.roles || {}).map(([key, localizedValue]) => ({
+                value: key,
+                label: localizedValue
+            }))
+        ];
+    }, [tLookup.roles])
+
+
     const inputClassName = `border h-11 py-0 ${getMyanmarLeadingClass(locale)} border-slate-200 bg-white`;
     const androidMmInputProps =
         Platform.OS === "android" && locale === "mm"
@@ -571,52 +593,60 @@ export default function TeamEditUserScreen() {
                             <Controller
                                 control={control}
                                 name="role"
-                                render={({field: {value, onChange}}) => (
-                                    <Select
-                                        value={{
-                                            value,
-                                            label:
-                                                locale === "mm"
-                                                    ? `${value} - ${(ROLE_OPTIONS.find((r) => r.value === value)?.labelMm ?? value)}`
-                                                    : value,
-                                        }}
-                                        onValueChange={(next) => {
-                                            if (next && !Array.isArray(next)) {
-                                                onChange(next.value as CreateUserRole);
-                                            }
-                                        }}
-                                    >
-                                        <Select.Trigger
-                                            className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)} border border-slate-200 bg-white px-2.5`}
+                                render={({field: {value, onChange}}) => {
+
+                                    const selectedOption = roleFilterOptions.find((r) => r.value === value);
+                                    const selectedLabel = selectedOption?.label;
+
+                                    return (
+                                        <Select
+                                            value={{value : value ,label: selectedLabel ? selectedLabel : ""}}
+                                            onValueChange={(next) => {
+                                                if (next && !Array.isArray(next)) {
+                                                    onChange(next.value as CreateUserRole);
+                                                }
+                                            }}
                                         >
-                                            <Select.Value
-                                                placeholder={labels.rolePlaceholder}
-                                                className={`py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
-                                            />
-                                            <Select.TriggerIndicator/>
-                                        </Select.Trigger>
-                                        <Select.Portal>
-                                            <Select.Overlay/>
-                                            <Select.Content
-                                                className="rounded-2xl border border-slate-200 bg-white"
-                                                presentation="popover"
-                                                width="trigger"
+                                            <Select.Trigger
+                                                className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)} border border-slate-200 bg-white px-2.5`}
                                             >
-                                                {ROLE_OPTIONS.map((role) => (
-                                                    <Select.Item
-                                                        key={role.value}
-                                                        value={role.value}
-                                                        label={locale === "mm" ? role.labelMm : role.labelEn}
-                                                    >
-                                                        <Select.ItemLabel style={style}/>
-                                                        <Select.ItemIndicator/>
-                                                    </Select.Item>
-                                                ))}
-                                            </Select.Content>
-                                        </Select.Portal>
-                                    </Select>
-                                )}
+                                                <Select.Value
+                                                    placeholder={labels.rolePlaceholder}
+                                                    className={`py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
+                                                />
+                                                <Select.TriggerIndicator/>
+                                            </Select.Trigger>
+                                            <Select.Portal>
+                                                <Select.Overlay/>
+                                                <Select.Content
+                                                    className="rounded-2xl border border-slate-200 bg-white"
+                                                    presentation="popover"
+                                                    width="trigger"
+                                                >
+                                                    {roleFilterOptions.map((role) => (
+                                                        <Select.Item
+                                                            key={role.value}
+                                                            value={role.value}
+                                                            label={ role.label ? role.label : ""}
+                                                        >
+                                                            <Select.ItemLabel style={style}/>
+                                                            <Select.ItemIndicator/>
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Portal>
+                                        </Select>
+                                    )
+                                }}
                             />
+                            {!!errors.role?.message && (
+                                <Text
+                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
+                                    style={style}
+                                >
+                                    {errors.role.message}
+                                </Text>
+                            )}
                         </View>
 
                         {selectedRole === "VIEWER" ? (
@@ -633,13 +663,6 @@ export default function TeamEditUserScreen() {
                                 <Controller
                                     control={control}
                                     name="parentOwnerId"
-                                    rules={{
-                                        validate: (value) =>
-                                            !!String(value ?? "").trim() ||
-                                            (locale === "mm"
-                                                ? "VIEWER အတွက် Parent Owner ID လိုအပ်သည်"
-                                                : "Parent Owner ID is required for VIEWER"),
-                                    }}
                                     render={({field: {onChange, value}}) => (
                                         <Input
                                             value={String(value ?? "")}
@@ -697,6 +720,11 @@ export default function TeamEditUserScreen() {
                             </Text>
                         </View>
                         <Switch
+                            animation={{
+                                backgroundColor: {
+                                    value: isActiveEnabled ? ['#E2E8F0', APP_COLORS.primary] : ['#E2E8F0', '#E2E8F0']
+                                },
+                            }}
                             isSelected={isActiveEnabled}
                             onSelectedChange={onToggleActive}
                             isDisabled={isActiveUpdating}
@@ -717,6 +745,11 @@ export default function TeamEditUserScreen() {
                             </Text>
                         </View>
                         <Switch
+                            animation={{
+                                backgroundColor: {
+                                    value: isActiveEnabled ? ['#E2E8F0', APP_COLORS.primary] : ['#E2E8F0', '#E2E8F0']
+                                },
+                            }}
                             isSelected={isUnlockedEnabled}
                             onSelectedChange={onToggleLocked}
                             isDisabled={isLockUpdating}
