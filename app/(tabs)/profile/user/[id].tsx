@@ -113,14 +113,17 @@ function buildSchema(locale: "en" | "mm") {
             .min(0, locale === "mm" ? "Version မမှန်ကန်ပါ" : "Version must be >= 0"),
         fullName: z
             .string()
-            .min(1, locale === "mm" ? "အမည်လိုအပ်သည်" : "Full name is required"),
+            .min(1, locale === "mm" ? "အမည်လိုအပ်သည်" : "Full name is required")
+            .max(100, locale === "mm" ? "အမည်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Full name cannot exceed 100 characters"),
         email: z
             .string()
+            .min(1, locale === "mm" ? "အီးမေးလ်လိုအပ်သည်" : "Email is required")
+            .max(100, locale === "mm" ? "အီးမေးလ်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Email cannot exceed 100 characters")
             .email(locale === "mm" ? "အီးမေးလ်မှန်ကန်ရမည်" : "Invalid email"),
         role: z.enum(["ADMIN", "OWNER", "WORKER", "VIEWER"]),
         joinDate: z
             .string()
-            .min(1, locale === "mm" ? "စတင်နေ့စွဲလိုအပ်သည်" : "Join date is required")
+            .min(1, locale === "mm" ? "စတင်ဝင်ရောက်သည့်ရက်စွဲလိုအပ်သည်" : "Join date is required")
             .refine((value) => !!toIsoDate(value), {
                 message:
                     locale === "mm" ? "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ" : "Use dd/mm/yyyy",
@@ -133,15 +136,16 @@ function buildSchema(locale: "en" | "mm") {
             }),
         phoneNumber: z
             .string()
+            .min(1, locale === "mm" ? "ဖုန်းနံပါတ်လိုအပ်သည်" : "Phone number is required")
             .regex(
                 /^09\d{9}$/,
                 locale === "mm"
-                    ? "09 ဖြင့်စပြီး ဂဏန်း ၉ လုံး ဆက်ရမည်"
-                    : "Must start with 09 and contain 11 digits",
+                    ? "၀၉ ဖြင့်စပြီး ဂဏန်း ၉ လုံး ဖြစ်ရမည် (ဥပမာ- 09111222333)"
+                    : "Phone number must start with 09 followed by exactly 9 digits (e.g., 09111222333)"
             ),
         dateOfBirth: z
             .string()
-            .min(1, locale === "mm" ? "မွေးသက္ကရာဇ်လိုအပ်သည်" : "Date is required")
+            .min(1, locale === "mm" ? "မွေးသက္ကရာဇ်လိုအပ်သည်" : "Birth date is required")
             .refine((value) => !!toIsoDate(value), {
                 message:
                     locale === "mm" ? "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ" : "Use dd/mm/yyyy",
@@ -149,10 +153,13 @@ function buildSchema(locale: "en" | "mm") {
             .refine((value) => isNotFutureDate(value), {
                 message:
                     locale === "mm"
-                        ? "မွေးနေ့သက္ကရာဇ်သည် အနာဂတ်နေ့ မဖြစ်ရပါ"
-                        : "Date of birth cannot be in the future",
+                        ? "မွေးသက္ကရာဇ်သည် အနာဂတ်ရက်စွဲ မဖြစ်ရပါ"
+                        : "Birth date cannot be in the future",
             }),
-        fullIdNo: z.string().max(50).optional(),
+        fullIdNo: z
+            .string()
+            .max(50, locale === "mm" ? "မှတ်ပုံတင်နံပါတ်သည် စာလုံး ၅၀ ထက်မကျော်ရပါ" : "Full ID number cannot exceed 50 characters")
+            .optional(),
         parentOwnerId: z.string().optional(),
     });
 }
@@ -160,6 +167,7 @@ function buildSchema(locale: "en" | "mm") {
 type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 export default function TeamEditUserScreen() {
+    const {updateUser: t} = useTranslation('user')
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const params = useLocalSearchParams<{
@@ -172,8 +180,8 @@ export default function TeamEditUserScreen() {
         notLocked?: string;
     }>();
     const locale = useLocaleStore((state) => state.locale);
-    const t = profileLocale[locale];
-    const labels = t.editUserScreen;
+    const t2 = profileLocale[locale];
+    const labels = t2.editUserScreen;
     const errorCatalog = useTranslation("error");
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
@@ -316,31 +324,6 @@ export default function TeamEditUserScreen() {
         ]);
     };
 
-    const fieldLabels =
-        locale === "mm"
-            ? {
-                version: "ဗားရှင်း",
-                fullName: "အမည်အပြည့်အစုံ",
-                email: "အီးမေးလ်လိပ်စာ",
-                role: "အခန်းကဏ္ဍ",
-                joinDate: "စတင်သည့်နေ့",
-                phoneNumber: "ဖုန်းနံပါတ်",
-                dateOfBirth: "မွေးနေ့သက္ကရာဇ်",
-                fullIdNo: "မှတ်ပုံတင်အမှတ်",
-                parentOwnerId: "မိဘ Owner ID",
-            }
-            : {
-                version: "Version",
-                fullName: "Full Name",
-                email: "Email",
-                role: "Role",
-                joinDate: "Join Date",
-                phoneNumber: "Phone Number",
-                dateOfBirth: "Date of Birth",
-                fullIdNo: "ID Number",
-                parentOwnerId: "Parent Owner ID",
-            };
-
     return (
         <SafeAreaView className="flex-1 bg-[#f3f7fb]">
             <View className="flex-row items-center px-4 pb-3 pt-1">
@@ -354,7 +337,7 @@ export default function TeamEditUserScreen() {
                     className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)} font-bold text-slate-900`}
                     style={style}
                 >
-                    {labels.title}
+                    {t.title}
                 </Text>
                 <View className="h-11 w-11"/>
             </View>
@@ -375,13 +358,13 @@ export default function TeamEditUserScreen() {
                                 className={`text-sm font-semibold ${getMyanmarLeadingClass(locale)} text-[#325f99]`}
                                 style={style}
                             >
-                                {labels.infoTitle}
+                                {t.infoTitle}
                             </Text>
                             <Text
                                 className={`mt-0.5 text-xs ${getMyanmarLeadingClass(locale)} text-[#325f99]`}
                                 style={style}
                             >
-                                {labels.infoBody}
+                                {t.infoBody}
                             </Text>
                         </View>
                     </View>
@@ -393,7 +376,7 @@ export default function TeamEditUserScreen() {
                             [
                                 {key: "fullName", required: true},
                                 {key: "email", required: true, keyboardType: "email-address"},
-                                {key: "phoneNumber", required: true, keyboardType: "phone-pad"},
+                                {key: "phoneNumber", required: true, keyboardType: "numeric"},
                                 {key: "fullIdNo", required: false},
                             ] as const
                         ).map((field) => (
@@ -403,9 +386,10 @@ export default function TeamEditUserScreen() {
                                         className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                         style={style}
                                     >
-                                        {fieldLabels[field.key]}
+                                        {t.labels[field.key]}
                                     </Text>
-                                    {field.required ? <Text className="text-red-500">*</Text> : null}
+                                    {!field.required ? <Text
+                                        className="text-yellow-500">{locale === 'mm' ? '(မထည့်လည်းရ)' : '(Optional)'}</Text> : null}
                                 </View>
                                 <Controller
                                     control={control}
@@ -417,6 +401,7 @@ export default function TeamEditUserScreen() {
                                             keyboardType={field.keyboardType}
                                             autoCapitalize={field.key === "email" ? "none" : "sentences"}
                                             className={inputClassName}
+                                            placeholder={t.placeholders[field.key]}
                                             {...androidMmInputProps}
                                         />
                                     )}
@@ -438,9 +423,8 @@ export default function TeamEditUserScreen() {
                                     className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                     style={style}
                                 >
-                                    {fieldLabels.joinDate}
+                                    {t.labels.joinDate}
                                 </Text>
-                                <Text className="text-red-500">*</Text>
                             </View>
                             <Controller
                                 control={control}
@@ -455,7 +439,7 @@ export default function TeamEditUserScreen() {
                                                 className={value ? "text-slate-900" : "text-slate-400"}
                                                 style={style}
                                             >
-                                                {value || labels.datePlaceholder}
+                                                {value || t.placeholders.joinDate}
                                             </Text>
                                             <Ionicons name="calendar-outline" size={18} color="#64748b"/>
                                         </Pressable>
@@ -485,7 +469,7 @@ export default function TeamEditUserScreen() {
                                                             className={`text-xs font-semibold text-slate-700 ${getMyanmarLeadingClass(locale)}`}
                                                             style={style}
                                                         >
-                                                            {locale === "mm" ? "ပြီးပါပြီ" : "Done"}
+                                                            {locale === "mm" ? "ရွေးချယ်မည်" : "Select"}
                                                         </Text>
                                                     </Pressable>
                                                 ) : null}
@@ -510,9 +494,8 @@ export default function TeamEditUserScreen() {
                                     className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                     style={style}
                                 >
-                                    {fieldLabels.dateOfBirth}
+                                    {t.labels.dateOfBirth}
                                 </Text>
-                                <Text className="text-red-500">*</Text>
                             </View>
                             <Controller
                                 control={control}
@@ -527,7 +510,7 @@ export default function TeamEditUserScreen() {
                                                 className={value ? "text-slate-900" : "text-slate-400"}
                                                 style={style}
                                             >
-                                                {value || labels.datePlaceholder}
+                                                {value || t.placeholders.dateOfBirth}
                                             </Text>
                                             <Ionicons name="calendar-outline" size={18} color="#64748b"/>
                                         </Pressable>
@@ -557,7 +540,7 @@ export default function TeamEditUserScreen() {
                                                             className={`text-xs font-semibold text-slate-700 ${getMyanmarLeadingClass(locale)}`}
                                                             style={style}
                                                         >
-                                                            {locale === "mm" ? "ပြီးပါပြီ" : "Done"}
+                                                            {locale === "mm" ? "ရွေးချယ်မည်" : "Select"}
                                                         </Text>
                                                     </Pressable>
                                                 ) : null}
@@ -582,9 +565,8 @@ export default function TeamEditUserScreen() {
                                     className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                     style={style}
                                 >
-                                    {fieldLabels.role}
+                                    {t.labels.role}
                                 </Text>
-                                <Text className="text-red-500">*</Text>
                             </View>
                             <Controller
                                 control={control}
@@ -644,7 +626,7 @@ export default function TeamEditUserScreen() {
                                         className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                         style={style}
                                     >
-                                        {fieldLabels.parentOwnerId}
+                                        {t.labels.parentOwner}
                                     </Text>
                                     <Text className="text-red-500">*</Text>
                                 </View>
@@ -692,7 +674,7 @@ export default function TeamEditUserScreen() {
                     }}
                 >
                     <Text className="text-base font-semibold text-white" style={style}>
-                        {isPending ? labels.submitting : labels.submit}
+                        {isPending ? t.submitting : t.submit}
                     </Text>
                 </Pressable>
 
@@ -701,7 +683,7 @@ export default function TeamEditUserScreen() {
                         className={`mb-3 text-sm font-semibold text-slate-900 ${getMyanmarLeadingClass(locale)}`}
                         style={style}
                     >
-                        {labels.statusTitle}
+                        {t.statusTitle}
                     </Text>
 
                     <View className="flex-row items-center justify-between py-2">
@@ -711,7 +693,7 @@ export default function TeamEditUserScreen() {
                                 style={{backgroundColor: isActiveEnabled ? "#22c55e" : "#94a3b8"}}
                             />
                             <Text className="text-sm text-slate-700" style={style}>
-                                {labels.statusActive}
+                                {isActiveEnabled ? t.active : t.inactive}
                             </Text>
                         </View>
                         <Switch
@@ -731,7 +713,7 @@ export default function TeamEditUserScreen() {
                                 color={isUnlockedEnabled ? "#10b981" : "#ef4444"}
                             />
                             <Text className="text-sm text-slate-700" style={style}>
-                                {labels.statusLock}
+                                {isUnlockedEnabled ? t.unlock : t.lock}
                             </Text>
                         </View>
                         <Switch

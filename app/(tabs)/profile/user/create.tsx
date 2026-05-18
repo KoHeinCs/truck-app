@@ -60,6 +60,12 @@ function todayIsoLocal(): string {
     return `${y}-${m}-${day}`;
 }
 
+function isNotFutureDate(dmy: string): boolean {
+    const iso = toIsoDate(dmy);
+    if (!iso) return false;
+    return iso <= todayIsoLocal();
+}
+
 function parseDmyToDate(dmy: string): Date | null {
     const iso = toIsoDate(dmy);
     if (!iso) return null;
@@ -121,6 +127,12 @@ function buildSchema(locale: "en" | "mm") {
                     locale === "mm"
                         ? "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ"
                         : "Use dd/mm/yyyy",
+            })
+            .refine((value) => isNotFutureDate(value), {
+                message:
+                    locale === "mm"
+                        ? "မွေးသက္ကရာဇ်သည် အနာဂတ်ရက်စွဲ မဖြစ်ရပါ"
+                        : "Birth date cannot be in the future",
             }),
         fullIdNo: z
             .string()
@@ -142,8 +154,8 @@ function buildSchema(locale: "en" | "mm") {
                     code: z.ZodIssueCode.custom,
                     message:
                         locale === "mm"
-                            ? "VIEWER အတွက် Parent Owner ID လိုအပ်သည်"
-                            : "Parent Owner ID is required for VIEWER",
+                            ? "ကြည့်ရှုသူ ရာထူးအတွက် ယာဉ်ပိုင်ရှင်ကို ရွေးချယ်ပေးပါ။"
+                            : "VIEWER role requires to select Owner",
                     path: ["parentOwnerId"],
                 });
             }
@@ -534,7 +546,7 @@ export default function TeamCreateUserScreen() {
                                                             className={`text-xs ${getMyanmarLeadingClass(locale)}  font-semibold text-slate-700`}
                                                             style={style}
                                                         >
-                                                            {locale === "mm" ? "ပြီးပါပြီ" : "Done"}
+                                                            {locale === "mm" ? "ရွေးချယ်မည်" : "Select"}
                                                         </Text>
                                                     </Pressable>
                                                 ) : null}
