@@ -90,6 +90,7 @@ function buildSchema(locale: "en" | "mm") {
             ),
         password: z
             .string()
+            .min(1, locale === "mm" ? "စကားဝှက်လိုအပ်သည်" : "Password is required")
             .min(
                 8,
                 locale === "mm" ? "စကားဝှက် အနည်းဆုံး ၈ လုံး" : "Min 8 characters",
@@ -100,6 +101,7 @@ function buildSchema(locale: "en" | "mm") {
             .max(100, locale === "mm" ? "အမည်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Full name cannot exceed 100 characters"),
         email: z
             .string()
+            .min(1, locale === "mm" ? "အီးမေးလ်လိုအပ်သည်" : "Email is required")
             .max(100, locale === "mm" ? "အီးမေးလ်သည် စာလုံး ၁၀၀ ထက်မကျော်ရပါ" : "Email cannot exceed 100 characters")
             .email(locale === "mm" ? "အီးမေးလ်မှန်ကန်ရမည်" : "Invalid email"),
         phoneNumber: z
@@ -113,7 +115,7 @@ function buildSchema(locale: "en" | "mm") {
             ),
         dateOfBirth: z
             .string()
-            .min(1, locale === "mm" ? "မွေးသက္ကရာဇ်လိုအပ်သည်" : "Date is required")
+            .min(1, locale === "mm" ? "မွေးသက္ကရာဇ်လိုအပ်သည်" : "Birth date is required")
             .refine((value) => !!toIsoDate(value), {
                 message:
                     locale === "mm"
@@ -124,7 +126,14 @@ function buildSchema(locale: "en" | "mm") {
             .string()
             .max(50, locale === "mm" ? "မှတ်ပုံတင်နံပါတ်သည် စာလုံး ၅၀ ထက်မကျော်ရပါ" : "Full ID number cannot exceed 50 characters")
             .optional(),
-        role: z.enum(["ADMIN", "OWNER", "WORKER", "VIEWER"]),
+        role: z
+            .string()
+            .min(1, locale === "mm" ? "ရာထူး ရွေးချယ်ရန် လိုအပ်သည်" : "Role is required")
+            .refine((val) => val !== "-", {
+                message: locale === "mm" ? "ရာထူး ရွေးချယ်ရန် လိုအပ်သည်" : "Please select a valid role",
+            })
+            .pipe(z.enum(["ADMIN", "OWNER", "WORKER", "VIEWER"])),
+
         parentOwnerId: z.string().optional(),
     })
         .superRefine((data, ctx) => {
@@ -639,6 +648,14 @@ export default function TeamCreateUserScreen() {
                                 }
                                 }
                             />
+                            {!!errors.role?.message && (
+                                <Text
+                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
+                                    style={style}
+                                >
+                                    {errors.role.message}
+                                </Text>
+                            )}
                         </View>
 
                         {selectedRole === "VIEWER" ? (
