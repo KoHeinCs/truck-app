@@ -32,33 +32,9 @@ import {
 import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
+import {toIsoDate , todayIsoLocal , parseDmyToDate } from '@/utils/dateUtil'
 
 
-function toIsoDate(dmy: string): string | null {
-    const value = dmy.trim();
-    const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value);
-    if (!match) return null;
-    const [, dd, mm, yyyy] = match;
-    const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-    if (
-        date.getFullYear() !== Number(yyyy) ||
-        date.getMonth() !== Number(mm) - 1 ||
-        date.getDate() !== Number(dd)
-    ) {
-        return null;
-    }
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${date.getFullYear()}-${month}-${day}`;
-}
-
-function todayIsoLocal(): string {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
-}
 
 function isNotFutureDate(dmy: string): boolean {
     const iso = toIsoDate(dmy);
@@ -66,13 +42,6 @@ function isNotFutureDate(dmy: string): boolean {
     return iso <= todayIsoLocal();
 }
 
-function parseDmyToDate(dmy: string): Date | null {
-    const iso = toIsoDate(dmy);
-    if (!iso) return null;
-    const [year, month, day] = iso.split("-").map(Number);
-    if (!year || !month || !day) return null;
-    return new Date(year, month - 1, day);
-}
 
 function toDmyDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, "0");

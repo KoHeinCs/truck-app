@@ -25,39 +25,13 @@ import {Controller, useForm} from "react-hook-form";
 import {Alert, Platform, Pressable, ScrollView, Text, View} from "react-native";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {z} from "zod";
-
-
-function toIsoDate(dmy: string): string | null {
-    const value = dmy.trim();
-    const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value);
-    if (!match) return null;
-    const [, dd, mm, yyyy] = match;
-    const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-    if (
-        date.getFullYear() !== Number(yyyy) ||
-        date.getMonth() !== Number(mm) - 1 ||
-        date.getDate() !== Number(dd)
-    ) {
-        return null;
-    }
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${date.getFullYear()}-${month}-${day}`;
-}
+import {toIsoDate , todayIsoLocal , parseDmyToDate } from '@/utils/dateUtil'
 
 function isoToDmy(isoDate: string): string {
     const raw = isoDate.trim();
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
     if (!match) return "";
     return `${match[3]}/${match[2]}/${match[1]}`;
-}
-
-function todayIsoLocal(): string {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
 }
 
 function isNotFutureDate(dmy: string): boolean {
@@ -68,14 +42,6 @@ function isNotFutureDate(dmy: string): boolean {
 
 function isRole(value: string): value is CreateUserRole {
     return ["ADMIN", "OWNER", "WORKER", "VIEWER"].includes(value);
-}
-
-function parseDmyToDate(dmy: string): Date | null {
-    const iso = toIsoDate(dmy);
-    if (!iso) return null;
-    const [year, month, day] = iso.split("-").map(Number);
-    if (!year || !month || !day) return null;
-    return new Date(year, month - 1, day);
 }
 
 function toDmyDate(date: Date): string {
@@ -221,7 +187,7 @@ export default function TeamEditUserScreen() {
             version: appVersion,
             fullName: String(params.fullName ?? ""),
             email: String(params.email ?? ""),
-            role: roleFromParams,
+            role: roleFromParams as CreateUserRole,
             phoneNumber: String(params.phoneNumber ?? ""),
             joinDate: isoToDmy(todayIsoLocal()),
             dateOfBirth: "",
