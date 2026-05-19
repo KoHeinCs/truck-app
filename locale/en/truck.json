@@ -1,0 +1,26 @@
+{
+  "truck": {
+    "master": {
+      "title": "Trucks",
+      "searchPlaceholder": "Search by plate number...",
+      "empty": "No trucks found"
+    },
+    "search": {
+      "advancedTitle": "Advanced Search",
+      "plateNo": "Plate No.",
+      "model": "Brand",
+      "modelYear": "Year",
+      "chassisNo": "Chassis No.",
+      "placeholders": {
+        "plateNo": "1T-9999",
+        "model": "Canter",
+        "modelYear": "2020",
+        "chassisNo": "Enter chassis no."
+      },
+      "reset": "Reset",
+      "search": "Search"
+    },
+    "createTruck": {},
+    "updateTruck": {}
+  }
+}
