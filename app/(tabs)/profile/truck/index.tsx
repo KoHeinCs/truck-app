@@ -3,7 +3,6 @@ import {APP_COLORS} from "@/constants/colors";
 import {COMPACT_ADVANCED_INPUT_CLASSNAME} from "@/constants/compact-input";
 import {myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useDebouncedValue} from "@/hooks/use-debounced-value";
-import profileLocale from "@/locale/profile/profile.json";
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {useTrucksInfinite} from "@/stores/server/truck/query";
 import {
@@ -26,6 +25,9 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {TruckCardItem} from "./components/truck-card";
 import {TruckSearchToolbar} from "./components/truck-search-toolbar";
 import {useTranslation} from "@/hooks/use-translation";
+import { useThrottledCallback } from '@/hooks/use-throttled-callback';
+import {TruckItem} from "@/stores/server/truck/typed";
+
 
 type TruckListUiState = {
     quickQuery: string;
@@ -109,6 +111,14 @@ export default function TruckManagementScreen() {
         "chassisNo",
     ];
 
+    const handleCardPress = useThrottledCallback((item:TruckItem) => {
+        router.push(`/(tabs)/profile/truck/edit/${item.id}`)
+    }, 600);
+
+    const handleAddPress = useThrottledCallback(()=>{
+        router.push("/(tabs)/profile/truck/create")
+    },600)
+
     return (
         <SafeAreaView className="flex-1 bg-[#f3f7fb]">
 
@@ -145,7 +155,7 @@ export default function TruckManagementScreen() {
                             chassisNo:tTruck.master.card.chassisNo,
                             engineNo:tTruck.master.card.engineNo
                         }}
-                        onPress={() => router.push(`/(tabs)/profile/truck/edit/${item.id}`)}
+                        onPress={() => handleCardPress(item)}
                     />
                 )}
                 onEndReachedThreshold={0.2}
@@ -166,7 +176,7 @@ export default function TruckManagementScreen() {
                             onToggleAdvanced={() =>
                                 setUi((s) => ({...s, advancedOpen: !s.advancedOpen}))
                             }
-                            onPressAdd={() => router.push("/(tabs)/profile/truck/create")}
+                            onPressAdd={() => handleAddPress()}
                         />
 
                         {ui.advancedOpen ? (
