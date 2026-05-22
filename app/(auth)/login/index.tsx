@@ -12,15 +12,24 @@ import {useLocaleStore} from "@/stores/client/locale-store";
 import {APP_COLORS} from "@/constants/colors";
 import {Feather} from "@expo/vector-icons";
 
-const formSchema = z.object({
-    username: z.string().min(1, "Username is required"),
-    password: z.string().min(1, "Password is required"),
-});
+function buildSchema(locale: "en" | "mm") {
+    return z.object({
+        username: z.string()
+            .min(1, locale === 'mm' ? "အကောင့်လိုအပ်သည်" : "Username is required"),
+        password: z.string()
+            .min(1, locale === "mm" ? "စကားဝှက်လိုအပ်သည်" : "Password is required")
+    })
+}
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 export default function LoginScreen() {
     const t = useTranslation("login");
+    const locale = useLocaleStore((state) => state.locale);
+    const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
+    const textStyle = locale === "mm" ? mmTextStyle : undefined;
+
+
     const {mutate, isPending} = useLogin();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {
@@ -28,7 +37,7 @@ export default function LoginScreen() {
         handleSubmit,
         formState: {errors},
     } = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(buildSchema(locale)),
         defaultValues: {
             username: "HHA09455733730",
             password: "Ashwetaw@ger123",
@@ -55,9 +64,6 @@ export default function LoginScreen() {
         });
     };
 
-    const locale = useLocaleStore((state) => state.locale);
-    const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-    const textStyle = locale === "mm" ? mmTextStyle : undefined;
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -101,15 +107,15 @@ export default function LoginScreen() {
                                         value={value}
                                         onChangeText={onChange}
                                         className={`${getMyanmarLeadingClass(locale)}`}
-                                        placeholder="Enter username"
+                                        placeholder={t.placeholders.username}
                                         placeholderTextColor={APP_COLORS.textMuted}
                                         autoCapitalize="none"
-                                        style={{
+                                        style={[{
                                             backgroundColor: APP_COLORS.inputBackground,
                                             borderColor: errors.username ? APP_COLORS.error : APP_COLORS.border,
                                             borderWidth: 1,
                                             color: APP_COLORS.textPrimary
-                                        }}
+                                        },textStyle]}
                                     />
                                 )}
                             />
@@ -140,16 +146,17 @@ export default function LoginScreen() {
                                             value={value}
                                             className={`${getMyanmarLeadingClass(locale)}`}
                                             onChangeText={onChange}
-                                            placeholder="Enter password"
+                                            placeholder={t.placeholders.password}
                                             placeholderTextColor={APP_COLORS.textMuted}
+                                            autoCapitalize="none"
                                             secureTextEntry={!showPassword}
-                                            style={{
+                                            style={[{
                                                 backgroundColor: APP_COLORS.inputBackground,
                                                 borderColor: errors.password ? APP_COLORS.error : APP_COLORS.border,
                                                 borderWidth: 1,
                                                 color: APP_COLORS.textPrimary,
                                                 paddingRight: 45
-                                            }}
+                                            },textStyle]}
 
                                         />
                                         <Pressable

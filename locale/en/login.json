@@ -4,6 +4,10 @@
     "description": "Truck Management System",
     "username": "Username",
     "password": "Password",
-    "login": "Login"
+    "login": "Login",
+    "placeholders": {
+      "username": "Enter username",
+      "password": "Enter password"
+    }
   }
 }
