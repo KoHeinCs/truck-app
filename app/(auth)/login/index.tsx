@@ -76,26 +76,26 @@ export default function LoginScreen() {
                       style={{
                           backgroundColor: APP_COLORS.card,
                           borderColor: APP_COLORS.border,
-                          borderWidth: 1,
-                          borderRadius: 12
+                          borderWidth: 1
                       }}
                 >
                     <Card.Header className="pb-0">
                         <Card.Title
-                            className={`${getMyanmarLeadingClass(locale)} `}
-                            style={[{color: APP_COLORS.textPrimary}, textStyle]}>
+                            className={`text-base font-bold ${getMyanmarLeadingClass(locale)}`}
+                            style={[{color: APP_COLORS.textPrimary}, textStyle]}
+                        >
                             {t.title}
                         </Card.Title>
                         <Card.Description
-                            className={`text-sm ${getMyanmarLeadingClass(locale)}`}
-                            style={[{color: APP_COLORS.textSecondary}, textStyle]}>
+                            className={`text-sm font-semibold ${getMyanmarLeadingClass(locale)}`}
+                            style={[{color: APP_COLORS.textPrimary}, textStyle]}>
                             {t.description}
                         </Card.Description>
                     </Card.Header>
 
                     <Card.Body className="gap-3">
                         <View className="gap-2">
-                            <Text className={`text-sm ${getMyanmarLeadingClass(locale)}`}
+                            <Text className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
                                   style={[{color: APP_COLORS.textSecondary}, textStyle]}>
                                 {t.username}
                             </Text>
@@ -121,7 +121,7 @@ export default function LoginScreen() {
                             />
                             {!!errors.username?.message ? (
                                 <Text
-                                    className={`text-xs ${getMyanmarLeadingClass(locale)} `}
+                                    className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
                                     style={[{color: APP_COLORS.error}, textStyle]}
                                 >
                                     {errors.username.message}
@@ -131,7 +131,7 @@ export default function LoginScreen() {
 
                         <View className="gap-2">
 
-                            <Text className={`text-sm ${getMyanmarLeadingClass(locale)}`}
+                            <Text className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
                                   style={[{color: APP_COLORS.textSecondary}, textStyle]}>
                                 {t.password}
                             </Text>
@@ -179,15 +179,16 @@ export default function LoginScreen() {
                                 )}
                             />
                             {!!errors.password?.message ? (
-                                <Text className={`text-xs ${getMyanmarLeadingClass(locale)}`}
-                                      style={[{color: APP_COLORS.error}, textStyle]}>
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)}`}
+                                      style={[{color: APP_COLORS.error}, textStyle]}
+                                >
                                     {errors.password.message}
                                 </Text>
                             ) : null}
                         </View>
 
                         {errorMessage ? (
-                            <Text className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                            <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)}`}
                                   style={[{color: APP_COLORS.error}, textStyle]}>
                                 {errorMessage}
                             </Text>
@@ -199,9 +200,15 @@ export default function LoginScreen() {
                             onPress={handleSubmit(onSubmit)}
                             isDisabled={isPending}
                             className={`w-full ${getMyanmarLeadingClass(locale)}`}
+                            animation={{
+                                highlight: {
+                                    backgroundColor: {
+                                        value: APP_COLORS.primaryPressed, // Safely injects #456385 on click!
+                                    }
+                                },
+                            }}
                             style={{
-                                backgroundColor: APP_COLORS.primary,
-                                opacity: isPending ? 0.7 : 1
+                                backgroundColor: APP_COLORS.primary
                             }}
                         >
                             {isPending ? (
