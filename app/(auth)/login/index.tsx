@@ -169,7 +169,7 @@ export default function LoginScreen() {
                                                 opacity: pressed ? 0.75 : 1
                                             })}
                                         >
-                                            <Feather name={showPassword ? 'eye-off' : 'eye'} size={18}
+                                            <Feather name={showPassword ? 'eye-off' : 'eye'} size={22}
                                                      color={APP_COLORS.textMuted}/>
                                         </Pressable>
 
