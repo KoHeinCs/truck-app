@@ -29,6 +29,8 @@ import { CompactSelect } from "./components/compact-select";
 import { TeamSearchToolbar } from "./components/team-search-toolbar";
 import { TeamUserCard } from "./components/team-user-card";
 import {useTranslation} from "@/hooks/use-translation";
+import { useThrottledCallback } from '@/hooks/use-throttled-callback';
+import {UserTeamItem} from "@/stores/server/user/typed";
 
 type SelectBoolValue = "all" | "true" | "false";
 
@@ -198,14 +200,40 @@ export default function TeamManagementScreen() {
     [data],
   );
 
+  // Wrap the navigation handler action loop inside the throttle engine
+  const handleCardPress = useThrottledCallback((item: UserTeamItem) => {
+    router.push({
+      pathname: "/(tabs)/profile/user/[id]",
+      params: {
+        id: item.id,
+        fullName: item.fullName,
+        email: item.email,
+        phoneNumber: item.phoneNumber || item.username,
+        role: item.role,
+        active: String(item.active),
+        notLocked: String(item.notLocked),
+      },
+    })
+  }, 600);
+
+  const handleAddPress = useThrottledCallback(()=>{
+    router.push("/(tabs)/profile/user/create")
+  },600)
+
+
+
   return (
-    <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+    <SafeAreaView className="flex-1 " style={{backgroundColor:APP_COLORS.background}}>
+
       <View className="flex-row items-center px-4 pb-2 pt-1">
         <Pressable
           onPress={() => router.back()}
           className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
+          style={({pressed})=> ({
+              backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+          })}
         >
-          <Ionicons name="arrow-back" size={22} color="#475569" />
+          <Ionicons name="arrow-back" size={22} color={APP_COLORS.card} />
         </Pressable>
 
         <Text
@@ -226,20 +254,7 @@ export default function TeamManagementScreen() {
           <TeamUserCard
             item={item}
             locale={locale}
-            onPress={() =>
-              router.push({
-                pathname: "/(tabs)/profile/user/[id]",
-                params: {
-                  id: item.id,
-                  fullName: item.fullName,
-                  email: item.email,
-                  phoneNumber: item.phoneNumber || item.username,
-                  role: item.role,
-                  active: String(item.active),
-                  notLocked: String(item.notLocked),
-                },
-              })
-            }
+            onPress={() =>handleCardPress(item)}
           />
         )}
         onEndReachedThreshold={0.2}
@@ -258,14 +273,20 @@ export default function TeamManagementScreen() {
               onChangeQuickQuery={(quickQuery) => patchUi({ quickQuery })}
               onClearQuickQuery={() => patchUi({ quickQuery: "" })}
               onToggleAdvanced={onToggleAdvanced}
-              onPressAdd={() => router.push("/(tabs)/profile/user/create")}
+              onPressAdd={() => handleAddPress()}
             />
 
             {ui.advancedOpen ? (
-              <Card className="mb-4 p-5 ">
+              <Card className="mb-4 p-5 "
+                    style={{
+                        backgroundColor:APP_COLORS.card,
+                        borderColor:APP_COLORS.border,
+                        borderWidth:1
+              }}
+              >
                 <Card.Body className="gap-3 ">
                   <Text
-                    className="text-sm font-semibold text-slate-900"
+                    className={`text-sm font-semibold text-slate-900 ${getMyanmarLeadingClass(locale)}`}
                     style={style}
                   >
                     {tUser.search.advancedTitle}
@@ -284,6 +305,12 @@ export default function TeamManagementScreen() {
                         onChangeText={(fullName) => patchUi({ fullName })}
                         placeholder={tUser.search.placeholders.fullName}
                         className={advancedInputClass}
+                        style={[style,{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor:  APP_COLORS.border,
+                            borderWidth: 1,
+                            color: APP_COLORS.textPrimary
+                        }]}
                       />
                     </View>
                     <View className="flex-1 gap-1">
@@ -299,6 +326,12 @@ export default function TeamManagementScreen() {
                         placeholder={tUser.search.placeholders.phoneNumber}
                         keyboardType="phone-pad"
                         className={advancedInputClass}
+                        style={[style,{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor:  APP_COLORS.border,
+                            borderWidth: 1,
+                            color: APP_COLORS.textPrimary
+                        }]}
                       />
                     </View>
                   </View>
@@ -328,6 +361,12 @@ export default function TeamManagementScreen() {
                         autoCapitalize="none"
                         keyboardType="email-address"
                         className={advancedInputClass}
+                        style={[style,{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor:  APP_COLORS.border,
+                            borderWidth: 1,
+                            color: APP_COLORS.textPrimary
+                        }]}
                       />
                     </View>
                   </View>
@@ -365,11 +404,17 @@ export default function TeamManagementScreen() {
                           ...initialAdvancedDraft,
                         });
                       }}
-                      className="flex-1 py-3 items-center justify-center rounded-xl bg-slate-100"
+                      className="flex-1 py-3 items-center justify-center rounded-xl "
+                      style={({ pressed }) => ({
+                          backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
+                          borderColor: APP_COLORS.border,
+                          borderWidth: 1
+                      })}
+
                     >
                       <Text
-                        className="text-xs font-semibold text-slate-700"
-                        style={style}
+                        className={`text-xs font-semibold  ${getMyanmarLeadingClass(locale)}`}
+                        style={[style,{color:APP_COLORS.error}]}
                       >
                         {tUser.search.reset}
                       </Text>
@@ -377,7 +422,9 @@ export default function TeamManagementScreen() {
 
                     <Pressable
                       className=" flex-1 py-3 items-center justify-center rounded-xl"
-                      style={{ backgroundColor: APP_COLORS.primary }}
+                      style={ ({pressed})=>({
+                          backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+                      })}
                       onPress={onApplyAdvanced}
                     >
                       <Text

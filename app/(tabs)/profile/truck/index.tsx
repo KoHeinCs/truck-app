@@ -136,6 +136,9 @@ export default function TruckManagementScreen() {
             labels={{
               fuelType: t.labels.fuelType,
               frontTire: t.labels.frontTire,
+              backTire: locale === "mm" ? "နောက်တာယာ" : "Back Tire",
+              chassisNo: t.labels.chassisNo,
+              engineNo: t.labels.engineNo,
             }}
             onPress={() => router.push(`/(tabs)/profile/truck/edit/${item.id}`)}
           />

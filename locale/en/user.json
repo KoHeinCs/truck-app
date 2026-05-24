@@ -38,13 +38,13 @@
         "parentOwner": "Owner"
       },
       "placeholders": {
-        "username": "ABC09xxxxxxxxx",
+        "username": "Enter username",
         "password": "Enter password",
         "fullName": "Enter full name",
-        "phoneNumber": "Enter phone",
-        "email": "example@gmail.com",
-        "dateOfBirth": "dd/mm/yyyy",
-        "fullIdNo": "Identity No",
+        "phoneNumber": "Enter phone number",
+        "email": "Enter email",
+        "dateOfBirth": "Enter birth date",
+        "fullIdNo": "Enter identity number",
         "role": "Select role",
         "parentOwner": "Select owner"
 
@@ -56,6 +56,63 @@
       "errorTitle": "Error",
       "errorBody": "Unable to create user account.",
       "dateInvalid": "Invalid date format. Use dd/mm/yyyy."
+    },
+    "updateUser": {
+      "title": "Update User",
+      "infoTitle": "Before you save",
+      "infoBody": "Phone must be 09 followed by 9 digits (11 total). Dates use dd/mm/yyyy. VIEWER role requires to select Owner .",
+      "labels": {
+        "username": "Username",
+        "password": "Password",
+        "fullName": "Full Name",
+        "phoneNumber": "Phone No",
+        "email": "Email",
+        "dateOfBirth": "Date of Birth",
+        "joinDate": "Join Date",
+        "fullIdNo": "Identity No",
+        "role": "Role",
+        "parentOwner": "Owner"
+      },
+      "placeholders": {
+        "username": "Enter username",
+        "password": "Enter password",
+        "fullName": "Enter full name",
+        "phoneNumber": "Enter phone number",
+        "email": "Enter email",
+        "dateOfBirth": "Enter birth date",
+        "joinDate": "Enter join date",
+        "fullIdNo": "Enter identity number",
+        "role": "Select role",
+        "parentOwner": "Select owner"
+
+      },
+      "submit": "Update",
+      "submitting": "Updating...",
+      "statusTitle": "Account Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "lock": "Locked",
+      "unlock": "Unlocked",
+      "errorTitle": "Error",
+      "dateInvalid": "Invalid date format. Use dd/mm/yyyy.",
+      "userInvalid": "Invalid user ",
+      "successTitle": "Success",
+      "successBody": "User update success",
+      "errorBody": "Failed to update user",
+
+      "accountActiveTitle": "Activate account?",
+      "accountActiveMsg": "This user will regain full login access immediately.",
+      "accountInactiveTitle": "Deactivate account?",
+      "accountInactiveMsg": "The user will be logged out and lose access to the app.",
+
+      "accountLockTitle": "Lock account?",
+      "accountLockMsg": "This account will be locked immediately.",
+      "accountUnlockTitle": "Unlock account?",
+      "accountUnlockMsg": "This account will be unlocked immediately.",
+
+
+      "confirmCancel": "Cancel",
+      "confirmOk": "Confirm"
     }
   }
 }
