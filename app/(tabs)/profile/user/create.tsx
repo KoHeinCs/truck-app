@@ -177,7 +177,7 @@ export default function TeamCreateUserScreen() {
             email: "",
             dateOfBirth: "",
             fullIdNo: "",
-            role: "" as CreateUserRole,
+            role: "WORKER" as CreateUserRole,
             parentOwnerId: "",
         },
     });
@@ -185,7 +185,6 @@ export default function TeamCreateUserScreen() {
     const selectedRole = watch("role");
     const roleFilterOptions = useMemo(() => {
         return [
-            {value: "", label: "-"},
             ...Object.entries(tLookup.roles || {}).map(([key, localizedValue]) => ({
                 value: key,
                 label: localizedValue
