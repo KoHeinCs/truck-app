@@ -25,7 +25,7 @@ export function ProposalTabs({
   const labels = proposalLocale[locale].list.tabs;
 
   return (
-    <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-1">
+    <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-2">
       {tabs.map((tab) => {
         const active = tab === value;
         return (

@@ -1,5 +1,6 @@
 import {
   useInfiniteQuery,
+  useQuery,
   type InfiniteData,
   type UseInfiniteQueryResult,
 } from "@tanstack/react-query";
@@ -11,7 +12,7 @@ import {
   type ProposalListFilters,
   type ProposalTabStatus,
 } from "./search-columns";
-import type { ProposalListResponse } from "./typed";
+import type { ProposalDetailResponse, ProposalListResponse } from "./typed";
 
 const PROPOSAL_PAGE_SIZE = 10;
 
@@ -25,6 +26,16 @@ const searchProposals = async (
   payload: ProposalSearchPayload,
 ): Promise<ProposalListResponse> => {
   const { data } = await axios.post("/proposal/search", payload);
+  return data;
+};
+
+const fetchProposalDetail = async (
+  proposalNo: string,
+  ownershipId: string,
+): Promise<ProposalDetailResponse> => {
+  const { data } = await axios.get(`/proposal/find/no/${proposalNo}`, {
+    params: { ownershipId },
+  });
   return data;
 };
 
@@ -88,5 +99,13 @@ export function useProposalsInfinite(
     staleTime: 0,
     refetchOnWindowFocus: false,
     refetchOnMount: "always",
+  });
+}
+
+export function useProposalDetail(proposalNo: string, ownershipId: string) {
+  return useQuery({
+    queryKey: ["proposal", "detail", proposalNo, ownershipId],
+    queryFn: () => fetchProposalDetail(proposalNo, ownershipId),
+    enabled: !!proposalNo && !!ownershipId,
   });
 }

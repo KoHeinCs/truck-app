@@ -106,7 +106,7 @@ export const APP_COLORS = {
    * WHEN: Displaying the absolute highest priority text piece that the user's eyes must look at first.
    * WHERE: Full names, main page header titles, primary card numbers, large navigation text. (Maximum readability weight).
    */
-  textPrimary: "#0F172A",
+  textPrimary: "#455c7a",
 
   /**
    * Secondary description metadata.

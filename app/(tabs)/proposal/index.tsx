@@ -115,7 +115,21 @@ export default function ProposalScreen() {
         data={items}
         className="px-4"
         keyExtractor={(item) => `${item.proposalNo}-${item.proposalDate}`}
-        renderItem={({ item }) => <ProposalCard item={item} locale={locale} />}
+        renderItem={({ item }) => (
+          <ProposalCard
+            item={item}
+            locale={locale}
+            onPressDetail={(selected) =>
+              router.push({
+                pathname: "/(tabs)/proposal/detail",
+                params: {
+                  proposalNo: selected.proposalNo,
+                  ownershipId: selected.ownershipId,
+                },
+              })
+            }
+          />
+        )}
         onEndReachedThreshold={0.2}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {

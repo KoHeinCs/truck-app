@@ -2,6 +2,10 @@
 @import "uniwind";
 @import "heroui-native/styles";
 
+@theme {
+  --color-primary: #455c7a;
+}
+
 @source "./app";
 @source "./components";
 @source "./hooks";
