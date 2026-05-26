@@ -35,7 +35,7 @@ import {
 } from "react-native";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {z} from "zod";
-import {toIsoDate,parseDmyToDate} from "@/utils/dateUtil"
+import {toIsoDate, parseDmyToDate} from "@/utils/dateUtil"
 
 
 function isoToDmy(isoDate: string): string {
@@ -129,7 +129,7 @@ function buildSchema(locale: "en" | "mm") {
                     message:
                         locale === "mm"
                             ? " ကြည့်ရှုသူ ရာထူးအတွက် ယာဉ်ပိုင်ရှင်ကို ရွေးချယ်ပေးပါ"
-                            : "Owner  is required to choose for VIEWER",
+                            : " VIEWER role must choose one owner",
                     path: ["parentOwnerId"],
                 });
             }
@@ -171,7 +171,6 @@ export default function TeamEditUserScreen() {
     const {data: ownerOptions = []} = useOwnerLookupOptions("");
     const roleFromParams = isRole(String(params.role ?? "")) ? params.role : "OWNER";
     const schema = useMemo(() => buildSchema(locale), [locale]);
-    const inputClassName = `border h-11 py-0 ${getMyanmarLeadingClass(locale)} border-slate-200 bg-white`;
     const androidMmInputProps = Platform.OS === "android" && locale === "mm" ? {includeFontPadding: false as const} : {};
 
     const {
@@ -328,17 +327,20 @@ export default function TeamEditUserScreen() {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
-                    className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
+                    className="h-11 w-11 items-center justify-center rounded-full"
+                    style={({pressed}) => ({
+                        backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+                    })}
                 >
                     <Ionicons name="arrow-back" size={22} color="#475569"/>
                 </Pressable>
                 <Text
-                    className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)} font-bold text-slate-900`}
-                    style={style}
+                    className={`flex-1 px-3 text-center text-lg font-bold ${getMyanmarLeadingClass(locale)}`}
+                    style={[style, {color: APP_COLORS.textPrimary}]}
                 >
                     {t.title}
                 </Text>
@@ -354,7 +356,15 @@ export default function TeamEditUserScreen() {
                     className="px-4"
                     contentContainerStyle={{paddingBottom: insets.bottom + 80, flexGrow: 1}}
                 >
-                    <View className="rounded-2xl border border-[#c8dbf7] bg-[#ecf4ff] p-3">
+                    {/* warning section */}
+                    <View
+                        className="rounded-2xl border p-3"
+                        style={{
+                            backgroundColor: APP_COLORS.warningSoft,
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1
+                        }}
+                    >
                         <View className="flex-row items-start gap-2">
                             <Ionicons
                                 name="information-circle-outline"
@@ -369,7 +379,7 @@ export default function TeamEditUserScreen() {
                                     {t.infoTitle}
                                 </Text>
                                 <Text
-                                    className={`mt-0.5 text-xs ${getMyanmarLeadingClass(locale)} text-[#325f99]`}
+                                    className={`mt-0.5 text-xs font-normal ${getMyanmarLeadingClass(locale)} text-[#325f99]`}
                                     style={style}
                                 >
                                     {t.infoBody}
@@ -378,61 +388,74 @@ export default function TeamEditUserScreen() {
                         </View>
                     </View>
 
-                    <View className="mt-4 rounded-2xl bg-white p-4">
+                    {/* edit form section */}
+                    <View
+                        className="mt-4 rounded-2xl p-4"
+                        style={{
+                            backgroundColor: APP_COLORS.card,
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1
+                        }}
+                    >
                         <View className="gap-3">
+                            {/* fullName , email , phoneNumber and fullIdNo  section */}
                             {(
                                 [
                                     {key: "fullName", required: true, keyboardType: undefined},
                                     {key: "email", required: true, keyboardType: "email-address"},
-                                    {key: "phoneNumber", required: true, keyboardType: "phone-pad"},
+                                    {key: "phoneNumber", required: true, keyboardType: "numeric"},
                                     {key: "fullIdNo", required: false, keyboardType: undefined},
                                 ] as const
                             ).map((field) => (
                                 <View className="gap-1.5" key={field.key}>
                                     <View className="flex-row items-center gap-1">
                                         <Text
-                                            className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
-                                            style={style}
+                                            className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                            style={[{color: APP_COLORS.textSecondary}, style]}
                                         >
                                             {t.labels[field.key]}
                                         </Text>
-                                        {field.required ? <Text className="text-red-500">*</Text> : null}
                                     </View>
                                     <Controller
                                         control={control}
                                         name={field.key}
                                         render={({field: {onChange, value}}) => (
                                             <Input
-                                                placeholder={String(t.placeholders[field.key])}
                                                 value={String(value ?? "")}
                                                 onChangeText={onChange}
+                                                placeholder={t.placeholders[field.key]}
+                                                placeholderTextColor={APP_COLORS.textMuted}
                                                 keyboardType={field.keyboardType}
                                                 autoCapitalize={field.key === "email" ? "none" : "sentences"}
-                                                className={inputClassName}
+                                                style={[{
+                                                    backgroundColor: APP_COLORS.inputBackground,
+                                                    borderColor: errors[field.key] ? APP_COLORS.error : APP_COLORS.border,
+                                                    borderWidth: 1,
+                                                    color: APP_COLORS.textPrimary
+                                                }, style]}
+                                                className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
                                                 {...androidMmInputProps}
                                             />
                                         )}
                                     />
                                     {!!errors[field.key]?.message && (
-                                        <Text
-                                            className={`text-xs text-red-500 ${getMyanmarLeadingClass(locale)}`}
-                                            style={style}
-                                        >
+                                        <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                                              style={[{color: APP_COLORS.error}, style]}>
                                             {String(errors[field.key]?.message)}
                                         </Text>
                                     )}
                                 </View>
                             ))}
 
+                            {/* Join Date section */}
                             <View className="gap-1.5">
                                 <View className="flex-row items-center gap-1">
                                     <Text
-                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
-                                        style={style}
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        style={[{color: APP_COLORS.textSecondary}, style]}
                                     >
                                         {t.labels.joinDate}
                                     </Text>
-                                    <Text className="text-red-500">*</Text>
                                 </View>
                                 <Controller
                                     control={control}
@@ -441,15 +464,20 @@ export default function TeamEditUserScreen() {
                                         <View>
                                             <Pressable
                                                 onPress={() => setActiveDateField("joinDate")}
-                                                className="flex-row items-center h-11 justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
+                                                className={`flex-row items-center h-14 justify-between rounded-xl  px-3 py-3`}
+                                                style={{
+                                                    backgroundColor: APP_COLORS.inputBackground,
+                                                    borderColor: errors.joinDate ? APP_COLORS.error : APP_COLORS.border,
+                                                    borderWidth: 1
+                                                }}
                                             >
                                                 <Text
-                                                    className={value ? "text-slate-900" : "text-slate-400"}
-                                                    style={style}
+                                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                                    style={[style, {color: value ? APP_COLORS.textPrimary : APP_COLORS.textMuted}]}
                                                 >
                                                     {value || t.placeholders.joinDate}
                                                 </Text>
-                                                <Ionicons name="calendar-outline" size={18} color="#64748b"/>
+                                                <Ionicons name="calendar-outline" size={22} color="#64748b"/>
                                             </Pressable>
 
                                             {activeDateField === "joinDate" ? (
@@ -487,24 +515,22 @@ export default function TeamEditUserScreen() {
                                     )}
                                 />
                                 {!!errors.joinDate?.message && (
-                                    <Text
-                                        className={`text-xs text-red-500 ${getMyanmarLeadingClass(locale)}`}
-                                        style={style}
-                                    >
+                                    <Text className={`text-xs font-normal  ${getMyanmarLeadingClass(locale)}`}
+                                          style={[style, {color: APP_COLORS.error}]}>
                                         {String(errors.joinDate.message)}
                                     </Text>
                                 )}
                             </View>
 
+                            {/* dateOfBirth section */}
                             <View className="gap-1.5">
                                 <View className="flex-row items-center gap-1">
                                     <Text
-                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
-                                        style={style}
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        style={[{color: APP_COLORS.textSecondary}, style]}
                                     >
                                         {t.labels.dateOfBirth}
                                     </Text>
-                                    <Text className="text-red-500">*</Text>
                                 </View>
                                 <Controller
                                     control={control}
@@ -513,11 +539,16 @@ export default function TeamEditUserScreen() {
                                         <View>
                                             <Pressable
                                                 onPress={() => setActiveDateField("dateOfBirth")}
-                                                className="flex-row items-center h-11 justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
+                                                className={`flex-row items-center h-14 justify-between rounded-xl  px-3 py-3`}
+                                                style={{
+                                                    backgroundColor: APP_COLORS.inputBackground,
+                                                    borderColor: errors.dateOfBirth ? APP_COLORS.error : APP_COLORS.border,
+                                                    borderWidth: 1
+                                                }}
                                             >
                                                 <Text
-                                                    className={value ? "text-slate-900" : "text-slate-400"}
-                                                    style={style}
+                                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                                    style={[style, {color: value ? APP_COLORS.textPrimary : APP_COLORS.textMuted}]}
                                                 >
                                                     {value || t.placeholders.dateOfBirth}
                                                 </Text>
@@ -559,24 +590,22 @@ export default function TeamEditUserScreen() {
                                     )}
                                 />
                                 {!!errors.dateOfBirth?.message && (
-                                    <Text
-                                        className={`text-xs text-red-500 ${getMyanmarLeadingClass(locale)}`}
-                                        style={style}
-                                    >
+                                    <Text className={`text-xs font-normal  ${getMyanmarLeadingClass(locale)}`}
+                                          style={[style, {color: APP_COLORS.error}]}>
                                         {String(errors.dateOfBirth.message)}
                                     </Text>
                                 )}
                             </View>
 
+                            {/* role field section */}
                             <View className="gap-1.5">
                                 <View className="flex-row items-center gap-1">
                                     <Text
-                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
-                                        style={style}
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        style={[{color: APP_COLORS.textSecondary}, style]}
                                     >
                                         {t.labels.role}
                                     </Text>
-                                    <Text className="text-red-500">*</Text>
                                 </View>
                                 <Controller
                                     control={control}
@@ -596,18 +625,29 @@ export default function TeamEditUserScreen() {
                                                 }}
                                             >
                                                 <Select.Trigger
-                                                    className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)} border border-slate-200 bg-white px-2.5`}
+                                                    className={`rounded-xl h-14 py-0 ${getMyanmarLeadingClass(locale)}   px-2.5`}
+                                                    style={{
+                                                        backgroundColor: APP_COLORS.inputBackground,
+                                                        borderColor: APP_COLORS.border,
+                                                        borderWidth: 1
+                                                    }}
                                                 >
                                                     <Select.Value
                                                         placeholder={t.placeholders.role}
-                                                        className={`py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
+                                                        className={` py-0 text-[11px] font-medium ${getMyanmarLeadingClass(locale)}`}
+                                                        style={[{color: APP_COLORS.textPrimary}]}
                                                     />
                                                     <Select.TriggerIndicator/>
                                                 </Select.Trigger>
                                                 <Select.Portal>
                                                     <Select.Overlay/>
                                                     <Select.Content
-                                                        className="rounded-2xl border border-slate-200 bg-white"
+                                                        className="rounded-2xl"
+                                                        style={{
+                                                            backgroundColor: APP_COLORS.card,
+                                                            borderColor: APP_COLORS.border,
+                                                            borderWidth: 1
+                                                        }}
                                                         presentation="popover"
                                                         width="trigger"
                                                     >
@@ -619,8 +659,19 @@ export default function TeamEditUserScreen() {
                                                                         key={role.value}
                                                                         value={role.value}
                                                                         label={itemLabel}
+                                                                        style={{
+                                                                            backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                            paddingVertical: 12,
+                                                                            paddingHorizontal: 16,
+                                                                        }}
                                                                     >
-                                                                        <Select.ItemLabel style={style}/>
+                                                                        <Select.ItemLabel
+                                                                            className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                                                                            style={[style, {
+                                                                                color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                                fontWeight: isSelected ? "600" : "400"
+                                                                            }]}
+                                                                        />
                                                                         <Select.ItemIndicator/>
                                                                     </Select.Item>
                                                                 )
@@ -633,29 +684,28 @@ export default function TeamEditUserScreen() {
                                     }
                                     }
                                 />
+                                {!!errors.role?.message && (
+                                    <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                                          style={[{color: APP_COLORS.error}, style]}>
+                                        {errors.role.message}
+                                    </Text>
+                                )}
                             </View>
 
+                            {/* parent owner field section */}
                             {selectedRole === "VIEWER" ? (
                                 <View className="gap-1.5">
                                     <View className="flex-row items-center gap-1">
                                         <Text
-                                            className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
-                                            style={style}
+                                            className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                            style={[{color: APP_COLORS.textSecondary}, style]}
                                         >
                                             {t.labels.parentOwner}
                                         </Text>
-                                        <Text className="text-red-500">*</Text>
                                     </View>
                                     <Controller
                                         control={control}
                                         name="parentOwnerId"
-                                        rules={{
-                                            validate: (value) =>
-                                                !!String(value ?? "").trim() ||
-                                                (locale === "mm"
-                                                    ? "VIEWER အတွက် Parent Owner ID လိုအပ်သည်"
-                                                    : "Parent Owner ID is required for VIEWER"),
-                                        }}
                                         render={({field: {onChange, value}}) => {
                                             const selectedOwner = ownerOptions.find(
                                                 (option) => option.value === String(value ?? ""),
@@ -678,31 +728,57 @@ export default function TeamEditUserScreen() {
                                                         }}
                                                     >
                                                         <Select.Trigger
-                                                            className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)} border border-slate-200 bg-white px-2.5`}
+                                                            className={`rounded-xl h-14 py-0 ${getMyanmarLeadingClass(locale)}   px-2.5`}
+                                                            style={{
+                                                                backgroundColor: APP_COLORS.inputBackground,
+                                                                borderColor: selectedOwner?.value ? APP_COLORS.border : APP_COLORS.error,
+                                                                borderWidth: 1
+                                                            }}
                                                         >
                                                             <Select.Value
                                                                 placeholder={t.placeholders.parentOwner}
-                                                                className={`py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
+                                                                className={` py-0 text-[11px] font-medium ${getMyanmarLeadingClass(locale)}`}
+                                                                style={[{color: APP_COLORS.textPrimary}]}
                                                             />
                                                             <Select.TriggerIndicator/>
                                                         </Select.Trigger>
                                                         <Select.Portal>
                                                             <Select.Overlay/>
                                                             <Select.Content
-                                                                className="rounded-2xl border border-slate-200 bg-white"
+                                                                className="rounded-2xl"
+                                                                style={{
+                                                                    backgroundColor: APP_COLORS.card,
+                                                                    borderColor: APP_COLORS.border,
+                                                                    borderWidth: 1
+                                                                }}
                                                                 presentation="popover"
                                                                 width="trigger"
                                                             >
-                                                                {ownerOptions.map((owner) => (
-                                                                    <Select.Item
-                                                                        key={owner.value}
-                                                                        value={owner.value}
-                                                                        label={owner.label}
-                                                                    >
-                                                                        <Select.ItemLabel style={style}/>
-                                                                        <Select.ItemIndicator/>
-                                                                    </Select.Item>
-                                                                ))}
+                                                                {ownerOptions.map((owner) => {
+                                                                    const itemLabel = owner.label;
+                                                                    const isSelected = owner.value === value;
+                                                                        return (
+                                                                            <Select.Item
+                                                                                key={owner.value}
+                                                                                value={owner.value}
+                                                                                label={itemLabel}
+                                                                                style={{
+                                                                                    backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                                    paddingVertical: 12,
+                                                                                    paddingHorizontal: 16,
+                                                                                }}
+                                                                            >
+                                                                                <Select.ItemLabel
+                                                                                    className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                                                                                    style={[style, {
+                                                                                        color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                                        fontWeight: isSelected ? "600" : "400"
+                                                                                    }]}/>
+                                                                                <Select.ItemIndicator/>
+                                                                            </Select.Item>
+                                                                        )
+                                                                    }
+                                                                )}
                                                             </Select.Content>
                                                         </Select.Portal>
                                                     </Select>
@@ -711,10 +787,8 @@ export default function TeamEditUserScreen() {
                                         }}
                                     />
                                     {!!errors.parentOwnerId?.message && (
-                                        <Text
-                                            className={`text-xs text-red-500 ${getMyanmarLeadingClass(locale)}`}
-                                            style={style}
-                                        >
+                                        <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                                              style={[{color: APP_COLORS.error}, style]}>
                                             {String(errors.parentOwnerId.message)}
                                         </Text>
                                     )}
@@ -727,12 +801,15 @@ export default function TeamEditUserScreen() {
                         onPress={handleSubmit(onSubmit)}
                         disabled={isPending}
                         className={`mb-2 mt-5 items-center justify-center rounded-xl py-3 ${getMyanmarLeadingClass(locale)}`}
-                        style={{
-                            backgroundColor: APP_COLORS.primary,
+                        style={({pressed}) => ({
+                            backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                             opacity: isPending ? 0.7 : 1,
-                        }}
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1
+                        })}
                     >
-                        <Text className="text-base font-semibold text-white" style={style}>
+                        <Text className={`text-base font-semibold text-white ${getMyanmarLeadingClass(locale)}`}
+                              style={style}>
                             {isPending ? t.submitting : t.submit}
                         </Text>
                     </Pressable>
