@@ -34,6 +34,7 @@ import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
+import {Feather} from "@expo/vector-icons";
 
 
 function toIsoDate(dmy: string): string | null {
@@ -135,8 +136,8 @@ function buildSchema(locale: "en" | "mm") {
                     code: z.ZodIssueCode.custom,
                     message:
                         locale === "mm"
-                            ? "VIEWER အတွက် Parent Owner ID လိုအပ်သည်"
-                            : "Parent Owner ID is required for VIEWER",
+                            ? " ကြည့်ရှုသူ ရာထူးအတွက် ယာဉ်ပိုင်ရှင်ကို ရွေးချယ်ပေးပါ"
+                            : "Owner  is required to choose for VIEWER",
                     path: ["parentOwnerId"],
                 });
             }
@@ -176,7 +177,7 @@ export default function TeamCreateUserScreen() {
             email: "",
             dateOfBirth: "",
             fullIdNo: "",
-            role: "" as CreateUserRole,
+            role: "WORKER" as CreateUserRole,
             parentOwnerId: "",
         },
     });
@@ -184,7 +185,6 @@ export default function TeamCreateUserScreen() {
     const selectedRole = watch("role");
     const roleFilterOptions = useMemo(() => {
         return [
-            {value: "", label: "-"},
             ...Object.entries(tLookup.roles || {}).map(([key, localizedValue]) => ({
                 value: key,
                 label: localizedValue
@@ -245,17 +245,20 @@ export default function TeamCreateUserScreen() {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+        <SafeAreaView style={{backgroundColor:APP_COLORS.background , flex:1}}>
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
-                    className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
+                    className="h-11 w-11 items-center justify-center rounded-full "
+                    style={({pressed})=> ({
+                        backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+                    })}
                 >
                     <Ionicons name="arrow-back" size={22} color="#475569"/>
                 </Pressable>
                 <Text
-                    className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)}  font-bold text-slate-900  `}
-                    style={style}
+                    className={`flex-1 px-3 text-center text-lg font-bold ${getMyanmarLeadingClass(locale)}`}
+                    style={[style,{color:APP_COLORS.textPrimary}]}
                 >
                     {t.title}
                 </Text>
@@ -269,7 +272,14 @@ export default function TeamCreateUserScreen() {
                     flexGrow: 1,
                 }}
             >
-                <View className="rounded-2xl border border-[#c8dbf7] bg-[#ecf4ff] p-3">
+                <View className="rounded-2xl border border-[#c8dbf7] bg-[#ecf4ff] p-3"
+                      style={{
+                          backgroundColor:APP_COLORS.warningSoft,
+                          borderColor:APP_COLORS.border,
+                          borderWidth:1
+                      }}
+                >
+
                     <View className="flex-row items-start gap-2">
                         <Ionicons
                             name="information-circle-outline"
@@ -284,22 +294,31 @@ export default function TeamCreateUserScreen() {
                                 {t.infoTitle}
                             </Text>
                             <Text
-                                className={`mt-0.5 text-xs ${getMyanmarLeadingClass(locale)}  text-[#325f99]`}
+                                className={`mt-0.5 text-xs font-normal ${getMyanmarLeadingClass(locale)}  text-[#325f99]`}
                                 style={style}
                             >
                                 {t.infoBody}
                             </Text>
                         </View>
                     </View>
+
                 </View>
 
-                <View className="mt-4 rounded-2xl bg-white p-4">
+                <View
+                    className="mt-4 rounded-2xl  p-4"
+                    style={{
+                        backgroundColor:APP_COLORS.card,
+                        borderColor:APP_COLORS.border,
+                        borderWidth:1
+                    }}
+                >
                     <View className="gap-3">
+
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
-                                    className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
-                                    style={style}
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.username}
                                 </Text>
@@ -313,7 +332,15 @@ export default function TeamCreateUserScreen() {
                                         onChangeText={onChange}
                                         maxLength={100}
                                         placeholder={t.placeholders.username}
-                                        className={`border py-0 h-11 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+                                        placeholderTextColor={APP_COLORS.textMuted}
+                                        autoCapitalize="none"
+                                        style={[{
+                                            backgroundColor: APP_COLORS.inputBackground,
+                                            borderColor: errors.username ? APP_COLORS.error : APP_COLORS.border,
+                                            borderWidth: 1,
+                                            color: APP_COLORS.textPrimary
+                                        },style]}
+                                        className={`${getMyanmarLeadingClass(locale)}`}
                                         {...(Platform.OS === "android" && locale === "mm"
                                             ? {includeFontPadding: false}
                                             : {})}
@@ -321,7 +348,7 @@ export default function TeamCreateUserScreen() {
                                 )}
                             />
                             {!!errors.username?.message && (
-                                <Text className="text-xs text-red-500" style={style}>
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
                                     {errors.username.message}
                                 </Text>
                             )}
@@ -330,8 +357,8 @@ export default function TeamCreateUserScreen() {
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
-                                    className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
-                                    style={style}
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.password}
                                 </Text>
@@ -340,38 +367,48 @@ export default function TeamCreateUserScreen() {
                                 control={control}
                                 name="password"
                                 render={({field: {onChange, value}}) => (
-                                    <Input
-                                        value={value}
-                                        onChangeText={onChange}
-                                        placeholder={t.placeholders.password}
-                                        secureTextEntry={!showPassword}
-                                        className={`border h-11 ${getMyanmarLeadingClass(locale)}  py-0 border-slate-200 bg-white`}
-                                        {...(Platform.OS === "android" && locale === "mm"
-                                            ? {includeFontPadding: false}
-                                            : {})}
-                                    />
+
+                                    <View style={{position: "relative", justifyContent: "center"}}>
+
+                                        <Input
+                                            value={value}
+                                            onChangeText={onChange}
+                                            placeholder={t.placeholders.password}
+                                            secureTextEntry={!showPassword}
+                                            placeholderTextColor={APP_COLORS.textMuted}
+                                            autoCapitalize="none"
+                                            style={[{
+                                                backgroundColor: APP_COLORS.inputBackground,
+                                                borderColor: errors.password ? APP_COLORS.error : APP_COLORS.border,
+                                                borderWidth: 1,
+                                                color: APP_COLORS.textPrimary
+                                            },style]}
+                                            className={`${getMyanmarLeadingClass(locale)}`}
+                                            {...(Platform.OS === "android" && locale === "mm"
+                                                ? {includeFontPadding: false}
+                                                : {})}
+                                        />
+                                        <Pressable
+                                            onPress={() => setShowPassword(!showPassword)}
+                                            style={({pressed}) => ({
+                                                position: 'absolute',
+                                                right: 12,
+                                                width: 32,
+                                                padding: 4,
+                                                opacity: pressed ? 0.75 : 1
+                                            })}
+                                        >
+                                            <Feather name={showPassword ? 'eye-off' : 'eye'} size={22}
+                                                     color={APP_COLORS.textMuted}/>
+                                        </Pressable>
+
+                                    </View>
+
                                 )}
                             />
-                            <Pressable
-                                onPress={() => setShowPassword((prev) => !prev)}
-                                className="self-end rounded-md bg-slate-100 px-2.5 py-1"
-                            >
-                                <Text
-                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-slate-600`}
-                                    // style={style}
-                                >
-                                    {showPassword
-                                        ? locale === "mm"
-                                            ? "ဖျောက်ရန်"
-                                            : "Hide"
-                                        : locale === "mm"
-                                            ? "ပြရန်"
-                                            : "Show"}
-                                </Text>
-                            </Pressable>
                             {!!errors.password?.message && (
-                                <Text className="text-xs text-red-500" style={style}>
-                                    {errors.password.message}
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                {errors.password.message}
                                 </Text>
                             )}
                         </View>
@@ -379,8 +416,8 @@ export default function TeamCreateUserScreen() {
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
-                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}  text-slate-900`}
-                                    style={style}
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.fullName}
                                 </Text>
@@ -394,7 +431,15 @@ export default function TeamCreateUserScreen() {
                                         onChangeText={onChange}
                                         maxLength={100}
                                         placeholder={t.placeholders.fullName}
-                                        className={`border h-11 py-0 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+                                        placeholderTextColor={APP_COLORS.textMuted}
+                                        autoCapitalize="none"
+                                        style={[{
+                                            backgroundColor: APP_COLORS.inputBackground,
+                                            borderColor: errors.fullName ? APP_COLORS.error : APP_COLORS.border,
+                                            borderWidth: 1,
+                                            color: APP_COLORS.textPrimary
+                                        },style]}
+                                        className={`${getMyanmarLeadingClass(locale)}`}
                                         {...(Platform.OS === "android" && locale === "mm"
                                             ? {includeFontPadding: false}
                                             : {})}
@@ -402,18 +447,16 @@ export default function TeamCreateUserScreen() {
                                 )}
                             />
                             {!!errors.fullName?.message && (
-                                <Text
-                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
-                                    style={style}
-                                >
-                                    {errors.fullName.message}
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                {errors.fullName.message}
                                 </Text>
                             )}
                         </View>
 
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
-                                <Text className={`text-sm ${getMyanmarLeadingClass(locale)} font-medium text-slate-900`} style={style}>
+                                <Text  className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                       style={[{color: APP_COLORS.textSecondary}, style]}>
                                     {t.labels.phoneNumber}
                                 </Text>
                             </View>
@@ -427,7 +470,15 @@ export default function TeamCreateUserScreen() {
                                         maxLength={50}
                                         keyboardType="numeric"
                                         placeholder={t.placeholders.phoneNumber}
-                                        className={`border h-11 py-0 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+                                        placeholderTextColor={APP_COLORS.textMuted}
+                                        autoCapitalize="none"
+                                        style={[{
+                                            backgroundColor: APP_COLORS.inputBackground,
+                                            borderColor: errors.phoneNumber ? APP_COLORS.error : APP_COLORS.border,
+                                            borderWidth: 1,
+                                            color: APP_COLORS.textPrimary
+                                        },style]}
+                                        className={`${getMyanmarLeadingClass(locale)}`}
                                         {...(Platform.OS === "android" && locale === "mm"
                                             ? {includeFontPadding: false}
                                             : {})}
@@ -435,11 +486,8 @@ export default function TeamCreateUserScreen() {
                                 )}
                             />
                             {!!errors.phoneNumber?.message && (
-                                <Text
-                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
-                                    style={style}
-                                >
-                                    {errors.phoneNumber.message}
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                {errors.phoneNumber.message}
                                 </Text>
                             )}
                         </View>
@@ -447,8 +495,8 @@ export default function TeamCreateUserScreen() {
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
-                                    className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
-                                    style={style}
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.email}
                                 </Text>
@@ -463,8 +511,15 @@ export default function TeamCreateUserScreen() {
                                         maxLength={100}
                                         placeholder={t.placeholders.email}
                                         keyboardType="email-address"
+                                        placeholderTextColor={APP_COLORS.textMuted}
                                         autoCapitalize="none"
-                                        className={`border h-11 py-0 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+                                        style={[{
+                                            backgroundColor: APP_COLORS.inputBackground,
+                                            borderColor: errors.email ? APP_COLORS.error : APP_COLORS.border,
+                                            borderWidth: 1,
+                                            color: APP_COLORS.textPrimary
+                                        },style]}
+                                        className={`${getMyanmarLeadingClass(locale)}`}
                                         {...(Platform.OS === "android" && locale === "mm"
                                             ? {includeFontPadding: false}
                                             : {})}
@@ -472,11 +527,8 @@ export default function TeamCreateUserScreen() {
                                 )}
                             />
                             {!!errors.email?.message && (
-                                <Text
-                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
-                                    style={style}
-                                >
-                                    {errors.email.message}
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                {errors.email.message}
                                 </Text>
                             )}
                         </View>
@@ -484,8 +536,8 @@ export default function TeamCreateUserScreen() {
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
-                                    className={`text-sm ${getMyanmarLeadingClass(locale)} font-semibold  text-slate-900`}
-                                    style={style}
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.dateOfBirth}
                                 </Text>
@@ -497,17 +549,22 @@ export default function TeamCreateUserScreen() {
                                     <View>
                                         <Pressable
                                             onPress={() => setShowDateOfBirthPicker(true)}
-                                            className="flex-row items-center h-11 justify-between rounded-xl border border-slate-200 bg-white px-3 py-3"
+                                            className={`flex-row items-center h-14 justify-between rounded-xl  px-3 py-3`}
+                                            style={{
+                                                backgroundColor: APP_COLORS.inputBackground,
+                                                borderColor: errors.email ? APP_COLORS.error : APP_COLORS.border,
+                                                borderWidth: 1
+                                            }}
                                         >
                                             <Text
-                                                className={value ? "text-slate-900" : "text-slate-400"}
-                                                style={style}
+                                                className={`${getMyanmarLeadingClass(locale)}`}
+                                                style={[style,{ color: value ? APP_COLORS.textPrimary : APP_COLORS.textMuted}]}
                                             >
                                                 {value || t.placeholders.dateOfBirth}
                                             </Text>
                                             <Ionicons
                                                 name="calendar-outline"
-                                                size={18}
+                                                size={22}
                                                 color="#64748b"
                                             />
                                         </Pressable>
@@ -552,11 +609,8 @@ export default function TeamCreateUserScreen() {
                                 )}
                             />
                             {!!errors.dateOfBirth?.message && (
-                                <Text
-                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
-                                    style={style}
-                                >
-                                    {errors.dateOfBirth.message}
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                {errors.dateOfBirth.message}
                                 </Text>
                             )}
                         </View>
@@ -564,12 +618,12 @@ export default function TeamCreateUserScreen() {
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
-                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}  text-slate-900`}
-                                    style={style}
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.fullIdNo}
                                 </Text>
-                                <Text className="text-yellow-500">{locale === 'mm' ? '(မထည့်လည်းရ)' : '(Optional)'}</Text>
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)}`} style={{color:APP_COLORS.warning}}>{locale === 'mm' ? '(မထည့်လည်းရ)' : '(Optional)'}</Text>
                             </View>
                             <Controller
                                 control={control}
@@ -580,7 +634,15 @@ export default function TeamCreateUserScreen() {
                                         onChangeText={onChange}
                                         maxLength={50}
                                         placeholder={t.placeholders.fullIdNo}
-                                        className={`border h-11 py-0 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+                                        placeholderTextColor={APP_COLORS.textMuted}
+                                        autoCapitalize="none"
+                                        style={[{
+                                            backgroundColor: APP_COLORS.inputBackground,
+                                            borderColor: APP_COLORS.border,
+                                            borderWidth: 1,
+                                            color: APP_COLORS.textPrimary
+                                        },style]}
+                                        className={`${getMyanmarLeadingClass(locale)}`}
                                         {...(Platform.OS === "android" && locale === "mm"
                                             ? {includeFontPadding: false}
                                             : {})}
@@ -588,11 +650,8 @@ export default function TeamCreateUserScreen() {
                                 )}
                             />
                             {!!errors.fullIdNo?.message && (
-                                <Text
-                                    className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
-                                    style={style}
-                                >
-                                    {errors.fullIdNo.message}
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                {errors.fullIdNo.message}
                                 </Text>
                             )}
                         </View>
@@ -600,8 +659,8 @@ export default function TeamCreateUserScreen() {
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
-                                    className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
-                                    style={style}
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.role}
                                 </Text>
@@ -624,31 +683,57 @@ export default function TeamCreateUserScreen() {
                                             }}
                                         >
                                             <Select.Trigger
-                                                className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)}  border border-slate-200 bg-white px-2.5`}
+                                                className={`rounded-xl h-14 py-0 ${getMyanmarLeadingClass(locale)}   px-2.5`}
+                                                style={{
+                                                    backgroundColor: APP_COLORS.inputBackground,
+                                                    borderColor:APP_COLORS.border,
+                                                    borderWidth:1
+                                                }}
                                             >
                                                 <Select.Value
                                                     placeholder={t.placeholders.role}
-                                                    className={` py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
+                                                    className={` py-0 text-[11px] ${getMyanmarLeadingClass(locale)}`}
+                                                    style={[{ color: APP_COLORS.textPrimary }]}
                                                 />
                                                 <Select.TriggerIndicator/>
                                             </Select.Trigger>
                                             <Select.Portal>
                                                 <Select.Overlay/>
                                                 <Select.Content
-                                                    className="rounded-2xl border border-slate-200 bg-white"
+                                                    className="rounded-2xl"
+                                                    style={{
+                                                        backgroundColor:APP_COLORS.card,
+                                                        borderColor:APP_COLORS.border,
+                                                        borderWidth:1
+                                                    }}
                                                     presentation="popover"
                                                     width="trigger"
                                                 >
-                                                    {roleFilterOptions.map((role) => (
+                                                    {roleFilterOptions.map((role) => {
+
+                                                        const itemLabel = role.label;
+                                                        const isSelected = role.value === value;
+
+                                                        return (
                                                         <Select.Item
                                                             key={role.value}
                                                             value={role.value}
-                                                            label={role.label ? role.label : ""}
+                                                            label={itemLabel}
+                                                            style={{
+                                                                backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                paddingVertical:12,
+                                                                paddingHorizontal:16,
+                                                            }}
                                                         >
-                                                            <Select.ItemLabel style={style}/>
+                                                            <Select.ItemLabel className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                                                                              style={[style,{
+                                                                                  color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                                  fontWeight: isSelected ? "600" : "400"
+                                                                              }]}/>
                                                             <Select.ItemIndicator/>
                                                         </Select.Item>
-                                                    ))}
+                                                    )}
+                                                    )}
                                                 </Select.Content>
                                             </Select.Portal>
                                         </Select>
@@ -656,14 +741,19 @@ export default function TeamCreateUserScreen() {
                                 }
                                 }
                             />
+                            {!!errors.role?.message && (
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                    {errors.role.message}
+                                </Text>
+                            )}
                         </View>
 
                         {selectedRole === "VIEWER" ? (
                             <View className="gap-1.5">
                                 <View className="flex-row items-center gap-1">
                                     <Text
-                                        className={`text-sm ${getMyanmarLeadingClass(locale)}  font-medium text-slate-900`}
-                                        style={style}
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        style={[{color: APP_COLORS.textSecondary}, style]}
                                     >
                                         {t.labels.parentOwner}
                                     </Text>
@@ -690,31 +780,54 @@ export default function TeamCreateUserScreen() {
                                                     }}
                                                 >
                                                     <Select.Trigger
-                                                        className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)}  border border-slate-200 bg-white px-2.5`}
+                                                        className={`rounded-xl h-14 py-0 ${getMyanmarLeadingClass(locale)}   px-2.5`}
+                                                        style={{
+                                                            backgroundColor: APP_COLORS.inputBackground,
+                                                            borderColor:APP_COLORS.border,
+                                                            borderWidth:1
+                                                        }}
                                                     >
                                                         <Select.Value
                                                             placeholder={t.placeholders.parentOwner}
-                                                            className={` py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
+                                                            className={` py-0 text-[11px] ${getMyanmarLeadingClass(locale)}`}
+                                                            style={[{ color: APP_COLORS.textPrimary }]}
                                                         />
                                                         <Select.TriggerIndicator/>
                                                     </Select.Trigger>
                                                     <Select.Portal>
                                                         <Select.Overlay/>
                                                         <Select.Content
-                                                            className="rounded-2xl border border-slate-200 bg-white"
+                                                            className="rounded-2xl"
+                                                            style={{
+                                                                backgroundColor:APP_COLORS.card,
+                                                                borderColor:APP_COLORS.border,
+                                                                borderWidth:1
+                                                            }}
                                                             presentation="popover"
                                                             width="trigger"
                                                         >
-                                                            {ownerOptions.map((owner) => (
+                                                            {ownerOptions.map((owner) => {
+                                                                const itemLabel = owner.label;
+                                                                const isSelected = owner.value === value;
+                                                                return (
                                                                 <Select.Item
                                                                     key={owner.value}
                                                                     value={owner.value}
-                                                                    label={owner.label}
+                                                                    label={itemLabel}
+                                                                    style={{
+                                                                        backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                        paddingVertical:12,
+                                                                        paddingHorizontal:16,
+                                                                    }}
                                                                 >
-                                                                    <Select.ItemLabel style={style}/>
+                                                                    <Select.ItemLabel className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                                                                                      style={[style,{
+                                                                                          color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                                          fontWeight: isSelected ? "600" : "400"
+                                                                                      }]}/>
                                                                     <Select.ItemIndicator/>
                                                                 </Select.Item>
-                                                            ))}
+                                                            )})}
                                                         </Select.Content>
                                                     </Select.Portal>
                                                 </Select>
@@ -723,11 +836,8 @@ export default function TeamCreateUserScreen() {
                                     }}
                                 />
                                 {!!errors.parentOwnerId?.message && (
-                                    <Text
-                                        className={`text-xs ${getMyanmarLeadingClass(locale)}  text-red-500`}
-                                        style={style}
-                                    >
-                                        {errors.parentOwnerId.message}
+                                    <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `} style={[{color: APP_COLORS.error}, style]}>
+                                    {errors.parentOwnerId.message}
                                     </Text>
                                 )}
                             </View>
@@ -739,12 +849,14 @@ export default function TeamCreateUserScreen() {
                     onPress={handleSubmit(onSubmit)}
                     disabled={isPending}
                     className={`mb-2 mt-5 items-center justify-center rounded-xl py-3 ${getMyanmarLeadingClass(locale)}`}
-                    style={{
-                        backgroundColor: APP_COLORS.primary,
+                    style={({pressed})=>({
+                        backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                         opacity: isPending ? 0.7 : 1,
-                    }}
+                        borderColor:APP_COLORS.border,
+                        borderWidth:1
+                    })}
                 >
-                    <Text className="text-base font-semibold text-white" style={style}>
+                    <Text className={`text-base font-semibold text-white ${getMyanmarLeadingClass(locale)}`} style={style}>
                         {isPending ? t.submitting : t.submit}
                     </Text>
                 </Pressable>
