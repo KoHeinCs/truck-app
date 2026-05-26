@@ -326,31 +326,6 @@ export default function TeamEditUserScreen() {
         ]);
     };
 
-    const fieldLabels =
-        locale === "mm"
-            ? {
-                version: "ဗားရှင်း",
-                fullName: "အမည်အပြည့်အစုံ",
-                email: "အီးမေးလ်လိပ်စာ",
-                role: "အခန်းကဏ္ဍ",
-                joinDate: "စတင်သည့်နေ့",
-                phoneNumber: "ဖုန်းနံပါတ်",
-                dateOfBirth: "မွေးနေ့သက္ကရာဇ်",
-                fullIdNo: "မှတ်ပုံတင်အမှတ်",
-                parentOwnerId: "မိဘ Owner ID",
-            }
-            : {
-                version: "Version",
-                fullName: "Full Name",
-                email: "Email",
-                role: "Role",
-                joinDate: "Join Date",
-                phoneNumber: "Phone Number",
-                dateOfBirth: "Date of Birth",
-                fullIdNo: "ID Number",
-                parentOwnerId: "Parent Owner ID",
-            };
-
     const onBack = useCallback(() => {
         qc.invalidateQueries({queryKey: ["users"]});
         router.back();
@@ -431,7 +406,7 @@ export default function TeamEditUserScreen() {
                                             className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                             style={style}
                                         >
-                                            {fieldLabels[field.key]}
+                                            {t.labels[field.key]}
                                         </Text>
                                         {field.required ? <Text className="text-red-500">*</Text> : null}
                                     </View>
@@ -440,6 +415,7 @@ export default function TeamEditUserScreen() {
                                         name={field.key}
                                         render={({field: {onChange, value}}) => (
                                             <Input
+                                                placeholder={String(t.placeholders[field.key])}
                                                 value={String(value ?? "")}
                                                 onChangeText={onChange}
                                                 keyboardType={field.keyboardType}
@@ -466,7 +442,7 @@ export default function TeamEditUserScreen() {
                                         className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                         style={style}
                                     >
-                                        {fieldLabels.joinDate}
+                                        {t.labels.joinDate}
                                     </Text>
                                     <Text className="text-red-500">*</Text>
                                 </View>
@@ -538,7 +514,7 @@ export default function TeamEditUserScreen() {
                                         className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                         style={style}
                                     >
-                                        {fieldLabels.dateOfBirth}
+                                        {t.labels.dateOfBirth}
                                     </Text>
                                     <Text className="text-red-500">*</Text>
                                 </View>
@@ -610,7 +586,7 @@ export default function TeamEditUserScreen() {
                                         className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                         style={style}
                                     >
-                                        {fieldLabels.role}
+                                        {t.labels.role}
                                     </Text>
                                     <Text className="text-red-500">*</Text>
                                 </View>
@@ -672,7 +648,7 @@ export default function TeamEditUserScreen() {
                                             className={`text-sm font-medium ${getMyanmarLeadingClass(locale)} text-slate-900`}
                                             style={style}
                                         >
-                                            {fieldLabels.parentOwnerId}
+                                            {t.labels.parentOwner}
                                         </Text>
                                         <Text className="text-red-500">*</Text>
                                     </View>
