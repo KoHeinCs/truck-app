@@ -36,16 +36,6 @@ import {
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import {z} from "zod";
 
-const ROLE_OPTIONS: {
-    value: CreateUserRole;
-    labelEn: string;
-    labelMm: string;
-}[] = [
-    {value: "ADMIN", labelEn: "ADMIN", labelMm: "စီမံ"},
-    {value: "OWNER", labelEn: "OWNER", labelMm: "ပိုင်ရှင်"},
-    {value: "WORKER", labelEn: "WORKER", labelMm: "ဝန်ထမ်း"},
-    {value: "VIEWER", labelEn: "VIEWER", labelMm: "ကြည့်ရှုသူ"},
-];
 
 function toIsoDate(dmy: string): string | null {
 
@@ -162,6 +152,7 @@ type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 export default function TeamEditUserScreen() {
     const {updateUser: t} = useTranslation('user');
+    const tLookup = useTranslation('lookup')
     const locale = useLocaleStore((state) => state.locale);
     const router = useRouter();
     const qc = useQueryClient();
@@ -215,6 +206,14 @@ export default function TeamEditUserScreen() {
         },
     });
     const selectedRole = watch("role");
+    const roleFilterOptions = useMemo(() => {
+        return [
+            ...Object.entries(tLookup.roles || {}).map(([key, localizedValue]) => ({
+                value: key,
+                label: localizedValue
+            }))
+        ];
+    }, [tLookup.roles])
 
 
     useEffect(() => {
@@ -593,51 +592,57 @@ export default function TeamEditUserScreen() {
                                 <Controller
                                     control={control}
                                     name="role"
-                                    render={({field: {value, onChange}}) => (
-                                        <Select
-                                            value={{
-                                                value,
-                                                label:
-                                                    locale === "mm"
-                                                        ? `${value} - ${(ROLE_OPTIONS.find((r) => r.value === value)?.labelMm ?? value)}`
-                                                        : value,
-                                            }}
-                                            onValueChange={(next) => {
-                                                if (next && !Array.isArray(next)) {
-                                                    onChange(next.value as CreateUserRole);
-                                                }
-                                            }}
-                                        >
-                                            <Select.Trigger
-                                                className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)} border border-slate-200 bg-white px-2.5`}
+                                    render={({field: {value, onChange}}) => {
+
+                                        const selectedOption = roleFilterOptions.find((r) => r.value === value);
+                                        const selectedLabel = selectedOption?.label;
+
+                                        return (
+                                            <Select
+                                                value={{value: value, label: selectedLabel ? selectedLabel : ""}}
+                                                onValueChange={(next) => {
+                                                    if (next && !Array.isArray(next)) {
+                                                        onChange(next.value as CreateUserRole);
+                                                    }
+                                                }}
                                             >
-                                                <Select.Value
-                                                    placeholder={t.placeholders.role}
-                                                    className={`py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
-                                                />
-                                                <Select.TriggerIndicator/>
-                                            </Select.Trigger>
-                                            <Select.Portal>
-                                                <Select.Overlay/>
-                                                <Select.Content
-                                                    className="rounded-2xl border border-slate-200 bg-white"
-                                                    presentation="popover"
-                                                    width="trigger"
+                                                <Select.Trigger
+                                                    className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)} border border-slate-200 bg-white px-2.5`}
                                                 >
-                                                    {ROLE_OPTIONS.map((role) => (
-                                                        <Select.Item
-                                                            key={role.value}
-                                                            value={role.value}
-                                                            label={locale === "mm" ? role.labelMm : role.labelEn}
-                                                        >
-                                                            <Select.ItemLabel style={style}/>
-                                                            <Select.ItemIndicator/>
-                                                        </Select.Item>
-                                                    ))}
-                                                </Select.Content>
-                                            </Select.Portal>
-                                        </Select>
-                                    )}
+                                                    <Select.Value
+                                                        placeholder={t.placeholders.role}
+                                                        className={`py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
+                                                    />
+                                                    <Select.TriggerIndicator/>
+                                                </Select.Trigger>
+                                                <Select.Portal>
+                                                    <Select.Overlay/>
+                                                    <Select.Content
+                                                        className="rounded-2xl border border-slate-200 bg-white"
+                                                        presentation="popover"
+                                                        width="trigger"
+                                                    >
+                                                        {roleFilterOptions.map((role) => {
+                                                            const itemLabel = role.label;
+                                                            const isSelected = role.value === value;
+                                                                return (
+                                                                    <Select.Item
+                                                                        key={role.value}
+                                                                        value={role.value}
+                                                                        label={itemLabel}
+                                                                    >
+                                                                        <Select.ItemLabel style={style}/>
+                                                                        <Select.ItemIndicator/>
+                                                                    </Select.Item>
+                                                                )
+                                                            }
+                                                        )}
+                                                    </Select.Content>
+                                                </Select.Portal>
+                                            </Select>
+                                        )
+                                    }
+                                    }
                                 />
                             </View>
 
