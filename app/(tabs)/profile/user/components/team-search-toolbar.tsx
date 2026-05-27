@@ -6,8 +6,6 @@ import { Input } from "heroui-native";
 import React from "react";
 import { Pressable, View } from "react-native";
 
-const TEAM_SEARCH_INPUT_CLASSNAME =
-  "flex-1 border h-11 py-0 text-sm border-slate-200 bg-white ";
 
 type TeamSearchToolbarProps = {
   locale: AppLocale;
@@ -40,7 +38,7 @@ export function TeamSearchToolbar({
           onChangeText={onChangeQuickQuery}
           placeholder={placeholder}
           placeholderTextColor={APP_COLORS.textMuted}
-          className={`flex-1 h-11 py-0 text-sm ${getMyanmarLeadingClass(_locale)}`}
+          className={`flex-1 h-11 py-0 text-sm font-medium ${getMyanmarLeadingClass(_locale)}`}
           style={{
             paddingRight: 44,
             backgroundColor:APP_COLORS.inputBackground,
@@ -58,7 +56,7 @@ export function TeamSearchToolbar({
         >
           <Ionicons
             name={advancedOpen ? "funnel" : "funnel-outline"}
-            size={20}
+            size={22}
             color={APP_COLORS.primary}
           />
         </Pressable>
@@ -69,7 +67,7 @@ export function TeamSearchToolbar({
           onPress={onClearQuickQuery}
           className="items-center justify-center rounded-full border border-slate-200 bg-white p-2.5"
         >
-          <Ionicons name="close" size={18} color="#4A7CFF" />
+          <Ionicons name="close" size={22} color={APP_COLORS.primary} />
         </Pressable>
       )}
 
@@ -80,7 +78,7 @@ export function TeamSearchToolbar({
           backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
         })}
       >
-        <Ionicons name="add" size={20} color="#fff" />
+        <Ionicons name="add" size={22} color="#fff" />
       </Pressable>
     </View>
   );
