@@ -1,18 +1,24 @@
 import { CompactTextInput } from "@/components/compact-text-input";
+import { ServiceDatePicker } from "@/components/service-date-picker";
 import { APP_COLORS } from "@/constants/colors";
 import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
+import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
+import { useTranslation } from "@/hooks/use-translation";
 import proposalLocale from "@/locale/proposal/proposal.json";
 import type { AppLocale } from "@/stores/client/locale-store";
+import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
 import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
+import { useServiceTypesInfinite } from "@/stores/server/service-type/query";
+import { buildServiceTypeSearchColumns } from "@/stores/server/service-type/search-columns";
+import type { ServiceTypeItem } from "@/stores/server/service-type/typed";
 import { Card } from "heroui-native";
-import React from "react";
-import type { StyleProp, TextStyle } from "react-native";
+import React, { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
+import { CompactSelect } from "../profile/user/components/compact-select";
 
 type ProposalAdvancedFiltersProps = {
   filters: ProposalAdvancedFilterValues;
   locale: AppLocale;
-  style?: StyleProp<TextStyle>;
   showOwnerId: boolean;
   showCreatedBy: boolean;
   onChange: (next: Partial<ProposalAdvancedFilterValues>) => void;
@@ -23,7 +29,6 @@ type ProposalAdvancedFiltersProps = {
 export function ProposalAdvancedFilters({
   filters,
   locale,
-  style,
   showOwnerId,
   showCreatedBy,
   onChange,
@@ -31,11 +36,47 @@ export function ProposalAdvancedFilters({
   onApply,
 }: ProposalAdvancedFiltersProps) {
   const t = proposalLocale[locale].advanced;
+  const tCreate = proposalLocale[locale].create;
+  const tCommon = useTranslation("common");
+  const mmLeading = getMyanmarLeadingClass(locale);
+
+  const serviceColumns = useMemo(
+    () =>
+      buildServiceTypeSearchColumns({
+        quickQuery: "",
+        active: true,
+        langEng: "",
+        langMy: "",
+      }),
+    [],
+  );
+  const { data: serviceTypeData } = useServiceTypesInfinite(serviceColumns);
+  const serviceTypes = useMemo(
+    () => serviceTypeData?.pages.flatMap((page) => page.data.data) ?? [],
+    [serviceTypeData],
+  );
+  const { data: ownerOptions = [] } = useOwnerLookupOptions("");
+
+  const serviceTypeOptions = useMemo(
+    () => [
+      { value: "", label: tCommon.anyLabel },
+      ...serviceTypes.map((serviceType) => ({
+        value: serviceType.serviceType,
+        label: getServiceTypeLabel(serviceType, locale),
+      })),
+    ],
+    [serviceTypes, locale, tCommon.anyLabel],
+  );
+
+  const ownerSelectOptions = useMemo(
+    () => [{ value: "", label: tCommon.anyLabel }, ...ownerOptions],
+    [ownerOptions, tCommon.anyLabel],
+  );
 
   return (
     <Card className="mb-4 p-5">
       <Card.Body className="gap-3">
-        <Text className="text-sm font-semibold text-slate-900" style={style}>
+        <Text className={`text-sm font-semibold text-slate-900 ${mmLeading}`}>
           {t.title}
         </Text>
 
@@ -45,7 +86,7 @@ export function ProposalAdvancedFilters({
             value={filters.proposalNo}
             placeholder={t.proposalNo}
             locale={locale}
-            style={style}
+            mmLeading={mmLeading}
             onChangeText={(proposalNo) => onChange({ proposalNo })}
           />
           <FilterInput
@@ -53,66 +94,72 @@ export function ProposalAdvancedFilters({
             value={filters.plateNo}
             placeholder={t.plateNo}
             locale={locale}
-            style={style}
+            mmLeading={mmLeading}
             onChangeText={(plateNo) => onChange({ plateNo })}
           />
         </View>
 
         <View className="flex-row gap-2">
-          <FilterInput
+          <FilterDateField
             label={t.proposalDateFrom}
             value={filters.proposalDateFrom}
             placeholder={t.datePlaceholder}
             locale={locale}
-            style={style}
-            onChangeText={(proposalDateFrom) => onChange({ proposalDateFrom })}
+            mmLeading={mmLeading}
+            doneLabel={tCreate.done}
+            mode="date"
+            onChange={(proposalDateFrom) => onChange({ proposalDateFrom })}
           />
-          <FilterInput
+          <FilterDateField
             label={t.proposalDateTo}
             value={filters.proposalDateTo}
             placeholder={t.datePlaceholder}
             locale={locale}
-            style={style}
-            onChangeText={(proposalDateTo) => onChange({ proposalDateTo })}
+            mmLeading={mmLeading}
+            doneLabel={tCreate.done}
+            mode="date"
+            onChange={(proposalDateTo) => onChange({ proposalDateTo })}
           />
         </View>
 
         <View className="flex-row gap-2">
-          <FilterInput
+          <CompactSelect
             label={t.serviceTypeCsv}
             value={filters.serviceTypeCsv}
-            placeholder={t.serviceTypeCsv}
+            onChange={(serviceTypeCsv) => onChange({ serviceTypeCsv })}
             locale={locale}
-            style={style}
-            onChangeText={(serviceTypeCsv) => onChange({ serviceTypeCsv })}
+            placeholder={tCreate.serviceTypePlaceholder}
+            options={serviceTypeOptions}
           />
-          <FilterInput
+          <FilterDateField
             label={t.serviceDateFrom}
             value={filters.serviceDateFrom}
             placeholder={t.datePlaceholder}
             locale={locale}
-            style={style}
-            onChangeText={(serviceDateFrom) => onChange({ serviceDateFrom })}
+            mmLeading={mmLeading}
+            doneLabel={tCreate.done}
+            onChange={(serviceDateFrom) => onChange({ serviceDateFrom })}
           />
         </View>
 
         <View className="flex-row gap-2">
-          <FilterInput
+          <FilterDateField
             label={t.serviceDateTo}
             value={filters.serviceDateTo}
             placeholder={t.datePlaceholder}
             locale={locale}
-            style={style}
-            onChangeText={(serviceDateTo) => onChange({ serviceDateTo })}
+            mmLeading={mmLeading}
+            doneLabel={tCreate.done}
+            onChange={(serviceDateTo) => onChange({ serviceDateTo })}
           />
           {showOwnerId ? (
-            <FilterInput
+            <CompactSelect
               label={t.ownerId}
               value={filters.ownerId}
-              placeholder={t.ownerId}
+              onChange={(ownerId) => onChange({ ownerId })}
               locale={locale}
-              style={style}
-              onChangeText={(ownerId) => onChange({ ownerId })}
+              placeholder={tCommon.anyLabel}
+              options={ownerSelectOptions}
             />
           ) : (
             <View className="flex-1" />
@@ -121,7 +168,7 @@ export function ProposalAdvancedFilters({
 
         {showCreatedBy ? (
           <View className="gap-1">
-            <Text className="text-[10px] text-slate-500" style={style}>
+            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
               {t.createdByCsv}
             </Text>
             <CompactTextInput
@@ -140,7 +187,7 @@ export function ProposalAdvancedFilters({
             onPress={onReset}
             className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
           >
-            <Text className="text-xs font-semibold text-slate-700" style={style}>
+            <Text className={`text-xs font-semibold text-slate-700 ${mmLeading}`}>
               {t.reset}
             </Text>
           </Pressable>
@@ -150,7 +197,7 @@ export function ProposalAdvancedFilters({
             style={{ backgroundColor: APP_COLORS.primary }}
             onPress={onApply}
           >
-            <Text className="text-xs font-semibold text-white" style={style}>
+            <Text className={`text-xs font-semibold text-white ${mmLeading}`}>
               {t.apply}
             </Text>
           </Pressable>
@@ -165,7 +212,7 @@ type FilterInputProps = {
   value: string;
   placeholder: string;
   locale: AppLocale;
-  style?: StyleProp<TextStyle>;
+  mmLeading: string;
   onChangeText: (next: string) => void;
 };
 
@@ -174,12 +221,12 @@ function FilterInput({
   value,
   placeholder,
   locale,
-  style,
+  mmLeading,
   onChangeText,
 }: FilterInputProps) {
   return (
     <View className="flex-1 gap-1">
-      <Text className="text-[10px] text-slate-500" style={style}>
+      <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
         {label}
       </Text>
       <CompactTextInput
@@ -192,4 +239,47 @@ function FilterInput({
       />
     </View>
   );
+}
+
+type FilterDateFieldProps = {
+  label: string;
+  value: string;
+  placeholder: string;
+  locale: AppLocale;
+  mmLeading: string;
+  doneLabel: string;
+  mode?: "date" | "datetime";
+  onChange: (next: string) => void;
+};
+
+function FilterDateField({
+  label,
+  value,
+  placeholder,
+  locale,
+  mmLeading,
+  doneLabel,
+  mode = "datetime",
+  onChange,
+}: FilterDateFieldProps) {
+  return (
+    <View className="flex-1 gap-1">
+      <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+        {label}
+      </Text>
+      <ServiceDatePicker
+        locale={locale}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        doneLabel={doneLabel}
+        mode={mode}
+        triggerClassName="h-11 min-h-11"
+      />
+    </View>
+  );
+}
+
+function getServiceTypeLabel(item: ServiceTypeItem, locale: "en" | "mm") {
+  return locale === "mm" ? item.langMy || item.langEng : item.langEng;
 }

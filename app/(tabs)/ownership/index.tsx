@@ -9,13 +9,7 @@ import type {
   OwnershipTruckStatus,
 } from "@/stores/server/ownership/search-columns";
 import React, { useCallback, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OwnershipAdvancedFilters } from "./ownership-advanced-filters";
 import { OwnershipCard } from "./ownership-card";
@@ -31,6 +25,14 @@ type OwnershipListUiState = OwnershipAdvancedFilterValues & {
 const initialOwnershipListUi: OwnershipListUiState = {
   quickQuery: "",
   advancedOpen: false,
+  plateNo: "",
+  licenseCity: "",
+  licenseEndDate: "",
+  profit: "",
+  ownerIdCsv: "",
+};
+
+const emptyOwnershipAdvancedApplied: OwnershipAdvancedFilterValues = {
   plateNo: "",
   licenseCity: "",
   licenseEndDate: "",
@@ -112,6 +114,10 @@ export default function OwnerShip() {
 
   const [status, setStatus] = useState<OwnershipTruckStatus>("ACTIVE");
   const [ui, setUi] = useState<OwnershipListUiState>(initialOwnershipListUi);
+  const [appliedAdvanced, setAppliedAdvanced] =
+    useState<OwnershipAdvancedFilterValues>(() => ({
+      ...emptyOwnershipAdvancedApplied,
+    }));
   const patchUi = useCallback((next: Partial<OwnershipListUiState>) => {
     setUi((prev) => ({ ...prev, ...next }));
   }, []);
@@ -123,22 +129,13 @@ export default function OwnerShip() {
   const filters = useMemo(
     () => ({
       quickQuery: debouncedQuickQuery,
-      plateNo: ui.plateNo,
-      licenseCity: ui.licenseCity,
-      licenseEndDate: ui.licenseEndDate,
-      profit: ui.profit,
-      ownerIdCsv: ui.ownerIdCsv,
+      ...appliedAdvanced,
     }),
-    [debouncedQuickQuery, ui],
+    [debouncedQuickQuery, appliedAdvanced],
   );
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isPending,
-  } = useOwnershipsInfinite(status, filters, role);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
+    useOwnershipsInfinite(status, filters, role);
 
   const items = useMemo(
     () => data?.pages.flatMap((page) => page.data.data) ?? [],
@@ -157,10 +154,15 @@ export default function OwnerShip() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+    <SafeAreaView
+      style={{ flex: 1 }}
+      className="flex-1 bg-[#f3f7fb]"
+      edges={["top", "left", "right"]}
+    >
       <FlatList
         data={items}
         className="px-4"
+        style={{ flex: 1 }}
         keyExtractor={(item, index) => item.id || `${item.plateNo}-${index}`}
         renderItem={({ item }) => (
           <OwnershipCard item={item} locale={locale} labels={t.card} />
@@ -184,6 +186,7 @@ export default function OwnerShip() {
               onChange={setStatus}
               labels={t.tabs}
               style={style}
+              locale={locale}
             />
             <OwnershipSearchToolbar
               locale={locale}
@@ -210,7 +213,8 @@ export default function OwnerShip() {
                 style={style}
                 showOwnerId={showOwnerId}
                 onChange={patchUi}
-                onReset={() =>
+                onReset={() => {
+                  setAppliedAdvanced({ ...emptyOwnershipAdvancedApplied });
                   patchUi({
                     quickQuery: "",
                     plateNo: "",
@@ -218,9 +222,18 @@ export default function OwnerShip() {
                     licenseEndDate: "",
                     profit: "",
                     ownerIdCsv: "",
-                  })
-                }
-                onApply={() => patchUi({ advancedOpen: false })}
+                  });
+                }}
+                onApply={() => {
+                  setAppliedAdvanced({
+                    plateNo: ui.plateNo,
+                    licenseCity: ui.licenseCity,
+                    licenseEndDate: ui.licenseEndDate,
+                    profit: ui.profit,
+                    ownerIdCsv: ui.ownerIdCsv,
+                  });
+                  patchUi({ advancedOpen: false });
+                }}
               />
             ) : null}
           </View>
@@ -231,7 +244,10 @@ export default function OwnerShip() {
               <ActivityIndicator color={APP_COLORS.primary} />
             </View>
           ) : (
-            <Text className="px-6 py-8 text-center text-slate-500" style={style}>
+            <Text
+              className="px-6 py-8 text-center text-slate-500"
+              style={style}
+            >
               {t.empty}
             </Text>
           )

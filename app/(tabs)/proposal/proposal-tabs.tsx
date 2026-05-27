@@ -4,7 +4,6 @@ import proposalLocale from "@/locale/proposal/proposal.json";
 import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalTabStatus } from "@/stores/server/proposal/search-columns";
 import React from "react";
-import type { StyleProp, TextStyle } from "react-native";
 import { Pressable, Text, View } from "react-native";
 
 type ProposalTabsProps = {
@@ -12,7 +11,6 @@ type ProposalTabsProps = {
   onChange: (next: ProposalTabStatus) => void;
   tabs: ProposalTabStatus[];
   locale: AppLocale;
-  style?: StyleProp<TextStyle>;
 };
 
 export function ProposalTabs({
@@ -20,9 +18,9 @@ export function ProposalTabs({
   onChange,
   tabs,
   locale,
-  style,
 }: ProposalTabsProps) {
   const labels = proposalLocale[locale].list.tabs;
+  const mmLeading = getMyanmarLeadingClass(locale);
 
   return (
     <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-2">
@@ -32,13 +30,12 @@ export function ProposalTabs({
           <Pressable
             key={tab}
             onPress={() => onChange(tab)}
-            className={`flex-1 items-center justify-center rounded-xl px-1 h-10 ${getMyanmarLeadingClass(locale)}`}
+            className={`flex-1 items-center justify-center rounded-xl px-1 h-10 ${mmLeading}`}
             style={active ? { backgroundColor: APP_COLORS.primary } : undefined}
           >
             <Text
-              className={`text-sm  ${getMyanmarLeadingClass(locale)}  ${active ? "text-white" : "text-slate-500"}`}
+              className={`text-sm ${mmLeading} ${active ? "text-white" : "text-slate-500"}`}
               numberOfLines={1}
-              // style={style}
             >
               {labels[tab]}
             </Text>

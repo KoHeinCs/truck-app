@@ -1,18 +1,17 @@
-import {
-  getMyanmarLeadingClass,
-  myanmarUITextStyle,
-} from "@/constants/myanmar-font";
+import { APP_COLORS } from "@/constants/colors";
+import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
 import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalItem } from "@/stores/server/proposal/typed";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Card } from "heroui-native";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 type ProposalCardProps = {
   item: ProposalItem;
   locale: AppLocale;
   onPressDetail: (item: ProposalItem) => void;
+  onPressEdit: (item: ProposalItem) => void;
 };
 
 function formatDateTime(value: string): string {
@@ -35,9 +34,13 @@ function formatAmount(value: number): string {
   return `${safeValue.toLocaleString()} Ks`;
 }
 
-export function ProposalCard({ item, locale, onPressDetail }: ProposalCardProps) {
-  const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? mmTextStyle : undefined;
+export function ProposalCard({
+  item,
+  locale,
+  onPressDetail,
+  onPressEdit,
+}: ProposalCardProps) {
+  const mmLeading = getMyanmarLeadingClass(locale);
   const [expanded, setExpanded] = useState(false);
   const labels =
     locale === "mm"
@@ -60,6 +63,8 @@ export function ProposalCard({ item, locale, onPressDetail }: ProposalCardProps)
           viewDetail: "View Detail",
         };
 
+  const canEdit = (item.status || "").toUpperCase() === "INFORM";
+
   return (
     <Pressable onPress={() => setExpanded((prev) => !prev)}>
       <Card className="mb-3">
@@ -74,16 +79,18 @@ export function ProposalCard({ item, locale, onPressDetail }: ProposalCardProps)
             </View>
 
             <View className="flex-1">
-              <Text className="text-sm font-bold text-primary">
+              <Text className={`text-sm font-bold text-primary ${mmLeading}`}>
                 {item.proposalNo}
               </Text>
-              <Text className="mt-0.5 text-xs text-slate-500" style={style}>
+              <Text className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}>
                 {formatDateTime(item.proposalDate)}
               </Text>
             </View>
 
             <View className="rounded-xl bg-[#edf2f7] px-2 py-1 ">
-              <Text className="text-xs font-semibold uppercase tracking-[0.4px] text-slate-600">
+              <Text
+                className={`text-xs font-semibold uppercase tracking-[0.4px] text-slate-600 ${mmLeading}`}
+              >
                 {item.serviceType || "SERVICE"}
               </Text>
             </View>
@@ -93,21 +100,16 @@ export function ProposalCard({ item, locale, onPressDetail }: ProposalCardProps)
             <View className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-3">
               <View className="mb-3 flex-row items-center justify-between">
                 <View className="flex-1 pr-2">
-                  <Text
-                    className={`text-xs text-slate-500" ${getMyanmarLeadingClass(locale)}`}
-                  >
+                  <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                     {labels.amount}
                   </Text>
-                  <Text
-                    className="text-xl font-semibold text-primary"
-                    style={style}
-                  >
+                  <Text className={`text-xl font-semibold text-primary ${mmLeading}`}>
                     {formatAmount(item.proposalAmount)}
                   </Text>
                 </View>
                 <View className="rounded-xl bg-[#edf2f7] px-3 py-1.5">
                   <Text
-                    className={`text-[10px] font-semibold text-slate-600 ${getMyanmarLeadingClass(locale)}`}
+                    className={`text-[10px] font-semibold text-slate-600 ${mmLeading}`}
                   >
                     {labels.createdBy}: {item.createdBy || "-"}
                   </Text>
@@ -116,28 +118,18 @@ export function ProposalCard({ item, locale, onPressDetail }: ProposalCardProps)
 
               <View className="flex-row gap-4">
                 <View className="flex-1">
-                  <Text
-                    className={`text-xs text-slate-500" ${getMyanmarLeadingClass(locale)}`}
-                  >
+                  <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                     {labels.plateNo}
                   </Text>
-                  <Text
-                    className="text-sm font-semibold text-slate-700"
-                    style={style}
-                  >
+                  <Text className={`text-sm font-semibold text-slate-700 ${mmLeading}`}>
                     {item.plateNo || "-"}
                   </Text>
                 </View>
                 <View className="flex-1">
-                  <Text
-                    className={`text-xs text-slate-500" ${getMyanmarLeadingClass(locale)}`}
-                  >
+                  <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                     {labels.serviceShop}
                   </Text>
-                  <Text
-                    className="text-sm font-semibold text-slate-700"
-                    style={style}
-                  >
+                  <Text className={`text-sm font-semibold text-slate-700 ${mmLeading}`}>
                     {item.serviceShop || "-"}
                   </Text>
                 </View>
@@ -145,41 +137,44 @@ export function ProposalCard({ item, locale, onPressDetail }: ProposalCardProps)
 
               <View className="mt-2 flex-row gap-4">
                 <View className="flex-1">
-                  <Text
-                    className={`text-xs text-slate-500" ${getMyanmarLeadingClass(locale)}`}
-                  >
+                  <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                     {labels.proposalDate}
                   </Text>
-                  <Text
-                    className="text-sm font-semibold text-slate-700"
-                    style={style}
-                  >
+                  <Text className={`text-sm font-semibold text-slate-700 ${mmLeading}`}>
                     {formatDateTime(item.proposalDate)}
                   </Text>
                 </View>
                 <View className="flex-1">
-                  <Text
-                    className={`text-xs text-slate-500" ${getMyanmarLeadingClass(locale)}`}
-                  >
+                  <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                     {labels.serviceDate}
                   </Text>
-                  <Text
-                    className="text-sm font-semibold text-slate-700"
-                    style={style}
-                  >
+                  <Text className={`text-sm font-semibold text-slate-700 ${mmLeading}`}>
                     {formatDateTime(item.serviceDate)}
                   </Text>
                 </View>
               </View>
-              <Pressable
-                onPress={() => onPressDetail(item)}
-                className="mt-3 items-center justify-center rounded-xl py-2.5"
-                style={{ backgroundColor: "#455c7a" }}
-              >
-                <Text className="text-xs font-semibold text-white" style={style}>
-                  {labels.viewDetail}
-                </Text>
-              </Pressable>
+              <View className="mt-3 flex-row items-center gap-2">
+                <Pressable
+                  onPress={() => onPressDetail(item)}
+                  className="flex-1 items-center justify-center rounded-xl py-2.5"
+                  style={{ backgroundColor: APP_COLORS.primary }}
+                >
+                  <Text
+                    className={`text-xs font-semibold text-white ${mmLeading}`}
+                  >
+                    {labels.viewDetail}
+                  </Text>
+                </Pressable>
+
+                {canEdit ? (
+                  <Pressable
+                    onPress={() => onPressEdit(item)}
+                    className="h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white"
+                  >
+                    <Ionicons name="create-outline" size={18} color={APP_COLORS.primary} />
+                  </Pressable>
+                ) : null}
+              </View>
             </View>
           ) : null}
         </Card.Body>

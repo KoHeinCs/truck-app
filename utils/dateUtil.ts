@@ -1,5 +1,12 @@
 
 
+export function formatDmyDate(date: Date): string {
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const yyyy = String(date.getFullYear());
+    return `${dd}/${mm}/${yyyy}`;
+}
+
 export function toIsoDate(dmy: string): string | null {
     const value = dmy.trim();
     const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value);
