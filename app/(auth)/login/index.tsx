@@ -4,13 +4,14 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Button, Card, Input, Spinner} from "heroui-native";
 import React, {useMemo, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
-import {KeyboardAvoidingView, Platform, Pressable, Text, View} from "react-native";
+import {Alert, KeyboardAvoidingView, Platform, Pressable, Text, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {z} from "zod";
 import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {APP_COLORS} from "@/constants/colors";
 import {Feather} from "@expo/vector-icons";
+import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 
 function buildSchema(locale: "en" | "mm") {
     return z.object({
@@ -25,18 +26,14 @@ type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 export default function LoginScreen() {
     const t = useTranslation("login");
+    const errorCatalog = useTranslation("error");
     const locale = useLocaleStore((state) => state.locale);
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const textStyle = locale === "mm" ? mmTextStyle : undefined;
 
 
     const {mutate, isPending} = useLogin();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const {
-        control,
-        handleSubmit,
-        formState: {errors},
-    } = useForm<FormValues>({
+    const {control, handleSubmit, formState: {errors},} = useForm<FormValues>({
         resolver: zodResolver(buildSchema(locale)),
         defaultValues: {
             username: "HHA09455733730",
@@ -56,10 +53,12 @@ export default function LoginScreen() {
                     return;
                 }
             },
-            onError: () => {
-                setErrorMessage(
-                    "Login failed. Please check your network or credentials.",
-                );
+            onError: (err: unknown) => {
+                const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
+                    title: t.errorTitle,
+                    message: t.errorBody,
+                });
+                Alert.alert(title, message);
             },
         });
     };
@@ -106,7 +105,7 @@ export default function LoginScreen() {
                                     <Input
                                         value={value}
                                         onChangeText={onChange}
-                                        className={`${getMyanmarLeadingClass(locale)}`}
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
                                         placeholder={t.placeholders.username}
                                         placeholderTextColor={APP_COLORS.textMuted}
                                         autoCapitalize="none"
@@ -144,7 +143,7 @@ export default function LoginScreen() {
 
                                         <Input
                                             value={value}
-                                            className={`${getMyanmarLeadingClass(locale)}`}
+                                            className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
                                             onChangeText={onChange}
                                             placeholder={t.placeholders.password}
                                             placeholderTextColor={APP_COLORS.textMuted}
@@ -186,13 +185,6 @@ export default function LoginScreen() {
                                 </Text>
                             ) : null}
                         </View>
-
-                        {errorMessage ? (
-                            <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)}`}
-                                  style={[{color: APP_COLORS.error}, textStyle]}>
-                                {errorMessage}
-                            </Text>
-                        ) : null}
                     </Card.Body>
 
                     <Card.Footer className="pt-0">

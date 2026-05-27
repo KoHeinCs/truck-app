@@ -8,6 +8,8 @@
     "placeholders": {
       "username": "Enter username",
       "password": "Enter password"
-    }
+    },
+    "errorTitle": "Login Failed",
+    "errorBody": "Invalid credentials or network connection issue. Please try again."
   }
 }
