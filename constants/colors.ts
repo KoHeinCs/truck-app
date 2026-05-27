@@ -8,9 +8,9 @@ export const APP_COLORS = {
    * WHEN: The element represents the main functional goal of the screen, or is actively focused by the user.
    * WHERE: Main CTA buttons, active screen header backgrounds, selected navigation tab icons, focused text input borders.
    */
-  primary: "#455c7a",
+  primary: "#5a80ab",
 
-  primaryPressed: "#374a62",
+  primaryPressed: "#456385",
 
   /**
    * Branded structural containers.
@@ -74,7 +74,7 @@ export const APP_COLORS = {
    * WHEN: Initializing the absolute root layout framework canvas for any feature screen.
    * WHERE: Main canvas background for `<SafeAreaView>` or base container views. Crucial to make white inner card blocks pop out.
    */
-  background: "",
+  background: "#f3f7fb",
 
   /**
    * Floating layer containers.
