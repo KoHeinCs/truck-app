@@ -7,8 +7,6 @@ import React from "react";
 import { Pressable, View } from "react-native";
 
 /** Same as team list search (`TeamSearchToolbar`). */
-const TRUCK_SEARCH_INPUT_CLASSNAME =
-  "flex-1 border h-11 py-0 text-sm border-slate-200 bg-white ";
 
 type TruckSearchToolbarProps = {
   locale: AppLocale;
@@ -38,8 +36,14 @@ export function TruckSearchToolbar({
           value={quickQuery}
           onChangeText={onChangeQuickQuery}
           placeholder={placeholder}
-          className={`flex-1 border h-11 py-0 text-sm border-slate-200 bg-white  ${getMyanmarLeadingClass(_locale)}`}
-          style={{ paddingRight: 44 }}
+          placeholderTextColor={APP_COLORS.textMuted}
+          className={`flex-1 h-11 py-0 text-sm font-medium ${getMyanmarLeadingClass(_locale)}`}
+          style={{
+            paddingRight: 44,
+            backgroundColor:APP_COLORS.inputBackground,
+            borderColor:APP_COLORS.border,
+            borderWidth:1
+          }}
         />
 
         <Pressable
@@ -51,7 +55,7 @@ export function TruckSearchToolbar({
         >
           <Ionicons
             name={advancedOpen ? "funnel" : "funnel-outline"}
-            size={20}
+            size={22}
             color={APP_COLORS.primary}
           />
         </Pressable>
@@ -62,16 +66,18 @@ export function TruckSearchToolbar({
           onPress={onClearQuickQuery}
           className="items-center justify-center rounded-full border border-slate-200 bg-white p-2.5"
         >
-          <Ionicons name="close" size={18} color="#4A7CFF" />
+          <Ionicons name="close" size={22} color={APP_COLORS.primary} />
         </Pressable>
       )}
 
       <Pressable
         onPress={onPressAdd}
         className="items-center justify-center rounded-full p-2.5"
-        style={{ backgroundColor: APP_COLORS.primary }}
+        style={({pressed}) => ({
+          backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+        })}
       >
-        <Ionicons name="add" size={20} color="#fff" />
+        <Ionicons name="add" size={22} color="#fff" />
       </Pressable>
     </View>
   );

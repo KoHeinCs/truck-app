@@ -1,7 +1,7 @@
 import { CompactTextInput } from "@/components/compact-text-input";
 import { APP_COLORS } from "@/constants/colors";
 import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
-import { myanmarUITextStyle } from "@/constants/myanmar-font";
+import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import profileLocale from "@/locale/profile/profile.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
@@ -24,6 +24,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TruckCardItem } from "./components/truck-card";
 import { TruckSearchToolbar } from "./components/truck-search-toolbar";
+import {useThrottledCallback} from '@/hooks/use-throttled-callback'
+import {TruckItem} from "@/stores/server/truck/typed";
+import {useTranslation} from "@/hooks/use-translation";
 
 type TruckListUiState = {
   quickQuery: string;
@@ -56,7 +59,7 @@ const emptyTruckAdvancedApplied: TruckAdvancedFilters = {
 export default function TruckManagementScreen() {
   const router = useRouter();
   const locale = useLocaleStore((state) => state.locale);
-  const t = profileLocale[locale].truckScreen;
+  const t = useTranslation('truck');
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
@@ -105,21 +108,28 @@ export default function TruckManagementScreen() {
     "chassisNo",
   ];
 
+  const handleCardPress = useThrottledCallback((item :TruckItem)=>{
+    router.push(`/(tabs)/profile/truck/edit/${item.id}`)
+  },600)
+
   return (
-    <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+    <SafeAreaView className="flex-1" style={{backgroundColor:APP_COLORS.background}}>
       <View className="flex-row items-center px-4 pb-2 pt-1">
         <Pressable
           onPress={() => router.back()}
-          className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
+          className="h-11 w-11 items-center justify-center rounded-full "
+          style={({pressed})=> ({
+            backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+          })}
         >
           <Ionicons name="arrow-back" size={22} color="#475569" />
         </Pressable>
 
         <Text
-          className="flex-1 px-3 text-center text-[18px] font-bold text-slate-900"
-          style={style}
+          className="flex-1 px-3 text-center text-[18px] font-bold"
+          style={[style,{color:APP_COLORS.textPrimary}]}
         >
-          {t.title}
+          {t.master.title}
         </Text>
 
         <View className="h-11 w-11" />
@@ -134,13 +144,13 @@ export default function TruckManagementScreen() {
             item={item}
             locale={locale}
             labels={{
-              fuelType: t.labels.fuelType,
-              frontTire: t.labels.frontTire,
-              backTire: locale === "mm" ? "နောက်တာယာ" : "Back Tire",
-              chassisNo: t.labels.chassisNo,
-              engineNo: t.labels.engineNo,
+              fuelType: t.master.card.fuelType,
+              frontTire: t.master.card.frontTire,
+              backTire: t.master.card.backTire,
+              chassisNo: t.master.card.chassisNo,
+              engineNo: t.master.card.engineNo,
             }}
-            onPress={() => router.push(`/(tabs)/profile/truck/edit/${item.id}`)}
+            onPress={() => handleCardPress(item)}
           />
         )}
         onEndReachedThreshold={0.2}
@@ -154,7 +164,7 @@ export default function TruckManagementScreen() {
             <TruckSearchToolbar
               locale={locale}
               quickQuery={ui.quickQuery}
-              placeholder={t.searchPlaceholder}
+              placeholder={t.master.searchPlaceholder}
               advancedOpen={ui.advancedOpen}
               onChangeQuickQuery={(quickQuery) => patchUi({ quickQuery })}
               onClearQuickQuery={() => patchUi({ quickQuery: "" })}
@@ -168,43 +178,55 @@ export default function TruckManagementScreen() {
               <Card className="mb-4 p-5">
                 <Card.Body className="gap-3">
                   <Text
-                    className="text-sm font-semibold text-slate-900"
-                    style={style}
+                      className={`text-sm font-medium  ${getMyanmarLeadingClass(locale)}`}
+                      style={[style,{color:APP_COLORS.textPrimary}]}
                   >
-                    {t.advancedTitle}
+                    {t.search.advancedTitle}
                   </Text>
 
                   <View className="flex-row gap-2">
                     <View className="flex-1 gap-1">
                       <Text
-                        className="text-[10px] text-slate-500"
-                        style={style}
+                          className={`text-xs font-semibold ${getMyanmarLeadingClass(locale)}`}
+                          style={[style,{color:APP_COLORS.textMuted}]}
                       >
-                        {t.labels.plateNo}
+                        {t.search.plateNo}
                       </Text>
                       <CompactTextInput
                         locale={locale}
                         compactVariant="advanced"
                         value={ui.plateNo}
                         onChangeText={(plateNo) => patchUi({ plateNo })}
-                        placeholder={t.placeholders.plateNo}
-                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                        placeholder={t.search.placeholders.plateNo}
+                        className={`${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                        style={[style,{
+                          backgroundColor: APP_COLORS.inputBackground,
+                          borderColor:  APP_COLORS.border,
+                          borderWidth: 1,
+                          color: APP_COLORS.textPrimary
+                        }]}
                       />
                     </View>
                     <View className="flex-1 gap-1">
                       <Text
-                        className="text-[10px] text-slate-500"
-                        style={style}
+                          className={`text-xs font-semibold ${getMyanmarLeadingClass(locale)}`}
+                          style={[style,{color:APP_COLORS.textMuted}]}
                       >
-                        {t.labels.model}
+                        {t.search.model}
                       </Text>
                       <CompactTextInput
                         locale={locale}
                         compactVariant="advanced"
                         value={ui.model}
                         onChangeText={(model) => patchUi({ model })}
-                        placeholder={t.placeholders.model}
-                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                        placeholder={t.search.placeholders.model}
+                        className={`${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                        style={[style,{
+                          backgroundColor: APP_COLORS.inputBackground,
+                          borderColor:  APP_COLORS.border,
+                          borderWidth: 1,
+                          color: APP_COLORS.textPrimary
+                        }]}
                       />
                     </View>
                   </View>
@@ -212,52 +234,49 @@ export default function TruckManagementScreen() {
                   <View className="flex-row gap-2">
                     <View className="flex-1 gap-1">
                       <Text
-                        className="text-[10px] text-slate-500"
-                        style={style}
+                          className={`text-xs font-semibold ${getMyanmarLeadingClass(locale)}`}
+                          style={[style,{color:APP_COLORS.textMuted}]}
                       >
-                        {t.labels.modelYear}
+                        {t.search.modelYear}
                       </Text>
                       <CompactTextInput
                         locale={locale}
                         compactVariant="advanced"
                         value={ui.modelYear}
                         onChangeText={(modelYear) => patchUi({ modelYear })}
-                        placeholder={t.placeholders.modelYear}
+                        placeholder={t.search.placeholders.modelYear}
                         keyboardType="number-pad"
-                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                        className={`${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                        style={[style,{
+                          backgroundColor: APP_COLORS.inputBackground,
+                          borderColor:  APP_COLORS.border,
+                          borderWidth: 1,
+                          color: APP_COLORS.textPrimary
+                        }]}
                       />
                     </View>
                     <View className="flex-1 gap-1">
-                      <Text
-                        className="text-[10px] text-slate-500"
-                        style={style}
-                      >
-                        {t.labels.engineNo}
+                      <Text className={`text-xs font-semibold ${getMyanmarLeadingClass(locale)}`}
+                            style={[style,{color:APP_COLORS.textMuted}]}>
+                        {t.search.chassisNo}
                       </Text>
                       <CompactTextInput
-                        locale={locale}
-                        compactVariant="advanced"
-                        value={ui.engineNo}
-                        onChangeText={(engineNo) => patchUi({ engineNo })}
-                        placeholder={t.placeholders.engineNo}
-                        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                          locale={locale}
+                          compactVariant="advanced"
+                          value={ui.chassisNo}
+                          onChangeText={(chassisNo) => patchUi({ chassisNo })}
+                          placeholder={t.search.placeholders.chassisNo}
+                          className={`${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                          style={[style,{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor:  APP_COLORS.border,
+                            borderWidth: 1,
+                            color: APP_COLORS.textPrimary
+                          }]}
                       />
                     </View>
                   </View>
 
-                  <View className="gap-1">
-                    <Text className="text-[10px] text-slate-500" style={style}>
-                      {t.labels.chassisNo}
-                    </Text>
-                    <CompactTextInput
-                      locale={locale}
-                      compactVariant="advanced"
-                      value={ui.chassisNo}
-                      onChangeText={(chassisNo) => patchUi({ chassisNo })}
-                      placeholder={t.placeholders.chassisNo}
-                      className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
-                    />
-                  </View>
 
                   <View className="flex-row gap-2 pt-0.5">
                     <Pressable
@@ -270,19 +289,26 @@ export default function TruckManagementScreen() {
                           ),
                         });
                       }}
-                      className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
+                      className="flex-1 items-center justify-center rounded-xl"
+                      style={({ pressed }) => ({
+                        backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
+                        borderColor: APP_COLORS.border,
+                        borderWidth: 1
+                      })}
                     >
                       <Text
-                        className="text-xs font-semibold text-slate-700"
-                        style={style}
+                          className={`text-xs font-semibold  ${getMyanmarLeadingClass(locale)}`}
+                          style={[style,{color:APP_COLORS.error}]}
                       >
-                        {t.reset}
+                        {t.search.reset}
                       </Text>
                     </Pressable>
 
                     <Pressable
                       className="flex-1 items-center justify-center rounded-xl py-3"
-                      style={{ backgroundColor: APP_COLORS.primary }}
+                      style={ ({pressed})=>({
+                        backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+                      })}
                       onPress={() => {
                         setAppliedAdvanced({
                           plateNo: ui.plateNo,
@@ -295,10 +321,10 @@ export default function TruckManagementScreen() {
                       }}
                     >
                       <Text
-                        className="text-xs font-semibold text-white"
+                        className={`text-xs font-semibold text-white ${getMyanmarLeadingClass(locale)}`}
                         style={style}
                       >
-                        {t.apply}
+                        {t.search.search}
                       </Text>
                     </Pressable>
                   </View>
@@ -317,7 +343,7 @@ export default function TruckManagementScreen() {
               className="px-6 py-8 text-center text-slate-500"
               style={style}
             >
-              {t.empty}
+              {t.master.empty}
             </Text>
           )
         }

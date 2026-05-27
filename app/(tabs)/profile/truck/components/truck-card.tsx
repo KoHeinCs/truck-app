@@ -1,8 +1,9 @@
-import { myanmarUITextStyle } from "@/constants/myanmar-font";
+import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import type { TruckItem } from "@/stores/server/truck/typed";
 import { Card } from "heroui-native";
 import React, { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
+import {APP_COLORS} from "@/constants/colors";
 
 type TruckCardProps = {
   item: TruckItem;
@@ -47,13 +48,20 @@ export function TruckCardItem({
       disabled={!onPress}
       style={({ pressed }) => [{ opacity: pressed ? 0.75 : 1 }]}
     >
-      <Card className="mb-3 border border-slate-100 shadow-sm rounded-xl">
+      <Card
+          className="mb-3 border shadow-sm "
+          style={{
+            backgroundColor: APP_COLORS.card,
+            borderColor:APP_COLORS.border,
+            borderWidth:1
+          }}
+      >
         <Card.Body className="p-4">
           {/* Top Header Row: Model Title & Branded License Plate Pill */}
           <View className="flex-row items-start justify-between border-b border-slate-100 pb-2.5 gap-x-3">
             <View className="flex-1 min-w-0">
               <Text
-                className="text-base font-bold text-slate-900"
+                className={`text-base font-bold text-slate-900 ${getMyanmarLeadingClass(locale)}`}
                 style={style}
                 numberOfLines={1}
                 ellipsizeMode="tail"
@@ -62,9 +70,11 @@ export function TruckCardItem({
               </Text>
 
               {/* Secondary description field using the core primary color for value text */}
-              <Text className="text-xs text-slate-400 mt-0.5" style={style}>
-                {labels.fuelType}:{" "}
-                <Text className="font-semibold text-[#3F5F87]">{fuel}</Text>
+              <Text
+                  className={`text-xs text-slate-400 mt-0.5 ${getMyanmarLeadingClass(locale)}`}
+                    style={style}>
+                {labels.fuelType}{" "}
+                <Text className={`font-semibold text-[#3F5F87] ${getMyanmarLeadingClass(locale)}`}>{fuel}</Text>
               </Text>
             </View>
 
@@ -82,7 +92,7 @@ export function TruckCardItem({
             <View className="flex-row justify-between gap-x-3">
               <View className="flex-1 min-w-0">
                 <Text
-                  className="text-[10px] text-slate-400 font-bold uppercase tracking-wider"
+                  className={`text-[10px] text-slate-400 font-bold uppercase tracking-wider ${getMyanmarLeadingClass(locale)}`}
                   style={style}
                 >
                   {labels.chassisNo}
@@ -92,12 +102,12 @@ export function TruckCardItem({
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {chassis}
+                  {chassis || "-"}
                 </Text>
               </View>
               <View className="flex-1 min-w-0">
                 <Text
-                  className="text-[10px] text-slate-400 font-bold uppercase tracking-wider"
+                    className={`text-[10px] text-slate-400 font-bold uppercase tracking-wider ${getMyanmarLeadingClass(locale)}`}
                   style={style}
                 >
                   {labels.engineNo}
@@ -107,7 +117,7 @@ export function TruckCardItem({
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {engine}
+                  {engine || "-"}
                 </Text>
               </View>
             </View>
@@ -122,7 +132,7 @@ export function TruckCardItem({
                   {labels.frontTire}
                 </Text>
                 <Text
-                  className="text-xs font-semibold text-slate-700 mt-0.5"
+                  className={`text-xs font-semibold text-slate-700 mt-0.5 ${getMyanmarLeadingClass(locale)}`}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >

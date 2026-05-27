@@ -11,6 +11,7 @@ import {
   type TextInputProps,
   type TextStyle,
 } from "react-native";
+import {APP_COLORS} from "@/constants/colors";
 
 export type CompactTextInputProps = TextInputProps & {
   locale: AppLocale;
@@ -44,7 +45,8 @@ export const CompactTextInput = forwardRef<TextInput, CompactTextInputProps>(
       <Input
         ref={ref}
         className={className}
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor={APP_COLORS.textMuted}
+        style={style}
         {...inputRest}
         {...(Platform.OS === "android" ? { includeFontPadding } : {})}
       />
