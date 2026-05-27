@@ -1,36 +1,36 @@
 import { APP_COLORS } from "@/constants/colors";
 import {
-  getMyanmarLeadingClass,
-  myanmarUITextStyle,
+    getMyanmarLeadingClass,
+    myanmarUITextStyle,
 } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useThrottledCallback } from '@/hooks/use-throttled-callback';
+import { useTranslation } from "@/hooks/use-translation";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useUsersInfinite } from "@/stores/server/user/query";
 import type { BoolFilter } from "@/stores/server/user/search-columns";
+import { UserTeamItem } from "@/stores/server/user/typed";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Card, Input } from "heroui-native";
 import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  Text,
-  View,
+    ActivityIndicator,
+    FlatList,
+    Pressable,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CompactSelect } from "./components/compact-select";
 import { TeamSearchToolbar } from "./components/team-search-toolbar";
 import { TeamUserCard } from "./components/team-user-card";
-import {useTranslation} from "@/hooks/use-translation";
-import { useThrottledCallback } from '@/hooks/use-throttled-callback';
-import {UserTeamItem} from "@/stores/server/user/typed";
 
 type SelectBoolValue = "all" | "true" | "false";
 

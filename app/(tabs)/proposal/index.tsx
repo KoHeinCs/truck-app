@@ -1,5 +1,5 @@
 import { APP_COLORS } from "@/constants/colors";
-import { myanmarUITextStyle } from "@/constants/myanmar-font";
+import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import proposalLocale from "@/locale/proposal/proposal.json";
 import { useAuthStore } from "@/stores/auth-store";
@@ -11,12 +11,7 @@ import type {
 } from "@/stores/server/proposal/search-columns";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ProposalAdvancedFilters as ProposalAdvancedFiltersCard } from "./proposal-advanced-filters";
 import { ProposalCard } from "./proposal-card";
@@ -45,6 +40,18 @@ const initialProposalListUi: ProposalListUiState = {
   createdByCsv: "",
 };
 
+const emptyProposalAdvancedApplied: ProposalAdvancedFilters = {
+  proposalNo: "",
+  ownerId: "",
+  plateNo: "",
+  proposalDateFrom: "",
+  proposalDateTo: "",
+  serviceTypeCsv: "",
+  serviceDateFrom: "",
+  serviceDateTo: "",
+  createdByCsv: "",
+};
+
 export default function ProposalScreen() {
   const router = useRouter();
   const locale = useLocaleStore((state) => state.locale);
@@ -53,13 +60,16 @@ export default function ProposalScreen() {
 
   const [status, setStatus] = useState<ProposalTabStatus>("INFORM");
   const [ui, setUi] = useState<ProposalListUiState>(initialProposalListUi);
+  const [appliedAdvanced, setAppliedAdvanced] =
+    useState<ProposalAdvancedFilters>(() => ({
+      ...emptyProposalAdvancedApplied,
+    }));
   const patchUi = useCallback((next: Partial<ProposalListUiState>) => {
     setUi((prev) => ({ ...prev, ...next }));
   }, []);
   const debouncedQuickQuery = useDebouncedValue(ui.quickQuery, 500);
 
-  const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? mmTextStyle : undefined;
+  const mmLeading = getMyanmarLeadingClass(locale);
   const t = proposalLocale[locale].list;
   const upperRole = (role || "").toUpperCase();
   const showOwnerId = upperRole === "ADMIN";
@@ -68,26 +78,13 @@ export default function ProposalScreen() {
   const filters = useMemo(
     () => ({
       quickQuery: debouncedQuickQuery,
-      proposalNo: ui.proposalNo,
-      ownerId: ui.ownerId,
-      plateNo: ui.plateNo,
-      proposalDateFrom: ui.proposalDateFrom,
-      proposalDateTo: ui.proposalDateTo,
-      serviceTypeCsv: ui.serviceTypeCsv,
-      serviceDateFrom: ui.serviceDateFrom,
-      serviceDateTo: ui.serviceDateTo,
-      createdByCsv: ui.createdByCsv,
+      ...appliedAdvanced,
     }),
-    [debouncedQuickQuery, ui],
+    [debouncedQuickQuery, appliedAdvanced],
   );
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isPending,
-  } = useProposalsInfinite(status, filters, role, true);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending } =
+    useProposalsInfinite(status, filters, role, true);
 
   const items = useMemo(
     () => data?.pages.flatMap((page) => page.data.data) ?? [],
@@ -110,10 +107,15 @@ export default function ProposalScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+    <SafeAreaView
+      style={{ flex: 1 }}
+      className="flex-1 bg-[#f3f7fb]"
+      edges={["top", "left", "right"]}
+    >
       <FlatList
         data={items}
         className="px-4"
+        style={{ flex: 1 }}
         keyExtractor={(item) => `${item.proposalNo}-${item.proposalDate}`}
         renderItem={({ item }) => (
           <ProposalCard
@@ -122,6 +124,15 @@ export default function ProposalScreen() {
             onPressDetail={(selected) =>
               router.push({
                 pathname: "/(tabs)/proposal/detail",
+                params: {
+                  proposalNo: selected.proposalNo,
+                  ownershipId: selected.ownershipId,
+                },
+              })
+            }
+            onPressEdit={(selected) =>
+              router.push({
+                pathname: "/(tabs)/proposal/edit",
                 params: {
                   proposalNo: selected.proposalNo,
                   ownershipId: selected.ownershipId,
@@ -143,14 +154,12 @@ export default function ProposalScreen() {
               locale={locale}
               welcomeLabel={t.welcome}
               fullName={fullName || "-"}
-              style={style}
             />
             <ProposalTabs
               value={status}
               onChange={setStatus}
               tabs={TAB_ORDER}
               locale={locale}
-              style={style}
             />
             <ProposalSearchToolbar
               locale={locale}
@@ -171,11 +180,11 @@ export default function ProposalScreen() {
               <ProposalAdvancedFiltersCard
                 filters={advancedFilters}
                 locale={locale}
-                style={style}
                 showOwnerId={showOwnerId}
                 showCreatedBy={showCreatedBy}
                 onChange={patchUi}
-                onReset={() =>
+                onReset={() => {
+                  setAppliedAdvanced({ ...emptyProposalAdvancedApplied });
                   patchUi({
                     quickQuery: "",
                     proposalNo: "",
@@ -187,9 +196,22 @@ export default function ProposalScreen() {
                     serviceDateFrom: "",
                     serviceDateTo: "",
                     createdByCsv: "",
-                  })
-                }
-                onApply={() => patchUi({ advancedOpen: false })}
+                  });
+                }}
+                onApply={() => {
+                  setAppliedAdvanced({
+                    proposalNo: ui.proposalNo,
+                    ownerId: ui.ownerId,
+                    plateNo: ui.plateNo,
+                    proposalDateFrom: ui.proposalDateFrom,
+                    proposalDateTo: ui.proposalDateTo,
+                    serviceTypeCsv: ui.serviceTypeCsv,
+                    serviceDateFrom: ui.serviceDateFrom,
+                    serviceDateTo: ui.serviceDateTo,
+                    createdByCsv: ui.createdByCsv,
+                  });
+                  patchUi({ advancedOpen: false });
+                }}
               />
             ) : null}
           </View>
@@ -201,8 +223,7 @@ export default function ProposalScreen() {
             </View>
           ) : (
             <Text
-              className="px-6 py-8 text-center text-slate-500"
-              style={style}
+              className={`px-6 py-8 text-center text-slate-500 ${mmLeading}`}
             >
               {t.empty}
             </Text>

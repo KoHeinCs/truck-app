@@ -41,7 +41,7 @@
       "serviceShop": "Service Shop",
       "serviceShopPlaceholder": "Zaw Star Car Workshop",
       "serviceDate": "Service Date",
-      "serviceDatePlaceholder": "dd/mm/yyyy, --:-- --",
+      "serviceDatePlaceholder": "DD/MM/YYYY",
       "description": "Description",
       "descriptionPlaceholder": "For tire maintenance",
       "cancel": "Cancel",
@@ -52,6 +52,30 @@
       "successBody": "Proposal created successfully.",
       "errorTitle": "Error",
       "errorBody": "Could not create proposal."
+    },
+    "detail": {
+      "accept": "Accept",
+      "terminate": "Terminate",
+      "remark": "Remark",
+      "remarkPlaceholder": "Enter remark...",
+      "terminateConfirmTitle": "Terminate Proposal",
+      "terminateConfirmBody": "Are you sure you want to terminate this proposal?",
+      "approveSuccessTitle": "Success",
+      "approveSuccessBody": "Proposal accepted successfully.",
+      "terminateSuccessTitle": "Success",
+      "terminateSuccessBody": "Proposal terminated successfully.",
+      "errorTitle": "Error",
+      "errorBody": "Could not complete the action."
+    },
+    "edit": {
+      "title": "Edit Proposal",
+      "proposalNo": "Proposal No",
+      "update": "Update",
+      "updating": "Updating...",
+      "successTitle": "Success",
+      "successBody": "Proposal updated successfully.",
+      "errorTitle": "Error",
+      "errorBody": "Could not update proposal."
     }
   },
   "mm": {
@@ -96,7 +120,7 @@
       "serviceShop": "ဝန်ဆောင်မှုဆိုင်",
       "serviceShopPlaceholder": "Zaw Star Car Workshop",
       "serviceDate": "ဝန်ဆောင်မှုရက်",
-      "serviceDatePlaceholder": "dd/mm/yyyy, --:-- --",
+      "serviceDatePlaceholder": "DD/MM/YYYY",
       "description": "ဖော်ပြချက်",
       "descriptionPlaceholder": "For tire maintenance",
       "cancel": "မလုပ်တော့ပါ",
@@ -107,6 +131,30 @@
       "successBody": "အဆိုပြုချက်အသစ်ထည့်ပြီးပါပြီ။",
       "errorTitle": "အမှားရှိပါသည်",
       "errorBody": "အဆိုပြုချက်ထည့်၍မရပါ။"
+    },
+    "detail": {
+      "accept": "လက်ခံရန်",
+      "terminate": "ရပ်ဆိုင်းရန်",
+      "remark": "မှတ်ချက်",
+      "remarkPlaceholder": "မှတ်ချက်ထည့်ပါ...",
+      "terminateConfirmTitle": "အဆိုပြုချက် ရပ်ဆိုင်းမည်",
+      "terminateConfirmBody": "ဤအဆိုပြုချက်ကို ရပ်ဆိုင်းရန် သေချာပါသလား?",
+      "approveSuccessTitle": "အောင်မြင်ပါသည်",
+      "approveSuccessBody": "အဆိုပြုချက်ကို လက်ခံပြီးပါပြီ။",
+      "terminateSuccessTitle": "အောင်မြင်ပါသည်",
+      "terminateSuccessBody": "အဆိုပြုချက်ကို ရပ်ဆိုင်းပြီးပါပြီ။",
+      "errorTitle": "အမှားရှိပါသည်",
+      "errorBody": "လုပ်ဆောင်ချက် မအောင်မြင်ပါ။"
+    },
+    "edit": {
+      "title": "အဆိုပြုချက် ပြင်ဆင်ရန်",
+      "proposalNo": "အဆိုပြုချက်နံပါတ်",
+      "update": "ပြင်ဆင်မည်",
+      "updating": "ပြင်ဆင်နေသည်...",
+      "successTitle": "အောင်မြင်ပါသည်",
+      "successBody": "အဆိုပြုချက် ပြင်ဆင်ပြီးပါပြီ။",
+      "errorTitle": "အမှားရှိပါသည်",
+      "errorBody": "အဆိုပြုချက် မပြင်ဆင်နိုင်ပါ။"
     }
   }
 }

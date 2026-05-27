@@ -1,5 +1,4 @@
 import { APP_COLORS } from "@/constants/colors";
-import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
 import type { AppLocale } from "@/stores/client/locale-store";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Input } from "heroui-native";
@@ -35,7 +34,7 @@ export function ProposalSearchToolbar({
           value={quickQuery}
           onChangeText={onChangeQuickQuery}
           placeholder={placeholder}
-          className={`flex-1 border h-11 py-0 text-sm border-slate-200 bg-white ${getMyanmarLeadingClass(_locale)}`}
+          className="flex-1 border h-11 py-0 text-sm border-slate-200 bg-white"
           style={{ paddingRight: 44 }}
         />
 

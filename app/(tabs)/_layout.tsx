@@ -7,7 +7,8 @@ import React from "react";
 export default function TabLayout() {
   const token = useAuthStore((state) => state.token);
   const pathname = usePathname();
-  const hideTabBar = pathname === "/proposal/create";
+  const hideTabBar =
+    pathname === "/proposal/create" || pathname === "/proposal/edit";
 
   if (!token) {
     return <Redirect href="/(auth)/login" />;

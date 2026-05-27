@@ -1,4 +1,6 @@
 import { APP_COLORS } from "@/constants/colors";
+import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
+import { AppLocale } from "@/stores/client/locale-store";
 import type { OwnershipTruckStatus } from "@/stores/server/ownership/search-columns";
 import React from "react";
 import type { StyleProp, TextStyle } from "react-native";
@@ -9,6 +11,7 @@ type OwnershipTabsProps = {
   onChange: (next: OwnershipTruckStatus) => void;
   labels: Record<OwnershipTruckStatus, string>;
   style?: StyleProp<TextStyle>;
+  locale: AppLocale;
 };
 
 const TABS: OwnershipTruckStatus[] = ["ACTIVE", "SOLD_OUT"];
@@ -18,6 +21,7 @@ export function OwnershipTabs({
   onChange,
   labels,
   style,
+  locale,
 }: OwnershipTabsProps) {
   return (
     <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-1">
@@ -31,7 +35,7 @@ export function OwnershipTabs({
             style={active ? { backgroundColor: APP_COLORS.primary } : undefined}
           >
             <Text
-              className={`text-sm font-semibold ${active ? "text-white" : "text-slate-500"}`}
+              className={`text-sm font-semibold ${getMyanmarLeadingClass(locale)} ${active ? "text-white" : "text-slate-500"}`}
               numberOfLines={1}
               style={style}
             >
