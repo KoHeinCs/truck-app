@@ -258,7 +258,7 @@ export default function TeamCreateUserScreen() {
                     flexGrow: 1,
                 }}
             >
-                <View className="rounded-2xl border border-[#c8dbf7] bg-[#ecf4ff] p-3"
+                <View className="rounded-2xl p-4"
                       style={{
                           backgroundColor: APP_COLORS.warningSoft,
                           borderColor: APP_COLORS.border,
