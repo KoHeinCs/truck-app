@@ -97,6 +97,15 @@ function buildSchema(locale: "en" | "mm") {
                         ? "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ"
                         : "Use dd/mm/yyyy",
             }),
+        joinDate: z
+            .string()
+            .min(1, locale === "mm" ? "အဖွဲ့ဝင်သည့်ရက်လိုအပ်သည်" : "Join date is required")
+            .refine((value) => !!toIsoDate(value), {
+                message:
+                    locale === "mm"
+                        ? "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ"
+                        : "Use dd/mm/yyyy",
+            }),
         fullIdNo: z
             .string()
             .max(50, locale === "mm" ? "မှတ်ပုံတင်နံပါတ်သည် စာလုံး ၅၀ ထက်မကျော်ရပါ" : "Full ID number cannot exceed 50 characters")
@@ -132,6 +141,7 @@ export default function TeamCreateUserScreen() {
     const style = locale === "mm" ? mmTextStyle : undefined;
     const [showPassword, setShowPassword] = useState(false);
     const [showDateOfBirthPicker, setShowDateOfBirthPicker] = useState(false);
+    const [showJoinDatePicker, setShowJoinDatePicker] = useState(false);
     const {mutate, isPending} = useCreateUser();
     const {data: ownerOptions = []} = useOwnerLookupOptions("");
 
@@ -150,6 +160,7 @@ export default function TeamCreateUserScreen() {
             phoneNumber: "",
             email: "",
             dateOfBirth: "",
+            joinDate: "",
             fullIdNo: "",
             role: "WORKER" as CreateUserRole,
             parentOwnerId: "",
@@ -168,7 +179,8 @@ export default function TeamCreateUserScreen() {
 
     const onSubmit = (values: FormValues) => {
         const dateOfBirthIso = toIsoDate(values.dateOfBirth);
-        if (!dateOfBirthIso) {
+        const joinDateIso = toIsoDate(values.joinDate);
+        if (!dateOfBirthIso || !joinDateIso) {
             Alert.alert(t.errorTitle, t.dateInvalid);
             return;
         }
@@ -182,7 +194,7 @@ export default function TeamCreateUserScreen() {
                 phoneNumber: values.phoneNumber.trim(),
                 dateOfBirth: dateOfBirthIso,
                 fullIdNo: values.fullIdNo?.trim() || undefined,
-                joinDate: todayIsoLocal(),
+                joinDate: joinDateIso,
                 role: values.role,
                 parentOwnerId:
                     values.role === "VIEWER"
@@ -288,6 +300,7 @@ export default function TeamCreateUserScreen() {
                 >
                     <View className="gap-3">
 
+                        {/* username */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
@@ -329,6 +342,7 @@ export default function TeamCreateUserScreen() {
                             )}
                         </View>
 
+                        {/* password */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
@@ -389,6 +403,7 @@ export default function TeamCreateUserScreen() {
                             )}
                         </View>
 
+                        {/* full name */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
@@ -430,6 +445,7 @@ export default function TeamCreateUserScreen() {
                             )}
                         </View>
 
+                        {/* phone number */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
@@ -470,6 +486,7 @@ export default function TeamCreateUserScreen() {
                             )}
                         </View>
 
+                        {/* email */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
@@ -512,6 +529,7 @@ export default function TeamCreateUserScreen() {
                             )}
                         </View>
 
+                        {/* date of birth */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
@@ -596,49 +614,92 @@ export default function TeamCreateUserScreen() {
                             )}
                         </View>
 
+                        {/* join date */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
                                     className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
                                     style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
-                                    {t.labels.fullIdNo}
+                                    {t.labels.joinDate}
                                 </Text>
-                                <Text className={`text-[11px] font-medium ${getMyanmarLeadingClass(locale)}`}
-                                      style={{color: APP_COLORS.warning}}>{locale === 'mm' ? '(မထည့်လည်းရ)' : '(Optional)'}</Text>
                             </View>
                             <Controller
                                 control={control}
-                                name="fullIdNo"
+                                name="joinDate"
                                 render={({field: {onChange, value}}) => (
-                                    <Input
-                                        value={value}
-                                        onChangeText={onChange}
-                                        maxLength={50}
-                                        placeholder={t.placeholders.fullIdNo}
-                                        placeholderTextColor={APP_COLORS.textMuted}
-                                        autoCapitalize="none"
-                                        style={[{
-                                            backgroundColor: APP_COLORS.inputBackground,
-                                            borderColor: APP_COLORS.border,
-                                            borderWidth: 1,
-                                            color: APP_COLORS.textPrimary
-                                        }, style]}
-                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
-                                        {...(Platform.OS === "android" && locale === "mm"
-                                            ? {includeFontPadding: false}
-                                            : {})}
-                                    />
+                                    <View>
+                                        <Pressable
+                                            onPress={() => setShowJoinDatePicker(true)}
+                                            className={`flex-row items-center h-14 justify-between rounded-xl  px-3 py-3`}
+                                            style={{
+                                                backgroundColor: APP_COLORS.inputBackground,
+                                                borderColor: errors.joinDate ? APP_COLORS.error : APP_COLORS.border,
+                                                borderWidth: 1
+                                            }}
+                                        >
+                                            <Text
+                                                className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                                style={[style, {color: value ? APP_COLORS.textPrimary : APP_COLORS.textMuted}]}
+                                            >
+                                                {value || t.placeholders.joinDate}
+                                            </Text>
+                                            <Ionicons
+                                                name="calendar-outline"
+                                                size={22}
+                                                color="#64748b"
+                                            />
+                                        </Pressable>
+
+                                        {showJoinDatePicker ? (
+                                            <View className="mt-2 rounded-xl border border-slate-200 bg-white p-2">
+                                                <DateTimePicker
+                                                    value={parseDmyToDate(value) ?? new Date()}
+                                                    mode="date"
+                                                    display={
+                                                        Platform.OS === "ios" ? "spinner" : "default"
+                                                    }
+                                                    maximumDate={new Date()}
+                                                    minimumDate={new Date(1950, 0, 1)}
+                                                    onChange={(
+                                                        event: DateTimePickerEvent,
+                                                        selectedDate?: Date,
+                                                    ) => {
+                                                        if (Platform.OS !== "ios") {
+                                                            setShowJoinDatePicker(false);
+                                                        }
+                                                        if (event.type === "set" && selectedDate) {
+                                                            onChange(toDmyDate(selectedDate));
+                                                        }
+                                                    }}
+                                                />
+                                                {Platform.OS === "ios" ? (
+                                                    <Pressable
+                                                        onPress={() => setShowJoinDatePicker(false)}
+                                                        className="mt-2 self-end rounded-lg bg-slate-100 px-3 py-1.5"
+                                                    >
+                                                        <Text
+                                                            className={`text-sm ${getMyanmarLeadingClass(locale)}  font-semibold text-slate-700`}
+                                                            style={style}
+                                                        >
+                                                            {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                                                        </Text>
+                                                    </Pressable>
+                                                ) : null}
+                                            </View>
+                                        ) : null}
+                                    </View>
                                 )}
                             />
-                            {!!errors.fullIdNo?.message && (
+                            {!!errors.joinDate?.message && (
                                 <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
                                       style={[{color: APP_COLORS.error}, style]}>
-                                    {errors.fullIdNo.message}
+                                    {errors.joinDate.message}
                                 </Text>
                             )}
                         </View>
 
+                        {/* role */}
                         <View className="gap-1.5">
                             <View className="flex-row items-center gap-1">
                                 <Text
@@ -735,6 +796,7 @@ export default function TeamCreateUserScreen() {
                             )}
                         </View>
 
+                        {/* owner */}
                         {selectedRole === "VIEWER" ? (
                             <View className="gap-1.5">
                                 <View className="flex-row items-center gap-1">
@@ -832,6 +894,51 @@ export default function TeamCreateUserScreen() {
                                 )}
                             </View>
                         ) : null}
+
+                        {/* full id number */}
+                        <View className="gap-1.5">
+                            <View className="flex-row items-center gap-1">
+                                <Text
+                                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                    style={[{color: APP_COLORS.textSecondary}, style]}
+                                >
+                                    {t.labels.fullIdNo}
+                                </Text>
+                                <Text className={`text-[11px] font-medium ${getMyanmarLeadingClass(locale)}`}
+                                      style={{color: APP_COLORS.warning}}>{locale === 'mm' ? '(မထည့်လည်းရ)' : '(Optional)'}</Text>
+                            </View>
+                            <Controller
+                                control={control}
+                                name="fullIdNo"
+                                render={({field: {onChange, value}}) => (
+                                    <Input
+                                        value={value}
+                                        onChangeText={onChange}
+                                        maxLength={50}
+                                        placeholder={t.placeholders.fullIdNo}
+                                        placeholderTextColor={APP_COLORS.textMuted}
+                                        autoCapitalize="none"
+                                        style={[{
+                                            backgroundColor: APP_COLORS.inputBackground,
+                                            borderColor: APP_COLORS.border,
+                                            borderWidth: 1,
+                                            color: APP_COLORS.textPrimary
+                                        }, style]}
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        {...(Platform.OS === "android" && locale === "mm"
+                                            ? {includeFontPadding: false}
+                                            : {})}
+                                    />
+                                )}
+                            />
+                            {!!errors.fullIdNo?.message && (
+                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                                      style={[{color: APP_COLORS.error}, style]}>
+                                    {errors.fullIdNo.message}
+                                </Text>
+                            )}
+                        </View>
+
                     </View>
                 </View>
 
