@@ -20,6 +20,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { z } from "zod";
+import {APP_COLORS} from "@/constants/colors";
 
 const YEAR_RE = /^\d{4}$/;
 const FUEL_TYPES = ["diesel", "petrol", "CNG"] as const;
@@ -117,12 +118,17 @@ export default function CreateTruckScreen() {
     <View className="gap-1.5">
       <View className="flex-row items-center gap-1">
         <Text
-          className={`text-sm font-medium text-slate-900 ${getMyanmarLeadingClass(locale)} `}
-          style={style}
+          className={`text-sm font-medium  ${getMyanmarLeadingClass(locale)} `}
+          style={[{color: APP_COLORS.textSecondary}, style]}
         >
           {labels.fieldLabels[key]}
         </Text>
-        {options?.required ? <Text className="text-red-500">*</Text> : null}
+        {options?.required ? null : (
+            <Text
+                className={`text-[11px] font-medium ${getMyanmarLeadingClass(locale)}`}
+                style={{color: APP_COLORS.warning}}>{locale === 'mm' ? '(မထည့်လည်းရ)' : '(Optional)'}
+            </Text>
+        )}
       </View>
       <Controller
         control={control}
@@ -132,13 +138,21 @@ export default function CreateTruckScreen() {
             value={String(value ?? "")}
             onChangeText={onChange}
             keyboardType={options?.keyboardType}
+            placeholderTextColor={APP_COLORS.textMuted}
             autoCapitalize="none"
-            className={`border py-0 h-11 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+            style={[{
+              backgroundColor: APP_COLORS.inputBackground,
+              borderColor: errors[key] ? APP_COLORS.error : APP_COLORS.border,
+              borderWidth: 1,
+              color: APP_COLORS.textPrimary
+            }, style]}
+            className={`py-0 h-12 text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
           />
         )}
       />
       {!!errors[key]?.message && (
-        <Text className="text-xs text-red-500">
+          <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                style={[{color: APP_COLORS.error}, style]}>
           {String(errors[key]?.message)}
         </Text>
       )}
@@ -146,17 +160,20 @@ export default function CreateTruckScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+    <SafeAreaView className="flex-1" style={{backgroundColor:APP_COLORS.background}}>
       <View className="flex-row items-center px-4 pb-3 pt-1">
         <Pressable
           onPress={onBack}
-          className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
+          className="h-11 w-11 items-center justify-center rounded-full"
+          style={({pressed}) => ({
+            backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+          })}
         >
           <Ionicons name="arrow-back" size={22} color="#475569" />
         </Pressable>
         <Text
-          className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)}  font-bold text-slate-900  `}
-          style={style}
+          className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)}  font-bold `}
+          style={[style, {color: APP_COLORS.textPrimary}]}
         >
           {labels.title}
         </Text>
@@ -170,17 +187,30 @@ export default function CreateTruckScreen() {
           flexGrow: 1,
         }}
       >
+
         <View className="mt-1 gap-4">
-          <View className="rounded-2xl bg-white p-4">
+
+          {/* 1st card */}
+          <View className="rounded-2xl p-4"
+                style={{
+                  backgroundColor: APP_COLORS.card,
+                  borderColor: APP_COLORS.border,
+                  borderWidth: 1
+                }}>
+
             <View className="gap-3">
+
               <Text
-                className="text-[18px] font-bold text-slate-900"
-                style={style}
+                className={`text-sm font-bold  ${getMyanmarLeadingClass(locale)}`}
+                style={[style,{color:APP_COLORS.textPrimary}]}
               >
                 {labels.basicInfoTitle}
               </Text>
+
+              {/* plate number section */}
               {renderTextInput("plateNo", { required: true })}
 
+              {/* model && model year section */}
               <View className="flex-row gap-2">
                 <View className="flex-1">
                   {renderTextInput("model", { required: true })}
@@ -193,15 +223,16 @@ export default function CreateTruckScreen() {
                 </View>
               </View>
 
+              {/* fuel type */}
               <View className="gap-1.5">
+
                 <View className="flex-row items-center gap-1">
                   <Text
-                    className="text-sm font-medium text-slate-900"
-                    style={style}
+                      className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                      style={[{color: APP_COLORS.textSecondary}, style]}
                   >
                     {labels.fieldLabels.fuelType}
                   </Text>
-                  <Text className="text-red-500">*</Text>
                 </View>
 
                 <Controller
@@ -217,54 +248,93 @@ export default function CreateTruckScreen() {
                       }}
                     >
                       <Select.Trigger
-                        className={`rounded-xl h-11 py-0 ${getMyanmarLeadingClass(locale)}  border border-slate-200 bg-white px-2.5`}
+                          className={`rounded-xl h-14 py-0 ${getMyanmarLeadingClass(locale)}   px-2.5`}
+                          style={{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1
+                          }}
                       >
                         <Select.Value
-                          className={` py-0 text-sm ${getMyanmarLeadingClass(locale)}`}
                           placeholder={labels.fuelTypePlaceholder}
+                          className={` py-0 text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                          style={[{color: APP_COLORS.textPrimary}]}
                         />
                         <Select.TriggerIndicator />
                       </Select.Trigger>
                       <Select.Portal>
                         <Select.Overlay />
                         <Select.Content
-                          className="rounded-2xl border border-slate-200 bg-white"
+                          className="rounded-2xl"
+                          style={{
+                              backgroundColor: APP_COLORS.card,
+                              borderColor: APP_COLORS.border,
+                              borderWidth: 1
+                          }}
                           presentation="popover"
                           width="trigger"
                         >
-                          {FUEL_TYPES.map((fuelType) => (
+                          {FUEL_TYPES.map((fuelType) => {
+
+                          const itemLabel = fuelType;
+                          const isSelected = fuelType === value;
+
+                          return (
                             <Select.Item
                               key={fuelType}
                               value={fuelType}
-                              label={fuelType}
+                              label={itemLabel}
+                              style={{
+                                  backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                  paddingVertical: 12,
+                                  paddingHorizontal: 16,
+                              }}
                             >
-                              <Select.ItemLabel style={style} />
+                                <Select.ItemLabel
+                                    className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                                    style={[style, {
+                                        color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                        fontWeight: isSelected ? "600" : "400"
+                                    }]}
+                                />
                               <Select.ItemIndicator />
                             </Select.Item>
-                          ))}
+                          )}
+
+                          )}
                         </Select.Content>
                       </Select.Portal>
                     </Select>
                   )}
                 />
                 {!!errors.fuelType?.message && (
-                  <Text className="text-xs text-red-500">
+                    <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                          style={[{color: APP_COLORS.error}, style]}>
                     {String(errors.fuelType.message)}
                   </Text>
                 )}
               </View>
+
             </View>
+
           </View>
 
-          <View className="rounded-2xl bg-white p-4">
+          {/* 2nd card */}
+          <View className="rounded-2xl p-4"
+                style={{
+                  backgroundColor: APP_COLORS.card,
+                  borderColor: APP_COLORS.border,
+                  borderWidth: 1
+                }}>
             <View className="gap-3">
               <Text
-                className="text-[18px] font-bold text-slate-900"
-                style={style}
+                  className={`text-sm font-bold  ${getMyanmarLeadingClass(locale)}`}
+                  style={[style,{color:APP_COLORS.textPrimary}]}
               >
                 {labels.tireAndExtraTitle}
               </Text>
 
+              {/* fTire and bTire section */}
               <View className="flex-row gap-2">
                 <View className="flex-1">
                   {renderTextInput("frontTire", { required: true })}
@@ -274,10 +344,15 @@ export default function CreateTruckScreen() {
                 </View>
               </View>
 
+              {/* chassisNo section */}
               {renderTextInput("chassisNo")}
+
+              {/* engineNo section */}
               {renderTextInput("engineNo")}
+
             </View>
           </View>
+
         </View>
 
         <Button
@@ -286,7 +361,7 @@ export default function CreateTruckScreen() {
           className={`mb-2 mt-5 items-center justify-center rounded-xl ${getMyanmarLeadingClass(locale)} bg-primary `}
           variant="outline"
         >
-          <Text className="text-base font-semibold text-white" style={style}>
+          <Text className={`text-sm font-bold text-white ${getMyanmarLeadingClass(locale)}`} style={style}>
             {isPending ? labels.submitting : labels.submit}
           </Text>
         </Button>
