@@ -37,14 +37,6 @@ import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-quer
 import {Feather} from "@expo/vector-icons";
 import {toIsoDate, parseDmyToDate} from "@/utils/dateUtil"
 
-function todayIsoLocal(): string {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
-}
-
 function toDmyDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
