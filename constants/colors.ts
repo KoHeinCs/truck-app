@@ -88,14 +88,14 @@ export const APP_COLORS = {
    * WHEN: Creating interactive fields where a user actively inputs text data, and you want to prevent blinding white glare over pure white card layouts.
    * WHERE: The background property inside a text input container box, dynamic search inputs, and text fields within a form card.
    */
-  inputBackground: "#f8fafc",
+  inputBackground: "#faf9f6",
 
   /**
    * Subtle grid structural dividers.
    * WHEN: Framing component boundaries, splitting list indexes, or drawing baseline structural constraints.
    * WHERE: Inner component border wrappers, thin 0.5px line dividers separating list items, unfocused input boxes outlines.
    */
-  border: "#d9e6f7",
+  border: "#cbd5e1",
 
   // ==========================================
   // 4. TYPOGRAPHIC CONTEXT TOKENS
