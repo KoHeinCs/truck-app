@@ -1,351 +1,406 @@
-import { APP_COLORS } from "@/constants/colors";
+import {APP_COLORS} from "@/constants/colors";
 import {
-  getMyanmarLeadingClass,
-  myanmarUITextStyle,
+    getMyanmarLeadingClass,
+    myanmarUITextStyle,
 } from "@/constants/myanmar-font";
-import { useTranslation } from "@/hooks/use-translation";
-import { getApiErrorAlertCopy } from "@/lib/api-error-alert";
+import {useTranslation} from "@/hooks/use-translation";
+import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import profileLocale from "@/locale/profile/profile.json";
-import { useLocaleStore } from "@/stores/client/locale-store";
-import { useTruckDetail } from "@/stores/server/truck/query";
-import { useUpdateTruck } from "@/stores/server/truck/update-mutation";
+import {useLocaleStore} from "@/stores/client/locale-store";
+import {useTruckDetail} from "@/stores/server/truck/query";
+import {useUpdateTruck} from "@/stores/server/truck/update-mutation";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { Button, Input, Select } from "heroui-native";
-import React, { useCallback, useEffect, useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useQueryClient} from "@tanstack/react-query";
+import {useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
+import {Button, Input, Select} from "heroui-native";
+import React, {useCallback, useEffect, useMemo} from "react";
+import {Controller, useForm} from "react-hook-form";
 import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
+    ActivityIndicator,
+    Alert,
+    Pressable,
+    ScrollView,
+    Text,
+    View,
 } from "react-native";
 import {
-  SafeAreaView,
-  useSafeAreaInsets,
+    SafeAreaView,
+    useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { z } from "zod";
+import {z} from "zod";
 
 const YEAR_RE = /^\d{4}$/;
 const FUEL_TYPES = ["diesel", "petrol", "CNG"] as const;
 
 function buildSchema(requiredField: string, modelYearInvalid: string) {
-  return z.object({
-    model: z.string().min(1, requiredField).max(100),
-    modelYear: z
-      .string()
-      .min(1, requiredField)
-      .refine((v) => YEAR_RE.test(v.trim()), modelYearInvalid),
-    fuelType: z.enum(FUEL_TYPES, { message: requiredField }),
-    frontTire: z.string().min(1, requiredField).max(100),
-    backTire: z.string().min(1, requiredField).max(100),
-    chassisNo: z.string().max(100).optional(),
-    engineNo: z.string().max(100).optional(),
-  });
+    return z.object({
+        model: z.string().min(1, requiredField).max(100),
+        modelYear: z
+            .string()
+            .min(1, requiredField)
+            .refine((v) => YEAR_RE.test(v.trim()), modelYearInvalid),
+        fuelType: z.enum(FUEL_TYPES, {message: requiredField}),
+        frontTire: z.string().min(1, requiredField).max(100),
+        backTire: z.string().min(1, requiredField).max(100),
+        chassisNo: z.string().max(100).optional(),
+        engineNo: z.string().max(100).optional(),
+    });
 }
 
 type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 export default function EditTruckScreen() {
-  const router = useRouter();
-  const qc = useQueryClient();
-  const insets = useSafeAreaInsets();
-  const locale = useLocaleStore((state) => state.locale);
-  const labels = profileLocale[locale].editTruckScreen;
-  const createLabels = profileLocale[locale].createTruckScreen;
-  const errorCatalog = useTranslation("error");
-  const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
-  const style = locale === "mm" ? mmTextStyle : undefined;
-  const schema = useMemo(
-    () =>
-      buildSchema(createLabels.requiredField, createLabels.modelYearInvalid),
-    [createLabels.modelYearInvalid, createLabels.requiredField],
-  );
-
-  const { id } = useLocalSearchParams<{ id?: string }>();
-  const truckId = String(id ?? "").trim();
-  const { data, isPending: isLoading } = useTruckDetail(truckId);
-  const { mutate, isPending } = useUpdateTruck();
-
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      model: "",
-      modelYear: "",
-      fuelType: "diesel",
-      frontTire: "",
-      backTire: "",
-      chassisNo: "",
-      engineNo: "",
-    },
-  });
-
-  useEffect(() => {
-    const detail = data?.data;
-    if (!detail) return;
-    const fuelTypeRaw = String(detail.fuelType ?? "diesel").toLowerCase();
-    const fuelType = FUEL_TYPES.includes(
-      fuelTypeRaw as (typeof FUEL_TYPES)[number],
-    )
-      ? (fuelTypeRaw as FormValues["fuelType"])
-      : "diesel";
-
-    reset({
-      model: String(detail.model ?? detail.make ?? "").trim(),
-      modelYear: String(detail.modelYear ?? "").trim(),
-      fuelType,
-      frontTire: String(detail.frontTire ?? detail.frontTireSize ?? "").trim(),
-      backTire: String(detail.backTire ?? "").trim(),
-      chassisNo: String(detail.chassisNo ?? "").trim(),
-      engineNo: String(detail.engineNo ?? "").trim(),
-    });
-  }, [data, reset]);
-
-  const onSubmit = (values: FormValues) => {
-    const detail = data?.data;
-    if (!truckId || !detail) return;
-    mutate(
-      {
-        id: truckId,
-        version: Number(detail.version ?? 0),
-        model: values.model.trim(),
-        modelYear: Number(values.modelYear.trim()),
-        fuelType: values.fuelType.trim(),
-        frontTire: values.frontTire.trim(),
-        backTire: values.backTire.trim(),
-        chassisNo: values.chassisNo?.trim() || undefined,
-        engineNo: values.engineNo?.trim() || undefined,
-      },
-      {
-        onSuccess: () => {
-          Alert.alert(labels.successTitle, labels.successBody);
-          router.replace("/(tabs)/profile/truck");
-        },
-        onError: (err: unknown) => {
-          const { title, message } = getApiErrorAlertCopy(err, errorCatalog, {
-            title: labels.errorTitle,
-            message: labels.errorBody,
-          });
-          Alert.alert(title, message);
-        },
-      },
+    const router = useRouter();
+    const qc = useQueryClient();
+    const insets = useSafeAreaInsets();
+    const locale = useLocaleStore((state) => state.locale);
+    const labels = profileLocale[locale].editTruckScreen;
+    const createLabels = profileLocale[locale].createTruckScreen;
+    const errorCatalog = useTranslation("error");
+    const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
+    const style = locale === "mm" ? mmTextStyle : undefined;
+    const schema = useMemo(
+        () =>
+            buildSchema(createLabels.requiredField, createLabels.modelYearInvalid),
+        [createLabels.modelYearInvalid, createLabels.requiredField],
     );
-  };
 
-  const renderField = (
-    key: keyof Omit<FormValues, "fuelType">,
-    options?: {
-      required?: boolean;
-      keyboardType?: "number-pad";
-      multiline?: boolean;
-      editable?: boolean;
-      valueOverride?: string;
-    },
-  ) => (
-    <View className="gap-1.5">
-      <View className="flex-row items-center gap-1">
-        <Text
-          className={`text-sm font-medium text-slate-900 ${getMyanmarLeadingClass(locale)} `}
-          style={style}
-        >
-          {createLabels.fieldLabels[key]}
-        </Text>
-        {options?.required ? <Text className="text-red-500">*</Text> : null}
-      </View>
-      <Controller
-        control={control}
-        name={key}
-        render={({ field: { onChange, value } }) => (
-          <Input
-            value={options?.valueOverride ?? String(value ?? "")}
-            onChangeText={onChange}
-            keyboardType={options?.keyboardType}
-            autoCapitalize="none"
-            editable={options?.editable ?? true}
-            // multiline={options?.multiline}
-            // numberOfLines={options?.multiline ? 4 : 1}
-            textAlignVertical={options?.multiline ? "top" : "center"}
-            className={`border py-0 h-11 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
-          />
-        )}
-      />
-      {(options?.editable ?? true) && !!errors[key]?.message && (
-        <Text className="text-xs text-red-500">
-          {String(errors[key]?.message)}
-        </Text>
-      )}
-    </View>
-  );
+    const {id} = useLocalSearchParams<{ id?: string }>();
+    const truckId = String(id ?? "").trim();
+    const {data, isPending: isLoading} = useTruckDetail(truckId);
+    const {mutate, isPending} = useUpdateTruck();
 
-  const onBack = useCallback(() => {
-    qc.invalidateQueries({ queryKey: ["trucks"] });
-    router.back();
-  }, [qc, router]);
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: {errors},
+    } = useForm<FormValues>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            model: "",
+            modelYear: "",
+            fuelType: "diesel",
+            frontTire: "",
+            backTire: "",
+            chassisNo: "",
+            engineNo: "",
+        },
+    });
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        qc.invalidateQueries({ queryKey: ["trucks"] });
-      };
-    }, [qc]),
-  );
+    useEffect(() => {
+        const detail = data?.data;
+        if (!detail) return;
+        const fuelTypeRaw = String(detail.fuelType ?? "diesel").toLowerCase();
+        const fuelType = FUEL_TYPES.includes(
+            fuelTypeRaw as (typeof FUEL_TYPES)[number],
+        )
+            ? (fuelTypeRaw as FormValues["fuelType"])
+            : "diesel";
 
-  return (
-    <SafeAreaView className="flex-1 bg-[#f3f7fb]">
-      <View className="flex-row items-center px-4 pb-3 pt-1">
-        <Pressable
-          onPress={onBack}
-          className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
-        >
-          <Ionicons name="arrow-back" size={22} color="#475569" />
-        </Pressable>
-        <Text
-          className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)}  font-bold text-slate-900  `}
-          style={style}
-        >
-          {labels.title}
-        </Text>
-        <View className="h-11 w-11" />
-      </View>
+        reset({
+            model: String(detail.model ?? detail.make ?? "").trim(),
+            modelYear: String(detail.modelYear ?? "").trim(),
+            fuelType,
+            frontTire: String(detail.frontTire ?? detail.frontTireSize ?? "").trim(),
+            backTire: String(detail.backTire ?? "").trim(),
+            chassisNo: String(detail.chassisNo ?? "").trim(),
+            engineNo: String(detail.engineNo ?? "").trim(),
+        });
+    }, [data, reset]);
 
-      {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color={APP_COLORS.primary} />
-        </View>
-      ) : (
-        <ScrollView
-          className="px-4"
-          contentContainerStyle={{
-            paddingBottom: insets.bottom + 80,
-            flexGrow: 1,
-          }}
-        >
-          <View className="mt-1 rounded-3xl bg-white p-5">
-            <View className="gap-4">
-              {renderField("model", {
-                required: true,
-                editable: false,
-                valueOverride:
-                  `${data?.data?.modelYear ?? ""} ${data?.data?.model ?? ""}`.trim(),
-              })}
+    const onSubmit = (values: FormValues) => {
+        const detail = data?.data;
+        if (!truckId || !detail) return;
+        mutate(
+            {
+                id: truckId,
+                version: Number(detail.version ?? 0),
+                model: values.model.trim(),
+                modelYear: Number(values.modelYear.trim()),
+                fuelType: values.fuelType.trim(),
+                frontTire: values.frontTire.trim(),
+                backTire: values.backTire.trim(),
+                chassisNo: values.chassisNo?.trim() || undefined,
+                engineNo: values.engineNo?.trim() || undefined,
+            },
+            {
+                onSuccess: () => {
+                    Alert.alert(labels.successTitle, labels.successBody);
+                    router.replace("/(tabs)/profile/truck");
+                },
+                onError: (err: unknown) => {
+                    const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
+                        title: labels.errorTitle,
+                        message: labels.errorBody,
+                    });
+                    Alert.alert(title, message);
+                },
+            },
+        );
+    };
 
-              <View className="flex-row gap-3">
-                <View className="flex-1">
-                  {renderField("frontTire", { required: true })}
-                </View>
-                <View className="flex-1">
-                  {renderField("backTire", { required: true })}
-                </View>
-              </View>
-
-              <View className="gap-1.5">
-                <View className="flex-row items-center gap-1">
-                  <Text
-                    className="text-sm font-medium text-slate-900"
-                    style={style}
-                  >
-                    {createLabels.fieldLabels.fuelType}
-                  </Text>
-                  <Text className="text-red-500">*</Text>
-                </View>
-                <Controller
-                  control={control}
-                  name="fuelType"
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      value={{ value, label: value }}
-                      onValueChange={(next) => {
-                        if (next && !Array.isArray(next)) {
-                          onChange(next.value as FormValues["fuelType"]);
-                        }
-                      }}
-                    >
-                      <Select.Trigger
-                        className={`rounded-2xl ${getMyanmarLeadingClass(locale)} h-11 py-0 border border-slate-200 bg-[#f8fafc] px-3`}
-                      >
-                        <Select.Value
-                          className={`py-0 ${getMyanmarLeadingClass(locale)}`}
-                          placeholder={createLabels.fuelTypePlaceholder}
-                        />
-                        <Select.TriggerIndicator />
-                      </Select.Trigger>
-                      <Select.Portal>
-                        <Select.Overlay />
-                        <Select.Content
-                          className="rounded-2xl border border-slate-200 bg-white"
-                          presentation="popover"
-                          width="trigger"
-                        >
-                          {FUEL_TYPES.map((fuelType) => (
-                            <Select.Item
-                              key={fuelType}
-                              value={fuelType}
-                              label={fuelType}
-                            >
-                              <Select.ItemLabel style={style} />
-                              <Select.ItemIndicator />
-                            </Select.Item>
-                          ))}
-                        </Select.Content>
-                      </Select.Portal>
-                    </Select>
-                  )}
-                />
-                {!!errors.fuelType?.message && (
-                  <Text className="text-xs text-red-500">
-                    {String(errors.fuelType.message)}
-                  </Text>
-                )}
-              </View>
-
-              {renderField("modelYear", {
-                required: true,
-                keyboardType: "number-pad",
-              })}
-              {renderField("chassisNo")}
-              {renderField("engineNo", { multiline: true })}
+    const renderField = (
+        key: keyof Omit<FormValues, "fuelType">,
+        options?: {
+            required?: boolean;
+            keyboardType?: "number-pad";
+            multiline?: boolean;
+            editable?: boolean;
+            valueOverride?: string;
+        },
+    ) => (
+        <View className="gap-1.5">
+            <View className="flex-row items-center gap-1">
+                <Text
+                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                    style={[{color: APP_COLORS.textSecondary}, style]}
+                >
+                    {createLabels.fieldLabels[key]}
+                </Text>
             </View>
-          </View>
+            <Controller
+                control={control}
+                name={key}
+                render={({field: {onChange, value}}) => (
+                    <Input
+                        value={options?.valueOverride ?? String(value ?? "")}
+                        onChangeText={onChange}
+                        keyboardType={options?.keyboardType}
+                        placeholderTextColor={APP_COLORS.textMuted}
+                        autoCapitalize="none"
+                        editable={options?.editable ?? true}
+                        textAlignVertical={options?.multiline ? "top" : "center"}
+                        style={[{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1,
+                            color: APP_COLORS.textPrimary
+                        }, style]}
+                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                    />
+                )}
+            />
+            {(options?.editable ?? true) && !!errors[key]?.message && (
+                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)}`}
+                      style={[style, {color: APP_COLORS.error}]}
+                >
+                    {String(errors[key]?.message)}
+                </Text>
+            )}
+        </View>
+    );
 
-          <View className="mb-2 mt-5 flex-row gap-3">
-            <Button
-              onPress={onBack}
-              variant="outline"
-              className={`flex-1 items-center py-0 justify-center rounded-xl bg-slate-200 ${getMyanmarLeadingClass(locale)}`}
-            >
-              <Text
-                className={`text-sm font-semibold text-slate-700 ${getMyanmarLeadingClass(locale)} `}
-                // style={style}
-              >
-                {labels.cancel}
-              </Text>
-            </Button>
+    const onBack = useCallback(() => {
+        qc.invalidateQueries({queryKey: ["trucks"]});
+        router.back();
+    }, [qc, router]);
 
-            <Button
-              onPress={handleSubmit(onSubmit)}
-              isDisabled={isPending}
-              className="flex-1 items-center justify-center rounded-xl py-0 bg-primary"
-              variant="outline"
-            >
-              <Text
-                className={`text-sm font-semibold text-white ${getMyanmarLeadingClass(locale)} `}
-                style={style}
-              >
-                {isPending ? labels.submitting : labels.submit}
-              </Text>
-            </Button>
-          </View>
-        </ScrollView>
-      )}
-    </SafeAreaView>
-  );
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                qc.invalidateQueries({queryKey: ["trucks"]});
+            };
+        }, [qc]),
+    );
+
+    return (
+        <SafeAreaView className="flex-1 " style={{backgroundColor: APP_COLORS.background}}>
+            <View className="flex-row items-center px-4 pb-3 pt-1">
+                <Pressable
+                    onPress={onBack}
+                    className="h-11 w-11 items-center justify-center rounded-full"
+                    style={({pressed}) => ({
+                        backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+                    })}>
+                    <Ionicons name="arrow-back" size={22} color="#475569"/>
+                </Pressable>
+                <Text
+                    className={`flex-1 px-3 text-center text-lg ${getMyanmarLeadingClass(locale)}  font-bold  `}
+                    style={[style, {color: APP_COLORS.textPrimary}]}
+                >
+                    {labels.title}
+                </Text>
+                <View className="h-11 w-11"/>
+            </View>
+
+            {isLoading ? (
+                <View className="flex-1 items-center justify-center">
+                    <ActivityIndicator color={APP_COLORS.primary}/>
+                </View>
+            ) : (
+                <ScrollView
+                    className="px-4"
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + 80,
+                        flexGrow: 1,
+                    }}
+                >
+
+                    <View className="mt-1 rounded-2xl p-4"
+                          style={{
+                              backgroundColor: APP_COLORS.card,
+                              borderColor: APP_COLORS.border,
+                              borderWidth: 1
+                          }}>
+                        <View className="gap-4">
+
+                            {/* model field */}
+                            {renderField("model", {
+                                required: true,
+                                editable: false,
+                                valueOverride:
+                                    `${data?.data?.modelYear ?? ""} ${data?.data?.model ?? ""}`.trim(),
+                            })}
+
+                            {/* F tire , B tire field */}
+                            <View className="flex-row gap-3">
+                                <View className="flex-1">
+                                    {renderField("frontTire", {required: true})}
+                                </View>
+                                <View className="flex-1">
+                                    {renderField("backTire", {required: true})}
+                                </View>
+                            </View>
+
+                            {/* fuel type */}
+                            <View className="gap-1.5">
+                                <View className="flex-row items-center gap-1">
+                                    <Text
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        style={[{color: APP_COLORS.textSecondary}, style]}
+                                    >
+                                        {createLabels.fieldLabels.fuelType}
+                                    </Text>
+                                </View>
+                                <Controller
+                                    control={control}
+                                    name="fuelType"
+                                    render={({field: {value, onChange}}) => (
+                                        <Select
+                                            value={{value, label: value}}
+                                            onValueChange={(next) => {
+                                                if (next && !Array.isArray(next)) {
+                                                    onChange(next.value as FormValues["fuelType"]);
+                                                }
+                                            }}
+                                        >
+                                            <Select.Trigger
+                                                className={`rounded-xl h-14 py-0 ${getMyanmarLeadingClass(locale)}   px-2.5`}
+                                                style={{
+                                                    backgroundColor: APP_COLORS.inputBackground,
+                                                    borderColor: APP_COLORS.border,
+                                                    borderWidth: 1
+                                                }}
+                                            >
+                                                <Select.Value
+                                                    className={` py-0 text-[12px] font-medium ${getMyanmarLeadingClass(locale)}`}
+                                                    style={[{color: APP_COLORS.textPrimary}]}
+                                                    placeholder={createLabels.fuelTypePlaceholder}
+                                                />
+                                                <Select.TriggerIndicator/>
+                                            </Select.Trigger>
+                                            <Select.Portal>
+                                                <Select.Overlay/>
+                                                <Select.Content
+                                                    className="rounded-2xl"
+                                                    style={{
+                                                        backgroundColor: APP_COLORS.card,
+                                                        borderColor: APP_COLORS.border,
+                                                        borderWidth: 1
+                                                    }}
+                                                    presentation="popover"
+                                                    width="trigger"
+                                                >
+                                                    {FUEL_TYPES.map((fuelType) => {
+
+                                                            const itemLabel = fuelType;
+                                                            const isSelected = fuelType === value;
+
+                                                            return (
+                                                                <Select.Item
+                                                                    key={fuelType}
+                                                                    value={fuelType}
+                                                                    label={fuelType}
+                                                                    style={{
+                                                                        backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                        paddingVertical: 12,
+                                                                        paddingHorizontal: 16,
+                                                                    }}
+                                                                >
+                                                                    <Select.ItemLabel
+                                                                        className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                                                                        style={[style, {
+                                                                            color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                            fontWeight: isSelected ? "600" : "400"
+                                                                        }]}
+                                                                    />
+                                                                    <Select.ItemIndicator/>
+                                                                </Select.Item>
+                                                            )
+                                                        }
+                                                    )}
+                                                </Select.Content>
+                                            </Select.Portal>
+                                        </Select>
+                                    )}
+                                />
+                                {!!errors.fuelType?.message && (
+                                    <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                                          style={[{color: APP_COLORS.error}, style]}>
+                                        {String(errors.fuelType.message)}
+                                    </Text>
+                                )}
+                            </View>
+
+                            {/* model year  */}
+                            {renderField("modelYear", {
+                                required: true,
+                                keyboardType: "number-pad",
+                            })}
+
+                            {/* chassis no.  */}
+                            {renderField("chassisNo")}
+
+                            {/* engine no.  */}
+                            {renderField("engineNo", {multiline: true})}
+
+                        </View>
+                    </View>
+
+                    {/* Cancel && Submit button */}
+                    <View className="mb-2 mt-5 flex-row gap-3">
+                        <Button
+                            onPress={onBack}
+                            variant="outline"
+                            className={`flex-1 items-center py-0 justify-center rounded-xl bg-slate-200 ${getMyanmarLeadingClass(locale)}`}
+                        >
+                            <Text
+                                className={`text-sm font-semibold text-slate-700 ${getMyanmarLeadingClass(locale)} `}
+                                // style={style}
+                            >
+                                {labels.cancel}
+                            </Text>
+                        </Button>
+
+                        <Button
+                            onPress={handleSubmit(onSubmit)}
+                            isDisabled={isPending}
+                            className="flex-1 items-center justify-center rounded-xl py-0 bg-primary"
+                            variant="outline"
+                        >
+                            <Text
+                                className={`text-sm font-semibold text-white ${getMyanmarLeadingClass(locale)} `}
+                                style={style}
+                            >
+                                {isPending ? labels.submitting : labels.submit}
+                            </Text>
+                        </Button>
+                    </View>
+
+                </ScrollView>
+            )}
+        </SafeAreaView>
+    );
 }
