@@ -1,4 +1,5 @@
 export type ProposalTabStatus = "INFORM" | "APPROVED" | "TERMINATED";
+type ProposalApiStatus = ProposalTabStatus;
 
 export type ProposalAdvancedFilters = {
   proposalNo: string;
@@ -42,6 +43,12 @@ const column = (
   searchable,
   orderable: false,
 });
+
+const proposalApiStatusByTab: Record<ProposalTabStatus, ProposalApiStatus> = {
+  INFORM: "INFORM",
+  APPROVED: "APPROVED",
+  TERMINATED: "TERMINATED",
+};
 
 const dmyToIsoDate = (value: string): string | null => {
   const raw = value.trim();
@@ -111,14 +118,13 @@ export function buildProposalSearchColumns(
   allowOwnerId: boolean,
   allowCreatedBy: boolean,
 ): ProposalColumn[] {
-  const columns: ProposalColumn[] = [];
-
-  // Keep initial default request unfiltered (no columns).
-  if (status !== "INFORM") {
-    columns.push(
-      column("status", { value: status, type: "eq", matchCase: true }),
-    );
-  }
+  const columns: ProposalColumn[] = [
+    column("status", {
+      value: proposalApiStatusByTab[status],
+      type: "eq",
+      matchCase: true,
+    }),
+  ];
 
   const proposalNo = f.proposalNo.trim();
   const quickQuery = f.quickQuery.trim();

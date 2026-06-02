@@ -6,9 +6,15 @@ import { getApiErrorAlertCopy } from "@/lib/api-error-alert";
 import proposalLocale from "@/locale/proposal/proposal.json";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useApproveProposal } from "@/stores/server/proposal/approve-mutation";
-import { useProposalDetail } from "@/stores/server/proposal/query";
+import {
+  useProposalDetail,
+  useProposalHistory,
+} from "@/stores/server/proposal/query";
 import { useTerminateProposal } from "@/stores/server/proposal/terminate-mutation";
-import type { ProposalDetail } from "@/stores/server/proposal/typed";
+import type {
+  ProposalDetail,
+  ProposalHistoryItem,
+} from "@/stores/server/proposal/typed";
 import { normalizeServiceDateForApi } from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -46,6 +52,26 @@ function formatAmount(value: number): string {
   return `${safeValue.toLocaleString()} Ks`;
 }
 
+function getHistoryBadgeContainerClass(action: string): string {
+  const normalized = action.toUpperCase();
+  if (normalized.includes("APPROV")) {
+    return "border-emerald-200 bg-emerald-50";
+  }
+  if (normalized.includes("TERMINAT") || normalized.includes("REJECT")) {
+    return "border-red-200 bg-red-50";
+  }
+  return "border-sky-200 bg-sky-50";
+}
+
+function getHistoryBadgeTextClass(action: string): string {
+  const normalized = action.toUpperCase();
+  if (normalized.includes("APPROV")) return "text-emerald-600";
+  if (normalized.includes("TERMINAT") || normalized.includes("REJECT")) {
+    return "text-red-600";
+  }
+  return "text-sky-600";
+}
+
 function getOwnershipId(
   detail: ProposalDetail | undefined,
   fallback: string,
@@ -68,7 +94,9 @@ export default function ProposalDetailScreen() {
   const proposalNo = String(params.proposalNo ?? "").trim();
   const ownershipId = String(params.ownershipId ?? "").trim();
   const { data, isPending } = useProposalDetail(proposalNo, ownershipId);
+  const { data: historyData } = useProposalHistory(proposalNo, ownershipId);
   const detail = data?.data;
+  const histories = historyData?.data ?? [];
   const { mutate: approveProposal, isPending: isApproving } =
     useApproveProposal();
   const { mutate: terminateProposal, isPending: isTerminating } =
@@ -91,6 +119,9 @@ export default function ProposalDetailScreen() {
           owner: "ပိုင်ရှင်",
           description: "ဖော်ပြချက်",
           status: "အခြေအနေ",
+          historyTitle: "လုပ်ဆောင်ချက် မှတ်တမ်းများ",
+          remark: "မှတ်ချက်",
+          notes: "မှတ်စု",
         }
       : {
           title: "Proposal Detail",
@@ -103,6 +134,9 @@ export default function ProposalDetailScreen() {
           owner: "Owner",
           description: "Description",
           status: "Status",
+          historyTitle: "Action History",
+          remark: "Remark",
+          notes: "Notes",
         };
 
   const showActions = (detail?.status || "").toUpperCase() === "INFORM";
@@ -366,6 +400,24 @@ export default function ProposalDetailScreen() {
             </View>
           </View>
 
+          {histories.length > 0 ? (
+            <View className="mt-5 rounded-2xl bg-white p-4">
+              <Text className={`text-base font-bold text-slate-900 ${mmLeading}`}>
+                {labels.historyTitle}
+              </Text>
+              <View className="mt-4 gap-3">
+                {histories.map((history) => (
+                  <ProposalHistoryCard
+                    key={history.id}
+                    item={history}
+                    labels={labels}
+                    mmLeading={mmLeading}
+                  />
+                ))}
+              </View>
+            </View>
+          ) : null}
+
           {showActions ? (
             <View className="mb-2 mt-5 flex-row items-center w-full gap-3">
               <Button
@@ -540,5 +592,84 @@ export default function ProposalDetailScreen() {
         </Pressable>
       </Modal>
     </SafeAreaView>
+  );
+}
+
+type HistoryLabels = {
+  remark: string;
+  notes: string;
+};
+
+type ProposalHistoryCardProps = {
+  item: ProposalHistoryItem;
+  labels: HistoryLabels;
+  mmLeading: string;
+};
+
+function ProposalHistoryCard({
+  item,
+  labels,
+  mmLeading,
+}: ProposalHistoryCardProps) {
+  const remark = String(item.remark ?? "").trim();
+  const notes = String(item.notes ?? "").trim();
+
+  return (
+    <View className="rounded-2xl border border-slate-100 bg-[#fbfcfe] p-3">
+      <View className="flex-row items-start gap-3">
+        <View className="h-9 w-9 items-center justify-center rounded-full border border-slate-100 bg-white">
+          <Ionicons name="person-outline" size={18} color="#64748b" />
+        </View>
+
+        <View className="flex-1">
+          <View className="flex-row items-start justify-between gap-2">
+            <View className="flex-1">
+              <Text className={`text-sm font-bold text-slate-700 ${mmLeading}`}>
+                {item.actorName || "-"}
+              </Text>
+              <Text className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}>
+                {formatDateTime(item.createdAt)}
+              </Text>
+            </View>
+
+            <View
+              className={`rounded-lg border px-3 py-1 ${getHistoryBadgeContainerClass(
+                item.action,
+              )}`}
+            >
+              <Text
+                className={`text-xs font-semibold uppercase ${getHistoryBadgeTextClass(
+                  item.action,
+                )} ${mmLeading}`}
+              >
+                {item.action || "-"}
+              </Text>
+            </View>
+          </View>
+
+          {remark ? (
+            <View className="mt-3 rounded-xl border border-slate-100 bg-white p-3">
+              <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                {labels.remark}
+              </Text>
+              <Text className={`mt-1 text-sm text-slate-700 ${mmLeading}`}>
+                {remark}
+              </Text>
+            </View>
+          ) : null}
+
+          {notes ? (
+            <View className="mt-3 rounded-xl border border-slate-100 bg-white p-3">
+              <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                {labels.notes}
+              </Text>
+              <Text className={`mt-1 text-sm text-slate-700 ${mmLeading}`}>
+                {notes}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      </View>
+    </View>
   );
 }

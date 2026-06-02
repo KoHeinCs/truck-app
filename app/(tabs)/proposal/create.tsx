@@ -12,8 +12,7 @@ import { useCreateProposal } from "@/stores/server/proposal/create-mutation";
 import { buildServiceTypeSearchColumns } from "@/stores/server/service-type/search-columns";
 import { useServiceTypesInfinite } from "@/stores/server/service-type/query";
 import type { ServiceTypeItem } from "@/stores/server/service-type/typed";
-import { buildTruckSearchColumns } from "@/stores/server/truck/search-columns";
-import { useTrucksInfinite } from "@/stores/server/truck/query";
+import { useTruckSearchOptions } from "@/stores/server/truck/query";
 import type { TruckItem } from "@/stores/server/truck/typed";
 import { parseServiceDateDisplayToApi } from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -47,6 +46,8 @@ type FormValues = {
   description: string;
 };
 
+type ReviewValues = FormValues;
+
 function buildSchema(t: (typeof proposalLocale)["en"]["create"]) {
   return z.object({
     truckId: z.string().min(1, t.required),
@@ -74,6 +75,15 @@ function getTruckSubtitle(item: TruckItem): string {
   return [year, model].filter(Boolean).join(" ") || "-";
 }
 
+function matchesTruckQuery(item: TruckItem, query: string): boolean {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return true;
+
+  return [item.plateNo, item.model, item.modelYear, item.make]
+    .map((value) => String(value ?? "").toLowerCase())
+    .some((value) => value.includes(normalizedQuery));
+}
+
 export default function CreateProposalScreen() {
   const router = useRouter();
   const qc = useQueryClient();
@@ -83,6 +93,7 @@ export default function CreateProposalScreen() {
   const { mutate, isPending } = useCreateProposal();
   const [truckQuery, setTruckQuery] = useState("");
   const [truckPickerOpen, setTruckPickerOpen] = useState(false);
+  const [reviewValues, setReviewValues] = useState<ReviewValues | null>(null);
   const debouncedTruckQuery = useDebouncedValue(truckQuery, 400);
 
   const mmLeading = getMyanmarLeadingClass(locale);
@@ -105,22 +116,13 @@ export default function CreateProposalScreen() {
     },
   });
 
-  const truckColumns = useMemo(
-    () =>
-      buildTruckSearchColumns({
-        quickQuery: debouncedTruckQuery,
-        plateNo: "",
-        model: "",
-        modelYear: "",
-        engineNo: "",
-        chassisNo: "",
-      }),
-    [debouncedTruckQuery],
-  );
-  const { data: truckData } = useTrucksInfinite(truckColumns);
+  const { data: truckData } = useTruckSearchOptions();
   const trucks = useMemo(
-    () => truckData?.pages.flatMap((page) => page.data.data) ?? [],
-    [truckData],
+    () =>
+      (truckData?.data ?? []).filter((truck) =>
+        matchesTruckQuery(truck, debouncedTruckQuery),
+      ),
+    [truckData, debouncedTruckQuery],
   );
 
   const serviceColumns = useMemo(
@@ -144,7 +146,7 @@ export default function CreateProposalScreen() {
     router.back();
   }, [qc, router]);
 
-  const onSubmit = (values: FormValues) => {
+  const createFromReview = (values: ReviewValues) => {
     const serviceDate = parseServiceDateDisplayToApi(values.serviceDate);
     if (!serviceDate) return;
 
@@ -178,6 +180,18 @@ export default function CreateProposalScreen() {
     );
   };
 
+  const onSubmit = (values: FormValues) => {
+    setReviewValues(values);
+    setTruckPickerOpen(false);
+  };
+
+  const selectedReviewTruck = reviewValues
+    ? trucks.find((truck) => truck.id === reviewValues.truckId)
+    : undefined;
+  const selectedReviewServiceType = reviewValues
+    ? serviceTypes.find((item) => item.serviceType === reviewValues.serviceType)
+    : undefined;
+
   return (
     <SafeAreaView className="flex-1 bg-[#f3f7fb]">
       <View className="flex-row items-center px-4 pb-3 pt-1">
@@ -204,6 +218,92 @@ export default function CreateProposalScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="mt-1 rounded-2xl bg-white p-4">
+          {reviewValues ? (
+            <View className="gap-4">
+              <Text
+                className={`text-base font-bold text-slate-900 ${mmLeading}`}
+              >
+                {t.reviewTitle}
+              </Text>
+              <View className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <View className="mb-3">
+                  <Text
+                    className={`text-xs text-slate-500 ${mmLeading}`}
+                  >
+                    {t.truck}
+                  </Text>
+                  <Text
+                    className={`mt-1 text-base font-bold text-slate-900 ${mmLeading}`}
+                  >
+                    {selectedReviewTruck?.plateNo || truckQuery || "-"}
+                  </Text>
+                  <Text
+                    className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}
+                  >
+                    {selectedReviewTruck ? getTruckSubtitle(selectedReviewTruck) : "-"}
+                  </Text>
+                </View>
+
+                <View className="border-t border-slate-200 pt-3">
+                  <PreviewRow
+                    label={t.amount}
+                    value={reviewValues.proposalAmount}
+                    mmLeading={mmLeading}
+                  />
+                  <PreviewRow
+                    label={t.serviceType}
+                    value={
+                      selectedReviewServiceType
+                        ? getServiceTypeLabel(selectedReviewServiceType, locale)
+                        : reviewValues.serviceType
+                    }
+                    mmLeading={mmLeading}
+                  />
+                  <PreviewRow
+                    label={t.serviceShop}
+                    value={reviewValues.serviceShop}
+                    mmLeading={mmLeading}
+                  />
+                  <PreviewRow
+                    label={t.serviceDate}
+                    value={reviewValues.serviceDate}
+                    mmLeading={mmLeading}
+                  />
+                  <PreviewRow
+                    label={t.description}
+                    value={reviewValues.description || "-"}
+                    mmLeading={mmLeading}
+                    last
+                  />
+                </View>
+              </View>
+
+              <View className="flex-row gap-3 pt-2">
+                <Pressable
+                  onPress={() => setReviewValues(null)}
+                  disabled={isPending}
+                  className="flex-1 items-center justify-center rounded-xl bg-slate-100 h-14"
+                >
+                  <Text className={`font-semibold text-slate-700 ${mmLeading}`}>
+                    {t.edit}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => createFromReview(reviewValues)}
+                  disabled={isPending}
+                  className="flex-1 items-center justify-center rounded-xl h-14"
+                  style={{
+                    backgroundColor: APP_COLORS.primary,
+                    opacity: isPending ? 0.7 : 1,
+                  }}
+                >
+                  <Text className={`font-semibold text-white ${mmLeading}`}>
+                    {isPending ? t.submitting : t.confirm}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
           <View className="gap-4">
             <Controller
               control={control}
@@ -413,6 +513,7 @@ export default function CreateProposalScreen() {
               </Pressable>
             </View>
           </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -423,6 +524,24 @@ type RequiredLabelProps = {
   label: string;
   mmLeading: string;
 };
+
+type PreviewRowProps = {
+  label: string;
+  value: string;
+  mmLeading: string;
+  last?: boolean;
+};
+
+function PreviewRow({ label, value, mmLeading, last }: PreviewRowProps) {
+  return (
+    <View className={`${last ? "" : "mb-3"}`}>
+      <Text className={`text-xs text-slate-500 ${mmLeading}`}>{label}</Text>
+      <Text className={`mt-1 text-sm font-semibold text-slate-900 ${mmLeading}`}>
+        {value || "-"}
+      </Text>
+    </View>
+  );
+}
 
 function RequiredLabel({ label, mmLeading }: RequiredLabelProps) {
   return (

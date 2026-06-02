@@ -10,6 +10,12 @@ export interface ProposalDetailResponse {
   message: string;
 }
 
+export interface ProposalHistoryResponse {
+  data: ProposalHistoryItem[];
+  httpStatus: number;
+  message: string;
+}
+
 export interface ProposalPageData {
   data: ProposalItem[];
   page: number;
@@ -51,4 +57,16 @@ export interface ProposalDetail {
   ownerId?: string;
   ownerFullName?: string;
   ownerPhone?: string;
+}
+
+export interface ProposalHistoryItem {
+  id: string;
+  proposalRefNo: string;
+  action: string;
+  fromStatus?: string;
+  toStatus?: string;
+  remark?: string | null;
+  notes?: string | null;
+  actorName?: string;
+  createdAt: string;
 }

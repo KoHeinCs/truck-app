@@ -6,7 +6,11 @@ import {
 } from "@tanstack/react-query";
 import { axios } from "../api";
 import type { Column } from "../user/query";
-import type { TruckDetailResponse, TruckListResponse } from "./typed";
+import type {
+  TruckDetailResponse,
+  TruckListResponse,
+  TruckSearchResponse,
+} from "./typed";
 
 export interface TruckSearchPayload {
   page: number;
@@ -16,6 +20,11 @@ export interface TruckSearchPayload {
 
 const searchTrucks = async (payload: TruckSearchPayload): Promise<TruckListResponse> => {
   const { data } = await axios.post("/truck/search", payload);
+  return data;
+};
+
+const fetchTruckSearchOptions = async (): Promise<TruckSearchResponse> => {
+  const { data } = await axios.get("/truck/search");
   return data;
 };
 
@@ -50,6 +59,15 @@ export function useTrucksInfinite(
       }
       return lastPageParam + 1;
     },
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useTruckSearchOptions() {
+  return useQuery({
+    queryKey: ["trucks", "search-options"],
+    queryFn: fetchTruckSearchOptions,
+    staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
 }

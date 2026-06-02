@@ -12,7 +12,11 @@ import {
   type ProposalListFilters,
   type ProposalTabStatus,
 } from "./search-columns";
-import type { ProposalDetailResponse, ProposalListResponse } from "./typed";
+import type {
+  ProposalDetailResponse,
+  ProposalHistoryResponse,
+  ProposalListResponse,
+} from "./typed";
 
 const PROPOSAL_PAGE_SIZE = 10;
 
@@ -34,6 +38,16 @@ const fetchProposalDetail = async (
   ownershipId: string,
 ): Promise<ProposalDetailResponse> => {
   const { data } = await axios.get(`/proposal/find/no/${proposalNo}`, {
+    params: { ownershipId },
+  });
+  return data;
+};
+
+const fetchProposalHistory = async (
+  proposalNo: string,
+  ownershipId: string,
+): Promise<ProposalHistoryResponse> => {
+  const { data } = await axios.get(`/proposal/find/no/${proposalNo}/history`, {
     params: { ownershipId },
   });
   return data;
@@ -106,6 +120,14 @@ export function useProposalDetail(proposalNo: string, ownershipId: string) {
   return useQuery({
     queryKey: ["proposal", "detail", proposalNo, ownershipId],
     queryFn: () => fetchProposalDetail(proposalNo, ownershipId),
+    enabled: !!proposalNo && !!ownershipId,
+  });
+}
+
+export function useProposalHistory(proposalNo: string, ownershipId: string) {
+  return useQuery({
+    queryKey: ["proposal", "history", proposalNo, ownershipId],
+    queryFn: () => fetchProposalHistory(proposalNo, ownershipId),
     enabled: !!proposalNo && !!ownershipId,
   });
 }

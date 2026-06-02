@@ -4,6 +4,12 @@ export interface TruckListResponse {
   message: string;
 }
 
+export interface TruckSearchResponse {
+  data: TruckItem[];
+  httpStatus: number;
+  message: string;
+}
+
 export interface TruckData {
   data: TruckItem[];
   page: number;
