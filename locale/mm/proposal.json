@@ -88,35 +88,37 @@
         "errorBody": "စာရင်းတင်မှု မအောင်မြင်ပါ။"
       }
     },
-    "updateProposal": {
-      "title": "အဆိုပြုချက် ပြင်ဆင်ရန်",
+    "editProposal": {
+      "title": "စောင့်ဆိုင်းဆဲစာရင်း ပြန်ပြင်ဆင်ရန်",
       "labels": {
-        "proposalNo": "အဆိုပြုလွှာနံပါတ်",
+        "truck": "ယာဉ်နံပါတ်",
+        "proposalNo": "စာရင်းနံပါတ်",
+        "amount": "ကျသင့်ငွေပမာဏ",
+        "serviceType": "ပြင်ဆင်မှု/ဝန်ဆောင်မှု အမျိုးအစား",
+        "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ပေးသူ",
+        "serviceDate": "ပြင်ဆင်/ဝန်ဆောင်မှု ပေးသည့်အချိန်",
+        "description": "အသေးစိတ်အချက်အလက်",
         "remark": "မှတ်ချက်"
       },
       "placeholders": {
-        "proposalNo": "PROP-9999",
-        "remark": "မှတ်ချက်ရေးရန်..."
+        "amount": "ကျသင့်ငွေပမာဏ ထည့်ပါ",
+        "serviceType": "အမျိုးအစားရွေးပါ",
+        "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ထည့်ပါ",
+        "serviceDate": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် ရွေးပါ",
+        "description": "အသေးစိတ်အချက်အလက် ရေးသားရန်",
+        "remark": "မှတ်ချက် ထည့်ပါ"
       },
       "actions": {
-        "submit": "သိမ်းမည်",
-        "submitting": "သိမ်းဆည်းနေ...",
-        "accept": "လက်ခံမည်",
-        "terminate": "ပယ်ဖျက်မည်",
-        "confirmCancel": "ပယ်ဖျက်",
-        "confirmOk": "အတည်ပြု"
+        "update": "ပြင်ဆင်မည်",
+        "updating": "ပြင်ဆင်နေသည်...",
+        "done": "ပြီးပါပြီ",
+        "cancel": "မလုပ်တော့ပါ"
       },
       "dialog": {
-        "terminateConfirmTitle": "အဆိုပြုလွှာ ပယ်ဖျက်မလား",
-        "terminateConfirmBody": "ဤအဆိုပြုလွှာကို ပယ်ဖျက်ရန် သေချာပါသလား။",
-        "terminateSuccessTitle": "အောင်မြင်သည်",
-        "terminateSuccessBody": "အဆိုပြုချက်ကို ရပ်ဆိုင်းပြီးပါပြီ။",
-        "approveSuccessTitle": "အောင်မြင်သည်",
-        "approveSuccessBody": "အဆိုပြုချက်ကို လက်ခံပြီးပါပြီ။",
-        "successTitle": "အောင်မြင်ပါသည်",
-        "successBody": "အဆိုပြုချက် ပြင်ဆင်ပြီးပါပြီ။",
+        "successTitle": "အောင်မြင်သည်",
+        "successBody": "စောင့်ဆိုင်းဆဲစာရင်း ပြင်ဆင်ပြီးပါပြီ။",
         "errorTitle": "အမှားအယွင်း",
-        "errorBody": "လုပ်ဆောင်ချက် မအောင်မြင်ပါ။"
+        "errorBody": "စောင့်ဆိုင်းဆဲစာရင်း မပြင်ဆင်နိုင်ပါ။"
       }
     }
   }
