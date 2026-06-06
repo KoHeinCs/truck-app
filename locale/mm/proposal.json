@@ -15,26 +15,26 @@
     "search": {
       "advancedTitle": "အဆင့်မြင့်ရှာဖွေမှု",
       "labels": {
-        "proposalNo": "အဆိုပြုလွှာနံပါတ်",
-        "ownerId": "ပိုင်ရှင်",
+        "proposalNo": "စာရင်းနံပါတ်",
+        "ownerId": "ယာဉ်ပိုင်ရှင်",
         "plateNo": "ယာဉ်နံပါတ်",
         "proposalDateFrom": "အဆိုပြုရက် (မှ)",
         "proposalDateTo": "အဆိုပြုရက် (ထိ)",
         "serviceType": "ဝန်ဆောင်မှုအမျိုးအစား",
         "serviceDateFrom": "ပြင်ဆင်ရက် (မှ)",
         "serviceDateTo": "ပြင်ဆင်ရက် (ထိ)",
-        "createdBy": "အဆိုပြုသူ"
+        "createdBy": "စာရင်းတင်သူ"
       },
       "placeholders": {
-        "proposalNo": "အဆိုပြုလွှာနံပါတ်",
-        "ownerId": "ပိုင်ရှင်",
-        "plateNo": "ယာဉ်နံပါတ်",
-        "proposalDateFrom": "အဆိုပြုရက် (မှ)",
-        "proposalDateTo": "အဆိုပြုရက် (ထိ)",
-        "serviceType": "ဝန်ဆောင်မှုအမျိုးအစား",
-        "serviceDateFrom": "ပြင်ဆင်ရက် (မှ)",
-        "serviceDateTo": "ပြင်ဆင်ရက် (ထိ)",
-        "createdBy": "အဆိုပြုသူ"
+        "proposalNo": "စာရင်းနံပါတ် ထည့်ပါ",
+        "ownerId": "ယာဉ်ပိုင်ရှင် ရွေးပါ",
+        "plateNo": "ယာဉ်နံပါတ် ထည့်ပါ",
+        "proposalDateFrom": "ရက်/လ/ခုနှစ် ရွေးပါ",
+        "proposalDateTo": "ရက်/လ/ခုနှစ် ရွေးပါ",
+        "serviceType": "ဝန်ဆောင်မှု ရွေးပါ",
+        "serviceDateFrom": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် ရွေးပါ",
+        "serviceDateTo": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် ရွေးပါ",
+        "createdBy": "စာရင်းတင်သူ ရွေးပါ"
       },
       "actions": {
         "reset": "ရှင်းလင်းမည်",

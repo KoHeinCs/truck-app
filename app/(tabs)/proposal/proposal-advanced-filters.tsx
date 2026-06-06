@@ -1,285 +1,290 @@
-import { CompactTextInput } from "@/components/compact-text-input";
-import { ServiceDatePicker } from "@/components/service-date-picker";
-import { APP_COLORS } from "@/constants/colors";
-import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
-import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
-import { useTranslation } from "@/hooks/use-translation";
-import proposalLocale from "@/locale/proposal/proposal.json";
-import type { AppLocale } from "@/stores/client/locale-store";
-import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
-import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
-import { useServiceTypesInfinite } from "@/stores/server/service-type/query";
-import { buildServiceTypeSearchColumns } from "@/stores/server/service-type/search-columns";
-import type { ServiceTypeItem } from "@/stores/server/service-type/typed";
-import { Card } from "heroui-native";
-import React, { useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
-import { CompactSelect } from "../profile/user/components/compact-select";
+import {CompactTextInput} from "@/components/compact-text-input";
+import {ServiceDatePicker} from "@/components/service-date-picker";
+import {APP_COLORS} from "@/constants/colors";
+import {COMPACT_ADVANCED_INPUT_CLASSNAME} from "@/constants/compact-input";
+import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
+import {useTranslation} from "@/hooks/use-translation";
+import type {AppLocale} from "@/stores/client/locale-store";
+import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-query";
+import type {ProposalAdvancedFilters as ProposalAdvancedFilterValues} from "@/stores/server/proposal/search-columns";
+import {useServiceTypesInfinite} from "@/stores/server/service-type/query";
+import {buildServiceTypeSearchColumns} from "@/stores/server/service-type/search-columns";
+import type {ServiceTypeItem} from "@/stores/server/service-type/typed";
+import {Card} from "heroui-native";
+import React, {useMemo} from "react";
+import {Pressable, Text, View} from "react-native";
+import {CompactSelect} from "../profile/user/components/compact-select";
 
 type ProposalAdvancedFiltersProps = {
-  filters: ProposalAdvancedFilterValues;
-  locale: AppLocale;
-  showOwnerId: boolean;
-  showCreatedBy: boolean;
-  onChange: (next: Partial<ProposalAdvancedFilterValues>) => void;
-  onReset: () => void;
-  onApply: () => void;
+    filters: ProposalAdvancedFilterValues;
+    locale: AppLocale;
+    showOwnerId: boolean;
+    showCreatedBy: boolean;
+    onChange: (next: Partial<ProposalAdvancedFilterValues>) => void;
+    onReset: () => void;
+    onApply: () => void;
 };
 
 export function ProposalAdvancedFilters({
-  filters,
-  locale,
-  showOwnerId,
-  showCreatedBy,
-  onChange,
-  onReset,
-  onApply,
-}: ProposalAdvancedFiltersProps) {
-  const t = proposalLocale[locale].advanced;
-  const tCreate = proposalLocale[locale].create;
-  const tCommon = useTranslation("common");
-  const mmLeading = getMyanmarLeadingClass(locale);
+                                            filters,
+                                            locale,
+                                            showOwnerId,
+                                            showCreatedBy,
+                                            onChange,
+                                            onReset,
+                                            onApply,
+                                        }: ProposalAdvancedFiltersProps) {
 
-  const serviceColumns = useMemo(
-    () =>
-      buildServiceTypeSearchColumns({
-        quickQuery: "",
-        active: true,
-        langEng: "",
-        langMy: "",
-      }),
-    [],
-  );
-  const { data: serviceTypeData } = useServiceTypesInfinite(serviceColumns);
-  const serviceTypes = useMemo(
-    () => serviceTypeData?.pages.flatMap((page) => page.data.data) ?? [],
-    [serviceTypeData],
-  );
-  const { data: ownerOptions = [] } = useOwnerLookupOptions("");
+    const {search:t} = useTranslation('proposal')
+    const tCommon = useTranslation("common");
+    const mmLeading = getMyanmarLeadingClass(locale);
 
-  const serviceTypeOptions = useMemo(
-    () => [
-      { value: "", label: tCommon.anyLabel },
-      ...serviceTypes.map((serviceType) => ({
-        value: serviceType.serviceType,
-        label: getServiceTypeLabel(serviceType, locale),
-      })),
-    ],
-    [serviceTypes, locale, tCommon.anyLabel],
-  );
+    const serviceColumns = useMemo(
+        () =>
+            buildServiceTypeSearchColumns({
+                quickQuery: "",
+                active: true,
+                langEng: "",
+                langMy: "",
+            }),
+        [],
+    );
+    const {data: serviceTypeData} = useServiceTypesInfinite(serviceColumns);
+    const serviceTypes = useMemo(
+        () => serviceTypeData?.pages.flatMap((page) => page.data.data) ?? [],
+        [serviceTypeData],
+    );
+    const {data: ownerOptions = []} = useOwnerLookupOptions("");
 
-  const ownerSelectOptions = useMemo(
-    () => [{ value: "", label: tCommon.anyLabel }, ...ownerOptions],
-    [ownerOptions, tCommon.anyLabel],
-  );
+    const serviceTypeOptions = useMemo(
+        () => [
+            {value: "", label: tCommon.anyLabel},
+            ...serviceTypes.map((serviceType) => ({
+                value: serviceType.serviceType,
+                label: getServiceTypeLabel(serviceType, locale),
+            })),
+        ],
+        [serviceTypes, locale, tCommon.anyLabel],
+    );
 
-  return (
-    <Card className="mb-4 p-5">
-      <Card.Body className="gap-3">
-        <Text className={`text-sm font-semibold text-slate-900 ${mmLeading}`}>
-          {t.title}
-        </Text>
+    const ownerSelectOptions = useMemo(
+        () => [{value: "", label: tCommon.anyLabel}, ...ownerOptions],
+        [ownerOptions, tCommon.anyLabel],
+    );
 
-        <View className="flex-row gap-2">
-          <FilterInput
-            label={t.proposalNo}
-            value={filters.proposalNo}
-            placeholder={t.proposalNo}
-            locale={locale}
-            mmLeading={mmLeading}
-            onChangeText={(proposalNo) => onChange({ proposalNo })}
-          />
-          <FilterInput
-            label={t.plateNo}
-            value={filters.plateNo}
-            placeholder={t.plateNo}
-            locale={locale}
-            mmLeading={mmLeading}
-            onChangeText={(plateNo) => onChange({ plateNo })}
-          />
-        </View>
+    return (
+        <Card className="mb-4 p-5">
+            <Card.Body className="gap-3">
+                {/* title */}
+                <Text className={`text-sm font-semibold text-slate-900 ${mmLeading}`}>
+                    {t.advancedTitle}
+                </Text>
 
-        <View className="flex-row gap-2">
-          <FilterDateField
-            label={t.proposalDateFrom}
-            value={filters.proposalDateFrom}
-            placeholder={t.datePlaceholder}
-            locale={locale}
-            mmLeading={mmLeading}
-            doneLabel={tCreate.done}
-            mode="date"
-            onChange={(proposalDateFrom) => onChange({ proposalDateFrom })}
-          />
-          <FilterDateField
-            label={t.proposalDateTo}
-            value={filters.proposalDateTo}
-            placeholder={t.datePlaceholder}
-            locale={locale}
-            mmLeading={mmLeading}
-            doneLabel={tCreate.done}
-            mode="date"
-            onChange={(proposalDateTo) => onChange({ proposalDateTo })}
-          />
-        </View>
+                {/* proposal number , plate number */}
+                <View className="flex-row gap-2">
+                    <FilterInput
+                        label={t.labels.proposalNo}
+                        value={filters.proposalNo}
+                        placeholder={t.placeholders.proposalNo}
+                        locale={locale}
+                        mmLeading={mmLeading}
+                        onChangeText={(proposalNo) => onChange({proposalNo})}
+                    />
+                    <FilterInput
+                        label={t.labels.plateNo}
+                        value={filters.plateNo}
+                        placeholder={t.placeholders.plateNo}
+                        locale={locale}
+                        mmLeading={mmLeading}
+                        onChangeText={(plateNo) => onChange({plateNo})}
+                    />
+                </View>
 
-        <View className="flex-row gap-2">
-          <CompactSelect
-            label={t.serviceTypeCsv}
-            value={filters.serviceTypeCsv}
-            onChange={(serviceTypeCsv) => onChange({ serviceTypeCsv })}
-            locale={locale}
-            placeholder={tCreate.serviceTypePlaceholder}
-            options={serviceTypeOptions}
-          />
-          <FilterDateField
-            label={t.serviceDateFrom}
-            value={filters.serviceDateFrom}
-            placeholder={t.datePlaceholder}
-            locale={locale}
-            mmLeading={mmLeading}
-            doneLabel={tCreate.done}
-            onChange={(serviceDateFrom) => onChange({ serviceDateFrom })}
-          />
-        </View>
+                {/* proposal date [from-to] */}
+                <View className="flex-row gap-2">
+                    <FilterDateField
+                        label={t.labels.proposalDateFrom}
+                        value={filters.proposalDateFrom}
+                        placeholder={t.placeholders.proposalDateFrom}
+                        locale={locale}
+                        mmLeading={mmLeading}
+                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        mode="date"
+                        onChange={(proposalDateFrom) => onChange({proposalDateFrom})}
+                    />
+                    <FilterDateField
+                        label={t.labels.proposalDateTo}
+                        value={filters.proposalDateTo}
+                        placeholder={t.placeholders.proposalDateTo}
+                        locale={locale}
+                        mmLeading={mmLeading}
+                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        mode="date"
+                        onChange={(proposalDateTo) => onChange({proposalDateTo})}
+                    />
+                </View>
 
-        <View className="flex-row gap-2">
-          <FilterDateField
-            label={t.serviceDateTo}
-            value={filters.serviceDateTo}
-            placeholder={t.datePlaceholder}
-            locale={locale}
-            mmLeading={mmLeading}
-            doneLabel={tCreate.done}
-            onChange={(serviceDateTo) => onChange({ serviceDateTo })}
-          />
-          {showOwnerId ? (
-            <CompactSelect
-              label={t.ownerId}
-              value={filters.ownerId}
-              onChange={(ownerId) => onChange({ ownerId })}
-              locale={locale}
-              placeholder={tCommon.anyLabel}
-              options={ownerSelectOptions}
-            />
-          ) : (
-            <View className="flex-1" />
-          )}
-        </View>
+                {/* service date [from-to] */}
+                <View className="flex-row gap-2">
+                    <FilterDateField
+                        label={t.labels.serviceDateFrom}
+                        value={filters.serviceDateFrom}
+                        placeholder={t.placeholders.serviceDateFrom}
+                        locale={locale}
+                        mmLeading={mmLeading}
+                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        onChange={(serviceDateFrom) => onChange({serviceDateFrom})}
+                    />
+                    <FilterDateField
+                        label={t.labels.serviceDateTo}
+                        value={filters.serviceDateTo}
+                        placeholder={t.placeholders.serviceDateTo}
+                        locale={locale}
+                        mmLeading={mmLeading}
+                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        onChange={(serviceDateTo) => onChange({serviceDateTo})}
+                    />
+                </View>
 
-        {showCreatedBy ? (
-          <View className="gap-1">
-            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
-              {t.createdByCsv}
-            </Text>
-            <CompactTextInput
-              locale={locale}
-              compactVariant="advanced"
-              value={filters.createdByCsv}
-              onChangeText={(createdByCsv) => onChange({ createdByCsv })}
-              placeholder={t.createdByCsv}
-              className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
-            />
-          </View>
-        ) : null}
+                {/* service type , owner */}
+                <View className="flex-row gap-2">
+                    <CompactSelect
+                        label={t.labels.serviceType}
+                        value={filters.serviceTypeCsv}
+                        onChange={(serviceTypeCsv) => onChange({serviceTypeCsv})}
+                        locale={locale}
+                        placeholder={t.placeholders.serviceType}
+                        options={serviceTypeOptions}
+                    />
+                    {showOwnerId ? (
+                        <CompactSelect
+                            label={t.labels.ownerId}
+                            value={filters.ownerId}
+                            onChange={(ownerId) => onChange({ownerId})}
+                            locale={locale}
+                            placeholder={t.placeholders.ownerId}
+                            options={ownerSelectOptions}
+                        />
+                    ) : (
+                        <View className="flex-1"/>
+                    )}
+                </View>
 
-        <View className="flex-row gap-2 pt-0.5">
-          <Pressable
-            onPress={onReset}
-            className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
-          >
-            <Text className={`text-xs font-semibold text-slate-700 ${mmLeading}`}>
-              {t.reset}
-            </Text>
-          </Pressable>
+                {/* created user */}
+                {showCreatedBy ? (
+                    <View className="gap-1">
+                        <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+                            {t.labels.createdBy}
+                        </Text>
+                        <CompactTextInput
+                            locale={locale}
+                            compactVariant="advanced"
+                            value={filters.createdByCsv}
+                            onChangeText={(createdByCsv) => onChange({createdByCsv})}
+                            placeholder={t.placeholders.createdBy}
+                            className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                        />
+                    </View>
+                ) : null}
 
-          <Pressable
-            className="flex-1 items-center justify-center rounded-xl py-3"
-            style={{ backgroundColor: APP_COLORS.primary }}
-            onPress={onApply}
-          >
-            <Text className={`text-xs font-semibold text-white ${mmLeading}`}>
-              {t.apply}
-            </Text>
-          </Pressable>
-        </View>
-      </Card.Body>
-    </Card>
-  );
+                <View className="flex-row gap-2 pt-0.5">
+                    <Pressable
+                        onPress={onReset}
+                        className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
+                    >
+                        <Text className={`text-xs font-semibold text-slate-700 ${mmLeading}`}>
+                            {t.actions.reset}
+                        </Text>
+                    </Pressable>
+
+                    <Pressable
+                        className="flex-1 items-center justify-center rounded-xl py-3"
+                        style={{backgroundColor: APP_COLORS.primary}}
+                        onPress={onApply}
+                    >
+                        <Text className={`text-xs font-semibold text-white ${mmLeading}`}>
+                            {t.actions.search}
+                        </Text>
+                    </Pressable>
+                </View>
+            </Card.Body>
+        </Card>
+    );
 }
 
 type FilterInputProps = {
-  label: string;
-  value: string;
-  placeholder: string;
-  locale: AppLocale;
-  mmLeading: string;
-  onChangeText: (next: string) => void;
+    label: string;
+    value: string;
+    placeholder: string;
+    locale: AppLocale;
+    mmLeading: string;
+    onChangeText: (next: string) => void;
 };
 
 function FilterInput({
-  label,
-  value,
-  placeholder,
-  locale,
-  mmLeading,
-  onChangeText,
-}: FilterInputProps) {
-  return (
-    <View className="flex-1 gap-1">
-      <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
-        {label}
-      </Text>
-      <CompactTextInput
-        locale={locale}
-        compactVariant="advanced"
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
-      />
-    </View>
-  );
+                         label,
+                         value,
+                         placeholder,
+                         locale,
+                         mmLeading,
+                         onChangeText,
+                     }: FilterInputProps) {
+    return (
+        <View className="flex-1 gap-1">
+            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+                {label}
+            </Text>
+            <CompactTextInput
+                locale={locale}
+                compactVariant="advanced"
+                value={value}
+                onChangeText={onChangeText}
+                placeholder={placeholder}
+                className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+            />
+        </View>
+    );
 }
 
 type FilterDateFieldProps = {
-  label: string;
-  value: string;
-  placeholder: string;
-  locale: AppLocale;
-  mmLeading: string;
-  doneLabel: string;
-  mode?: "date" | "datetime";
-  onChange: (next: string) => void;
+    label: string;
+    value: string;
+    placeholder: string;
+    locale: AppLocale;
+    mmLeading: string;
+    doneLabel: string;
+    mode?: "date" | "datetime";
+    onChange: (next: string) => void;
 };
 
 function FilterDateField({
-  label,
-  value,
-  placeholder,
-  locale,
-  mmLeading,
-  doneLabel,
-  mode = "datetime",
-  onChange,
-}: FilterDateFieldProps) {
-  return (
-    <View className="flex-1 gap-1">
-      <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
-        {label}
-      </Text>
-      <ServiceDatePicker
-        locale={locale}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        doneLabel={doneLabel}
-        mode={mode}
-        triggerClassName="h-11 min-h-11"
-      />
-    </View>
-  );
+                             label,
+                             value,
+                             placeholder,
+                             locale,
+                             mmLeading,
+                             doneLabel,
+                             mode = "datetime",
+                             onChange,
+                         }: FilterDateFieldProps) {
+    return (
+        <View className="flex-1 gap-1">
+            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+                {label}
+            </Text>
+            <ServiceDatePicker
+                locale={locale}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                doneLabel={doneLabel}
+                mode={mode}
+                triggerClassName="h-11 min-h-11"
+            />
+        </View>
+    );
 }
 
 function getServiceTypeLabel(item: ServiceTypeItem, locale: "en" | "mm") {
-  return locale === "mm" ? item.langMy || item.langEng : item.langEng;
+    return locale === "mm" ? item.langMy || item.langEng : item.langEng;
 }
