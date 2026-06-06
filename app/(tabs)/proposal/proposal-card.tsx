@@ -6,6 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button, Card } from "heroui-native";
 import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import {useTranslation} from "@/hooks/use-translation";
 
 type ProposalCardProps = {
   item: ProposalItem;
@@ -40,28 +41,11 @@ export function ProposalCard({
   onPressDetail,
   onPressEdit,
 }: ProposalCardProps) {
+
   const mmLeading = getMyanmarLeadingClass(locale);
   const [expanded, setExpanded] = useState(false);
-  const labels =
-    locale === "mm"
-      ? {
-          amount: "အဆိုပြုငွေ",
-          plateNo: "ယာဉ်နံပါတ်",
-          serviceShop: "ဆိုင်",
-          proposalDate: "အဆိုပြုရက်",
-          serviceDate: "ဝန်ဆောင်မှုရက်",
-          createdBy: "အဆိုပြုသူ",
-          viewDetail: "Detail ကြည့်ရန်",
-        }
-      : {
-          amount: "Amount",
-          plateNo: "Plate No",
-          serviceShop: "Service Shop",
-          proposalDate: "Proposal Date",
-          serviceDate: "Service Date",
-          createdBy: "Created By",
-          viewDetail: "View Detail",
-        };
+  const {card:t} = useTranslation('proposal')
+
 
   const canEdit = (item.status || "").toUpperCase() === "INFORM";
 
@@ -101,7 +85,7 @@ export function ProposalCard({
               <View className="mb-3 flex-row items-center justify-between">
                 <View className="flex-1 pr-2">
                   <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                    {labels.amount}
+                    {t.amount}
                   </Text>
                   <Text
                     className={`text-xl font-semibold text-primary ${mmLeading}`}
@@ -113,7 +97,7 @@ export function ProposalCard({
                   <Text
                     className={`text-[10px] font-semibold text-slate-600 ${mmLeading}`}
                   >
-                    {labels.createdBy}: {item.createdBy || "-"}
+                    {t.createdBy}: {item.createdBy || "-"}
                   </Text>
                 </View>
               </View>
@@ -121,7 +105,7 @@ export function ProposalCard({
               <View className="flex-row gap-4">
                 <View className="flex-1">
                   <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                    {labels.plateNo}
+                    {t.plateNo}
                   </Text>
                   <Text
                     className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
@@ -131,7 +115,7 @@ export function ProposalCard({
                 </View>
                 <View className="flex-1">
                   <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                    {labels.serviceShop}
+                    {t.serviceShop}
                   </Text>
                   <Text
                     className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
@@ -144,7 +128,7 @@ export function ProposalCard({
               <View className="mt-2 flex-row gap-4">
                 <View className="flex-1">
                   <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                    {labels.proposalDate}
+                    {t.proposalDate}
                   </Text>
                   <Text
                     className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
@@ -154,7 +138,7 @@ export function ProposalCard({
                 </View>
                 <View className="flex-1">
                   <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                    {labels.serviceDate}
+                    {t.serviceDate}
                   </Text>
                   <Text
                     className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
@@ -173,7 +157,7 @@ export function ProposalCard({
                   <Text
                     className={`text-xs font-semibold text-white ${mmLeading}`}
                   >
-                    {labels.viewDetail}
+                    {t.viewDetail}
                   </Text>
                 </Button>
 
