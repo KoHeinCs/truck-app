@@ -150,6 +150,7 @@ export default function ProposalScreen() {
                         fetchNextPage();
                     }
                 }}
+                // header , tabs , search
                 ListHeaderComponent={
                     <View className="pb-3 pt-1">
                         <ProposalHeader

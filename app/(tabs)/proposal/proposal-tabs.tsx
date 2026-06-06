@@ -1,10 +1,10 @@
 import { APP_COLORS } from "@/constants/colors";
 import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
-import proposalLocale from "@/locale/proposal/proposal.json";
 import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalTabStatus } from "@/stores/server/proposal/search-columns";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
+import {useTranslation} from "@/hooks/use-translation";
 
 type ProposalTabsProps = {
   value: ProposalTabStatus;
@@ -19,8 +19,8 @@ export function ProposalTabs({
   tabs,
   locale,
 }: ProposalTabsProps) {
-  const labels = proposalLocale[locale].list.tabs;
   const mmLeading = getMyanmarLeadingClass(locale);
+  const {tabs:t} = useTranslation('proposal')
 
   return (
     <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-2">
@@ -37,7 +37,7 @@ export function ProposalTabs({
               className={`text-sm ${mmLeading} ${active ? "text-white" : "text-slate-500"}`}
               numberOfLines={1}
             >
-              {labels[tab]}
+              {t[tab]}
             </Text>
           </Pressable>
         );
