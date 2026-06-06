@@ -205,7 +205,7 @@ export default function EditProposalScreen() {
                 <View className="h-11 w-11"/>
             </View>
 
-            {/* details form */}
+            {/* edit form */}
             {
                 isDetailPending ?
                     (
