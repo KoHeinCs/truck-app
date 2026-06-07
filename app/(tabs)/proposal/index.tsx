@@ -110,9 +110,8 @@ export default function ProposalScreen() {
 
     return (
         <SafeAreaView
-            style={{flex: 1}}
-            className="flex-1 bg-[#f3f7fb]"
             edges={["top", "left", "right"]}
+            style={{flex: 1, backgroundColor: APP_COLORS.background}}
         >
             <FlatList
                 data={items}
