@@ -1,47 +1,55 @@
-import { APP_COLORS } from "@/constants/colors";
-import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
-import type { AppLocale } from "@/stores/client/locale-store";
-import type { ProposalTabStatus } from "@/stores/server/proposal/search-columns";
+import {APP_COLORS} from "@/constants/colors";
+import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
+import type {AppLocale} from "@/stores/client/locale-store";
+import type {ProposalTabStatus} from "@/stores/server/proposal/search-columns";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import {Pressable, Text, View} from "react-native";
 import {useTranslation} from "@/hooks/use-translation";
 
 type ProposalTabsProps = {
-  value: ProposalTabStatus;
-  onChange: (next: ProposalTabStatus) => void;
-  tabs: ProposalTabStatus[];
-  locale: AppLocale;
+    value: ProposalTabStatus;
+    onChange: (next: ProposalTabStatus) => void;
+    tabs: ProposalTabStatus[];
+    locale: AppLocale;
 };
 
 export function ProposalTabs({
-  value,
-  onChange,
-  tabs,
-  locale,
-}: ProposalTabsProps) {
-  const mmLeading = getMyanmarLeadingClass(locale);
-  const {tabs:t} = useTranslation('proposal')
+                                 value,
+                                 onChange,
+                                 tabs,
+                                 locale,
+                             }: ProposalTabsProps) {
 
-  return (
-    <View className="mb-3 flex-row rounded-2xl border border-slate-200 bg-white p-2">
-      {tabs.map((tab) => {
-        const active = tab === value;
-        return (
-          <Pressable
-            key={tab}
-            onPress={() => onChange(tab)}
-            className={`flex-1 items-center justify-center rounded-xl px-1 h-10 ${mmLeading}`}
-            style={active ? { backgroundColor: APP_COLORS.primary } : undefined}
-          >
-            <Text
-              className={`text-sm ${mmLeading} ${active ? "text-white" : "text-slate-500"}`}
-              numberOfLines={1}
-            >
-              {t[tab]}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
+    const mmLeading = getMyanmarLeadingClass(locale);
+    const {tabs: t} = useTranslation('proposal')
+
+    return (
+        <View
+            className="mb-3 flex-row rounded-2xl  p-1"
+            style={{
+                backgroundColor: APP_COLORS.card,
+                borderColor: APP_COLORS.border,
+                borderWidth: 1
+            }}
+        >
+            {tabs.map((tab) => {
+                const active = tab === value;
+                return (
+                    <Pressable
+                        key={tab}
+                        onPress={() => onChange(tab)}
+                        className={`flex-1 items-center justify-center rounded-xl px-1 h-10 ${mmLeading}`}
+                        style={active ? {backgroundColor: APP_COLORS.primary} : undefined}
+                    >
+                        <Text
+                            className={`text-sm ${mmLeading} ${active ? "text-white" : "text-slate-500"}`}
+                            numberOfLines={1}
+                        >
+                            {t[tab]}
+                        </Text>
+                    </Pressable>
+                );
+            })}
+        </View>
+    );
 }
