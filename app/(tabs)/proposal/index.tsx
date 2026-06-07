@@ -156,9 +156,10 @@ export default function ProposalScreen() {
                     <View className="pb-3 pt-1">
                         <ProposalHeader
                             title={t.master.title}
-                            locale={locale}
                             welcomeLabel={greeting}
                             fullName={fullName || "-"}
+                            textStyle={style}
+                            mmLeading = {mmLeading}
                         />
                         <ProposalTabs
                             value={status}
