@@ -1,5 +1,4 @@
 import {APP_COLORS} from "@/constants/colors";
-import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
 import type {AppLocale} from "@/stores/client/locale-store";
 import type {ProposalTabStatus} from "@/stores/server/proposal/search-columns";
 import React from "react";
@@ -10,22 +9,24 @@ type ProposalTabsProps = {
     value: ProposalTabStatus;
     onChange: (next: ProposalTabStatus) => void;
     tabs: ProposalTabStatus[];
-    locale: AppLocale;
+    style:any;
+    mmLeading:any
 };
 
 export function ProposalTabs({
                                  value,
                                  onChange,
                                  tabs,
-                                 locale,
+                                 style,
+                                 mmLeading
                              }: ProposalTabsProps) {
 
-    const mmLeading = getMyanmarLeadingClass(locale);
+
     const {tabs: t} = useTranslation('proposal')
 
     return (
         <View
-            className="mb-3 flex-row rounded-2xl  p-1"
+            className="mb-3 flex-row rounded-2xl  p-2"
             style={{
                 backgroundColor: APP_COLORS.card,
                 borderColor: APP_COLORS.border,
@@ -38,12 +39,13 @@ export function ProposalTabs({
                     <Pressable
                         key={tab}
                         onPress={() => onChange(tab)}
-                        className={`flex-1 items-center justify-center rounded-xl px-1 h-10 ${mmLeading}`}
+                        className={`flex-1 items-center justify-center rounded-xl px-1 py-2.5`}
                         style={active ? {backgroundColor: APP_COLORS.primary} : undefined}
                     >
                         <Text
-                            className={`text-sm ${mmLeading} ${active ? "text-white" : "text-slate-500"}`}
+                            className={`text-sm font-semibold ${mmLeading} ${active ? "text-white" : "text-slate-500"}`}
                             numberOfLines={1}
+                            style={style}
                         >
                             {t[tab]}
                         </Text>

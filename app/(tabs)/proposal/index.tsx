@@ -1,5 +1,5 @@
 import {APP_COLORS} from "@/constants/colors";
-import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
+import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useDebouncedValue} from "@/hooks/use-debounced-value";
 import {useTimeBasedGreeting} from "@/hooks/use-time-based-greeting";
 import {useAuthStore} from "@/stores/auth-store";
@@ -76,6 +76,8 @@ export default function ProposalScreen() {
     const upperRole = (role || "").toUpperCase();
     const showOwnerId = upperRole === "ADMIN";
     const showCreatedBy = upperRole === "ADMIN" || upperRole === "OWNER";
+    const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
+    const style = locale === "mm" ? mmTextStyle : undefined;
 
     const filters = useMemo(
         () => ({
@@ -162,7 +164,8 @@ export default function ProposalScreen() {
                             value={status}
                             onChange={setStatus}
                             tabs={TAB_ORDER}
-                            locale={locale}
+                            style={style}
+                            mmLeading = {mmLeading}
                         />
                         <ProposalSearchToolbar
                             locale={locale}
