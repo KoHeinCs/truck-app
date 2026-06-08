@@ -143,6 +143,7 @@ export default function ProposalScreen() {
                                 },
                             })
                         }
+                        mmLeading={mmLeading}
                     />
                 )}
                 onEndReachedThreshold={0.2}
