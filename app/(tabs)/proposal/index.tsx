@@ -124,7 +124,6 @@ export default function ProposalScreen() {
                 renderItem={({item}) => (
                     <ProposalCard
                         item={item}
-                        locale={locale}
                         onPressDetail={(selected) =>
                             router.push({
                                 pathname: "/(tabs)/proposal/detail",

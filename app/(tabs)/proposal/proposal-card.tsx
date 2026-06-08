@@ -1,5 +1,4 @@
 import {APP_COLORS} from "@/constants/colors";
-import type {AppLocale} from "@/stores/client/locale-store";
 import type {ProposalItem} from "@/stores/server/proposal/typed";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Button, Card} from "heroui-native";
@@ -9,10 +8,9 @@ import {useTranslation} from "@/hooks/use-translation";
 
 type ProposalCardProps = {
     item: ProposalItem;
-    locale: AppLocale;
     onPressDetail: (item: ProposalItem) => void;
     onPressEdit: (item: ProposalItem) => void;
-    mmLeading:any
+    mmLeading: any
 };
 
 function formatDateTime(value: string): string {
@@ -38,7 +36,6 @@ function formatAmount(value: number): string {
 export function ProposalCard(
     {
         item,
-        locale,
         onPressDetail,
         onPressEdit,
         mmLeading
@@ -56,7 +53,7 @@ export function ProposalCard(
             <Card className="mb-3">
                 <Card.Body className="gap-2">
 
-                    {/* proposal number , proposal date , service type */}
+                    {/* proposal number , proposal date */}
                     <View className="flex-row items-center gap-2">
                         <View className="h-6 w-6 items-center justify-center rounded-full bg-slate-100">
                             <Ionicons
@@ -75,13 +72,6 @@ export function ProposalCard(
                             </Text>
                         </View>
 
-                        <View className="rounded-xl bg-[#edf2f7] px-2 py-1 ">
-                            <Text
-                                className={`text-xs font-semibold uppercase tracking-[0.4px] text-slate-600 ${mmLeading}`}
-                            >
-                                {item.serviceType || "SERVICE"}
-                            </Text>
-                        </View>
                     </View>
 
                     {/* expanded form */}
@@ -90,29 +80,9 @@ export function ProposalCard(
                             (
                                 <View className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-3">
 
-                                    {/* proposal amount , created user */}
-                                    <View className="mb-3 flex-row items-center justify-between">
-                                        <View className="flex-1 pr-2">
-                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                                                {t.amount}
-                                            </Text>
-                                            <Text
-                                                className={`text-xl font-semibold text-primary ${mmLeading}`}
-                                            >
-                                                {formatAmount(item.proposalAmount)}
-                                            </Text>
-                                        </View>
-                                        <View className="rounded-xl bg-[#edf2f7] px-3 py-1.5">
-                                            <Text
-                                                className={`text-[10px] font-semibold text-slate-600 ${mmLeading}`}
-                                            >
-                                                {t.createdBy}: {item.createdBy || "-"}
-                                            </Text>
-                                        </View>
-                                    </View>
-
-                                    {/* plate number , service shop */}
+                                    {/* plate number , proposal amount */}
                                     <View className="flex-row gap-4">
+
                                         <View className="flex-1">
                                             <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                                                 {t.plateNo}
@@ -125,6 +95,33 @@ export function ProposalCard(
                                         </View>
                                         <View className="flex-1">
                                             <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                                {t.amount}
+                                            </Text>
+                                            <Text
+                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                            >
+                                                {formatAmount(item.proposalAmount) || "-"}
+                                            </Text>
+                                        </View>
+
+                                    </View>
+
+                                    {/* service type , service shop */}
+                                    <View className="flex-row gap-4">
+
+                                        <View className="flex-1">
+                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                                {t.serviceType}
+                                            </Text>
+                                            <Text
+                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                            >
+                                                {item.serviceType || "-"}
+                                            </Text>
+                                        </View>
+
+                                        <View className="flex-1">
+                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                                                 {t.serviceShop}
                                             </Text>
                                             <Text
@@ -133,18 +130,19 @@ export function ProposalCard(
                                                 {item.serviceShop || "-"}
                                             </Text>
                                         </View>
+
                                     </View>
 
-                                    {/* proposal date , service date */}
+                                    {/* created user , service date */}
                                     <View className="mt-2 flex-row gap-4">
                                         <View className="flex-1">
                                             <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                                                {t.proposalDate}
+                                                {t.createdBy}
                                             </Text>
                                             <Text
                                                 className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
                                             >
-                                                {formatDateTime(item.proposalDate)}
+                                                {item.createdBy || "-"}
                                             </Text>
                                         </View>
                                         <View className="flex-1">
