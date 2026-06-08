@@ -5,28 +5,15 @@ import {Button, Card} from "heroui-native";
 import React, {useState} from "react";
 import {Pressable, Text, View} from "react-native";
 import {useTranslation} from "@/hooks/use-translation";
+import {formatDate, formatDateTime} from "@/utils/dateUtil";
+
 
 type ProposalCardProps = {
     item: ProposalItem;
     onPressDetail: (item: ProposalItem) => void;
     onPressEdit: (item: ProposalItem) => void;
-    mmLeading: any
+    mmLeading: any;
 };
-
-function formatDateTime(value: string): string {
-    if (!value) return "-";
-
-    const normalized = value.includes("T") ? value : value.replace(" ", "T");
-    const parsed = new Date(normalized);
-    if (Number.isNaN(parsed.getTime())) return value;
-
-    const dd = String(parsed.getDate()).padStart(2, "0");
-    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
-    const yyyy = String(parsed.getFullYear());
-    const hh = String(parsed.getHours()).padStart(2, "0");
-    const min = String(parsed.getMinutes()).padStart(2, "0");
-    return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
-}
 
 function formatAmount(value: number): string {
     const safeValue = Number.isFinite(value) ? value : 0;
@@ -38,37 +25,53 @@ export function ProposalCard(
         item,
         onPressDetail,
         onPressEdit,
-        mmLeading
+        mmLeading,
     }: ProposalCardProps
 ) {
 
     const [expanded, setExpanded] = useState(false);
     const {card: t} = useTranslation('proposal')
 
-
     const canEdit = (item.status || "").toUpperCase() === "INFORM";
 
     return (
-        <Pressable onPress={() => setExpanded((prev) => !prev)}>
-            <Card className="mb-3">
-                <Card.Body className="gap-2">
+        <Pressable
+            onPress={() => setExpanded((prev) => !prev)}
+        >
+            <Card
+                className="mb-3"
+                style={{
+                    backgroundColor: APP_COLORS.card,
+                    borderColor: APP_COLORS.border,
+                    borderWidth: 1,
+                }}
+            >
+                <Card.Body className="p-0 gap-2">
 
                     {/* proposal number , proposal date */}
-                    <View className="flex-row items-center gap-2">
-                        <View className="h-6 w-6 items-center justify-center rounded-full bg-slate-100">
+                    <View className="flex-row items-center gap-x-2">
+
+                        <View className="h-6 w-6 items-center justify-center rounded-full">
                             <Ionicons
                                 name={expanded ? "chevron-up" : "chevron-down"}
-                                size={14}
-                                color="#64748b"
+                                size={22}
+                                color={APP_COLORS.primary}
                             />
                         </View>
 
                         <View className="flex-1">
-                            <Text className={`text-sm font-bold text-primary ${mmLeading}`}>
+                            <Text
+                                className={`text-xs font-bold ${mmLeading}`}
+                                style={[{color: APP_COLORS.primary}]}
+                                numberOfLines={1}
+                            >
                                 {item.proposalNo}
                             </Text>
-                            <Text className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}>
-                                {formatDateTime(item.proposalDate)}
+                            <Text
+                                className={`mt-0.5 text-xs font-semibold ${mmLeading}`}
+                                style={[{color: APP_COLORS.textMuted}]}
+                            >
+                                {formatDate(item.proposalDate)}
                             </Text>
                         </View>
 
@@ -78,27 +81,44 @@ export function ProposalCard(
                     {
                         expanded ?
                             (
-                                <View className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-3">
+                                <View
+                                    className="rounded-2xl border border-slate-200  p-3"
+                                    style={{backgroundColor:APP_COLORS.inputBackground}}
+                                >
 
                                     {/* plate number , proposal amount */}
                                     <View className="flex-row gap-4">
 
-                                        <View className="flex-1">
-                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                        <View className="flex-1 min-w-0">
+                                            <Text
+                                                className={`text-[11px] font-medium ${mmLeading}`}
+                                                style={{color: APP_COLORS.textMuted}}
+                                            >
                                                 {t.plateNo}
                                             </Text>
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-xs font-semibold  ${mmLeading}`}
+                                                style={{color: APP_COLORS.textSecondary}}
+                                                numberOfLines={1}
+                                                ellipsizeMode={"tail"}
+
                                             >
                                                 {item.plateNo || "-"}
                                             </Text>
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+
+                                        <View className="flex-1 min-w-0">
+                                            <Text
+                                                className={`text-[11px] font-medium ${mmLeading}`}
+                                                style={{color: APP_COLORS.textMuted}}
+                                            >
                                                 {t.amount}
                                             </Text>
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-xs font-semibold  ${mmLeading}`}
+                                                style={{color: APP_COLORS.textSecondary}}
+                                                numberOfLines={1}
+                                                ellipsizeMode={"tail"}
                                             >
                                                 {formatAmount(item.proposalAmount) || "-"}
                                             </Text>
@@ -107,25 +127,34 @@ export function ProposalCard(
                                     </View>
 
                                     {/* service type , service shop */}
-                                    <View className="flex-row gap-4">
+                                    <View className="mt-2  flex-row gap-4">
 
-                                        <View className="flex-1">
-                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                        <View className="flex-1 min-w-0">
+                                            <Text
+                                                className={`text-[11px] font-medium ${mmLeading}`}
+                                                style={{color:APP_COLORS.textMuted}}
+                                            >
                                                 {t.serviceType}
                                             </Text>
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-xs font-semibold  ${mmLeading}`}
+                                                style={{color:APP_COLORS.textSecondary}}
+                                                numberOfLines={2}
+                                                ellipsizeMode={"clip"}
                                             >
                                                 {item.serviceType || "-"}
                                             </Text>
                                         </View>
 
-                                        <View className="flex-1">
-                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                        <View className="flex-1 min-w-0">
+                                            <Text className={`text-[11px] font-medium  ${mmLeading}`} style={{color: APP_COLORS.textMuted}} >
                                                 {t.serviceShop}
                                             </Text>
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-xs font-semibold  ${mmLeading}`}
+                                                style={{color: APP_COLORS.textSecondary}}
+                                                numberOfLines={2}
+                                                ellipsizeMode={"tail"}
                                             >
                                                 {item.serviceShop || "-"}
                                             </Text>
@@ -135,30 +164,46 @@ export function ProposalCard(
 
                                     {/* created user , service date */}
                                     <View className="mt-2 flex-row gap-4">
-                                        <View className="flex-1">
-                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                                                {t.createdBy}
-                                            </Text>
+
+                                        <View className="flex-1 min-w-0">
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-[11px] font-medium ${mmLeading}`}
+                                                style={{color:APP_COLORS.textMuted}}
+                                                numberOfLines={1}
                                             >
-                                                {item.createdBy || "-"}
-                                            </Text>
-                                        </View>
-                                        <View className="flex-1">
-                                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
                                                 {t.serviceDate}
                                             </Text>
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-xs font-semibold  ${mmLeading}`}
+                                                style={{color:APP_COLORS.textSecondary}}
+                                                numberOfLines={2}
+                                                ellipsizeMode={"clip"}
                                             >
                                                 {formatDateTime(item.serviceDate)}
                                             </Text>
                                         </View>
+
+                                        <View className="flex-1 min-w-0">
+                                            <Text
+                                                className={`text-[11px] font-medium ${mmLeading}`}
+                                                style={{color:APP_COLORS.textMuted}}
+                                            >
+                                                {t.createdBy}
+                                            </Text>
+                                            <Text
+                                                className={`text-xs font-semibold  ${mmLeading}`}
+                                                style={{color:APP_COLORS.textSecondary}}
+                                                numberOfLines={1}
+                                                ellipsizeMode={"tail"}
+                                            >
+                                                {item.createdBy || "-"}
+                                            </Text>
+                                        </View>
+
                                     </View>
 
                                     {/* details button , edit button */}
-                                    <View className="mt-3 flex-row items-center gap-2">
+                                    <View className="mt-5 flex-row items-center gap-2">
                                         <Button
                                             onPress={() => onPressDetail(item)}
                                             className=" flex-1 bg-primary rounded-md "
@@ -166,7 +211,7 @@ export function ProposalCard(
                                             variant="outline"
                                         >
                                             <Text
-                                                className={`text-xs font-semibold text-white ${mmLeading}`}
+                                                className={`text-sm font-semibold text-white ${mmLeading}`}
                                             >
                                                 {t.viewDetail}
                                             </Text>
@@ -181,7 +226,7 @@ export function ProposalCard(
                                             >
                                                 <Ionicons
                                                     name="create-outline"
-                                                    size={18}
+                                                    size={22}
                                                     color={APP_COLORS.primary}
                                                 />
                                             </Button>

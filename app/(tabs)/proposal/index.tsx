@@ -19,6 +19,8 @@ import {ProposalHeader} from "./proposal-header";
 import {ProposalSearchToolbar} from "./proposal-search-toolbar";
 import {ProposalTabs} from "./proposal-tabs";
 import {useTranslation} from "@/hooks/use-translation";
+import { useThrottledCallback } from '@/hooks/use-throttled-callback';
+import {ProposalItem} from "@/stores/server/proposal/typed";
 
 const TAB_ORDER: ProposalTabStatus[] = ["INFORM", "APPROVED", "TERMINATED"];
 
@@ -110,6 +112,26 @@ export default function ProposalScreen() {
         [ui],
     );
 
+    const handleCardDetailBtn = useThrottledCallback((item: ProposalItem) => {
+        router.push({
+            pathname: "/(tabs)/proposal/detail",
+            params: {
+                proposalNo: item.proposalNo,
+                ownershipId: item.ownershipId,
+            },
+        })
+    }, 600);
+
+    const handleCardEditBtn = useThrottledCallback((item: ProposalItem) => {
+        router.push({
+            pathname: "/(tabs)/proposal/edit",
+            params: {
+                proposalNo: item.proposalNo,
+                ownershipId: item.ownershipId,
+            },
+        })
+    }, 600);
+
     return (
         <SafeAreaView
             edges={["top", "left", "right"]}
@@ -124,24 +146,8 @@ export default function ProposalScreen() {
                 renderItem={({item}) => (
                     <ProposalCard
                         item={item}
-                        onPressDetail={(selected) =>
-                            router.push({
-                                pathname: "/(tabs)/proposal/detail",
-                                params: {
-                                    proposalNo: selected.proposalNo,
-                                    ownershipId: selected.ownershipId,
-                                },
-                            })
-                        }
-                        onPressEdit={(selected) =>
-                            router.push({
-                                pathname: "/(tabs)/proposal/edit",
-                                params: {
-                                    proposalNo: selected.proposalNo,
-                                    ownershipId: selected.ownershipId,
-                                },
-                            })
-                        }
+                        onPressDetail={(selected) =>handleCardDetailBtn(selected)}
+                        onPressEdit={(selected) =>handleCardEditBtn(selected)}
                         mmLeading={mmLeading}
                     />
                 )}
