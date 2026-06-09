@@ -45,6 +45,7 @@ export function ProposalTabs({
                         <Text
                             className={`text-sm font-semibold ${mmLeading} ${active ? "text-white" : "text-slate-500"}`}
                             numberOfLines={1}
+                            ellipsizeMode={"clip"}
                             style={style}
                         >
                             {t[tab]}

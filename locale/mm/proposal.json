@@ -30,8 +30,8 @@
         "plateNo": "ယာဉ်နံပါတ်",
         "proposalDateFrom": "စာရင်းတင်ရက် (မှ)",
         "proposalDateTo": "(အထိ)",
-        "serviceType": "ဝန်ဆောင်မှုအမျိုးအစား",
-        "serviceDateFrom": "ဝန်ဆောင်မှုပေးချိန် (မှ)",
+        "serviceType": "ဝန်ဆောင်မှု",
+        "serviceDateFrom": "ဝန်ဆောင်မှုရက် (မှ)",
         "serviceDateTo": "(အထိ)",
         "createdBy": "စာရင်းတင်သူ"
       },
