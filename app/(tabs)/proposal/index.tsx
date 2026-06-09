@@ -132,6 +132,10 @@ export default function ProposalScreen() {
         })
     }, 600);
 
+    const handleAddPress = useThrottledCallback(()=>{
+        router.push("/(tabs)/proposal/create")
+    },600)
+
     return (
         <SafeAreaView
             edges={["top", "left", "right"]}
@@ -187,7 +191,8 @@ export default function ProposalScreen() {
                                     advancedOpen: !prev.advancedOpen,
                                 }))
                             }
-                            onPressAdd={() => router.push("/(tabs)/proposal/create")}
+                            onPressAdd={() => handleAddPress()}
+                            mmLeading={mmLeading}
                         />
                         {ui.advancedOpen ? (
                             <ProposalAdvancedFiltersCard

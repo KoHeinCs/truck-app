@@ -15,6 +15,7 @@ type ProposalSearchToolbarProps = {
   onClearQuickQuery: () => void;
   onToggleAdvanced: () => void;
   onPressAdd: () => void;
+  mmLeading:any
 };
 
 export function ProposalSearchToolbar({
@@ -26,6 +27,7 @@ export function ProposalSearchToolbar({
   onClearQuickQuery,
   onToggleAdvanced,
   onPressAdd,
+  mmLeading
 }: ProposalSearchToolbarProps) {
   return (
     <View className="mb-4 flex-row items-center gap-2">
@@ -34,8 +36,14 @@ export function ProposalSearchToolbar({
           value={quickQuery}
           onChangeText={onChangeQuickQuery}
           placeholder={placeholder}
-          className="flex-1 border h-11 py-0 text-sm border-slate-200 bg-white"
-          style={{ paddingRight: 44 }}
+          placeholderTextColor={APP_COLORS.textMuted}
+          className={`flex-1 border h-11 py-0 text-sm font-medium ${mmLeading}`}
+          style={{
+            paddingRight: 44 ,
+            backgroundColor:APP_COLORS.inputBackground,
+            borderColor:APP_COLORS.border,
+            borderWidth:1
+        }}
         />
 
         <Pressable
@@ -47,7 +55,7 @@ export function ProposalSearchToolbar({
         >
           <Ionicons
             name={advancedOpen ? "funnel" : "funnel-outline"}
-            size={20}
+            size={22}
             color={APP_COLORS.primary}
           />
         </Pressable>
@@ -58,16 +66,18 @@ export function ProposalSearchToolbar({
           onPress={onClearQuickQuery}
           className="items-center justify-center rounded-full border border-slate-200 bg-white p-2.5"
         >
-          <Ionicons name="close" size={18} color="#4A7CFF" />
+          <Ionicons name="close" size={22} color={APP_COLORS.primary} />
         </Pressable>
       )}
 
       <Pressable
         onPress={onPressAdd}
         className="items-center justify-center rounded-full p-2.5"
-        style={{ backgroundColor: APP_COLORS.primary }}
+        style={({pressed}) => ({
+            backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+        })}
       >
-        <Ionicons name="add" size={20} color="#fff" />
+        <Ionicons name="add" size={22} color="#fff" />
       </Pressable>
     </View>
   );
