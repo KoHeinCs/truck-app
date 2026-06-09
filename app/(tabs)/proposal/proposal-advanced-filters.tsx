@@ -73,10 +73,20 @@ export function ProposalAdvancedFilters({
     );
 
     return (
-        <Card className="mb-4 p-5">
+        <Card
+            className="mb-4 p-5"
+            style={{
+                backgroundColor:APP_COLORS.card,
+                borderColor:APP_COLORS.border,
+                borderWidth:1
+            }}
+        >
             <Card.Body className="gap-3">
                 {/* title */}
-                <Text className={`text-sm font-semibold text-slate-900 ${mmLeading}`}>
+                <Text
+                    className={`text-sm font-medium  ${mmLeading}`}
+                    style={{color:APP_COLORS.textPrimary}}
+                >
                     {t.advancedTitle}
                 </Text>
 
@@ -187,19 +197,30 @@ export function ProposalAdvancedFilters({
                     </View>
                 ) : null}
 
+                {/* reset , search buttons */}
                 <View className="flex-row gap-2 pt-0.5">
                     <Pressable
                         onPress={onReset}
-                        className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
+                        className="flex-1 items-center justify-center rounded-xl  py-2"
+                        style={({ pressed }) => ({
+                            backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1
+                        })}
                     >
-                        <Text className={`text-xs font-semibold text-slate-700 ${mmLeading}`}>
+                        <Text
+                            className={`text-xs font-semibold  ${mmLeading}`}
+                            style={{color:APP_COLORS.error}}
+                        >
                             {t.actions.reset}
                         </Text>
                     </Pressable>
 
                     <Pressable
-                        className="flex-1 items-center justify-center rounded-xl py-3"
-                        style={{backgroundColor: APP_COLORS.primary}}
+                        className="flex-1 items-center justify-center rounded-xl py-2"
+                        style={ ({pressed})=>({
+                            backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+                        })}
                         onPress={onApply}
                     >
                         <Text className={`text-xs font-semibold text-white ${mmLeading}`}>
@@ -231,7 +252,10 @@ function FilterInput({
                      }: FilterInputProps) {
     return (
         <View className="flex-1 gap-1">
-            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+            <Text
+                className={`text-xs font-semibold ${mmLeading}`}
+                style={{color:APP_COLORS.textMuted}}
+            >
                 {label}
             </Text>
             <CompactTextInput
@@ -240,7 +264,7 @@ function FilterInput({
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
-                className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                className={` ${mmLeading} ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
             />
         </View>
     );
@@ -269,7 +293,10 @@ function FilterDateField({
                          }: FilterDateFieldProps) {
     return (
         <View className="flex-1 gap-1">
-            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+            <Text
+                className={`text-xs font-semibold ${mmLeading}`}
+                style={{color:APP_COLORS.textMuted}}
+            >
                 {label}
             </Text>
             <ServiceDatePicker
