@@ -193,18 +193,22 @@ export default function CreateProposalScreen() {
         : undefined;
 
     return (
-        <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
 
             {/* back button , page title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
-                    className="h-11 w-11 items-center justify-center rounded-full bg-[#f1f5f9]"
+                    className="h-11 w-11 items-center justify-center rounded-full "
+                    style={({pressed}) => ({
+                        backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+                    })}
                 >
                     <Ionicons name="arrow-back" size={22} color="#475569"/>
                 </Pressable>
                 <Text
-                    className={`flex-1 px-3 text-center text-lg font-bold text-slate-900 ${mmLeading}`}
+                    className={`flex-1 px-3 text-center text-sm font-bold ${mmLeading}`}
+                    style={{color: APP_COLORS.textPrimary}}
                 >
                     {t.title}
                 </Text>
@@ -220,12 +224,19 @@ export default function CreateProposalScreen() {
                 }}
                 keyboardShouldPersistTaps="handled"
             >
-                <View className="mt-1 rounded-2xl bg-white p-4">
+                <View
+                    className="mt-1 rounded-2xl  p-4"
+                    style={{
+                        backgroundColor: APP_COLORS.card,
+                        borderColor: APP_COLORS.border,
+                        borderWidth: 1
+                    }}
+                >
                     {/* preview page && create page */}
                     {
                         reviewValues ?
                             (
-                                <View className="gap-4">
+                                <View className="gap-3">
 
                                     {/* step2 form */}
 
@@ -328,7 +339,7 @@ export default function CreateProposalScreen() {
                                 </View>
                             ) :
                             (
-                                <View className="gap-4">
+                                <View className="gap-3">
 
                                     {/* step1 form */}
 
@@ -337,7 +348,7 @@ export default function CreateProposalScreen() {
                                         control={control}
                                         name="truckId"
                                         render={() => (
-                                            <View className="gap-2">
+                                            <View className="gap-1.5">
                                                 <RequiredLabel label={t.labels.truck} mmLeading={mmLeading}/>
                                                 <Input
                                                     value={truckQuery}
@@ -348,15 +359,27 @@ export default function CreateProposalScreen() {
                                                     }}
                                                     onFocus={() => setTruckPickerOpen(true)}
                                                     placeholder={t.placeholders.truck}
-                                                    className={`border py-0 h-11 ${mmLeading} border-slate-200 bg-white ${truckPickerOpen ? "border-blue-500" : ""}`}
+                                                    placeholderTextColor={APP_COLORS.textMuted}
+                                                    style={{
+                                                        backgroundColor: APP_COLORS.inputBackground,
+                                                        borderColor: errors.truckId ? APP_COLORS.error : APP_COLORS.border,
+                                                        borderWidth: 1,
+                                                        color: APP_COLORS.textPrimary
+                                                    }}
+                                                    className={`py-0 h-14  text-sm font-medium ${mmLeading} ${truckPickerOpen ? "border-blue-500" : ""}`}
                                                 />
                                                 {!!errors.truckId?.message && (
-                                                    <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                                                    <Text
+                                                        className={`text-xs font-normal ${mmLeading}`}
+                                                        style={{color: APP_COLORS.error}}
+                                                    >
                                                         {String(errors.truckId.message)}
                                                     </Text>
                                                 )}
                                                 {truckPickerOpen ? (
-                                                    <View className="rounded-2xl border border-slate-200 bg-white p-3">
+                                                    <View
+                                                        className="rounded-2xl border border-slate-200 bg-white p-3"
+                                                    >
                                                         <Input
                                                             value={truckQuery}
                                                             onChangeText={(next) => {
@@ -364,7 +387,14 @@ export default function CreateProposalScreen() {
                                                                 setValue("truckId", "");
                                                             }}
                                                             placeholder={t.placeholders.truckSearch}
-                                                            className={`mb-2 border py-0 h-11 ${mmLeading} border-slate-100 bg-slate-50`}
+                                                            placeholderTextColor={APP_COLORS.textMuted}
+                                                            style={{
+                                                                backgroundColor: APP_COLORS.inputBackground,
+                                                                borderColor: APP_COLORS.border,
+                                                                borderWidth: 1,
+                                                                color: APP_COLORS.textPrimary
+                                                            }}
+                                                            className={`mb-2 border py-0 h-11 ${mmLeading} `}
                                                         />
                                                         {trucks.slice(0, 5).map((truck) => (
                                                             <Pressable
@@ -378,9 +408,13 @@ export default function CreateProposalScreen() {
                                                                     setTruckPickerOpen(false);
                                                                 }}
                                                                 className="py-2"
+
                                                             >
                                                                 <Text
-                                                                    className={`text-sm font-semibold text-slate-900 ${mmLeading}`}
+                                                                    className={`text-sm font-semibold  ${mmLeading}`}
+                                                                    style={{
+                                                                        color: APP_COLORS.textPrimary
+                                                                    }}
                                                                 >
                                                                     {truck.plateNo}
                                                                 </Text>
@@ -389,6 +423,7 @@ export default function CreateProposalScreen() {
                                                                 >
                                                                     {getTruckSubtitle(truck)}
                                                                 </Text>
+                                                                <View className="my-2 h-[0.5px] bg-slate-200/60"/>
                                                             </Pressable>
                                                         ))}
                                                     </View>
@@ -425,31 +460,64 @@ export default function CreateProposalScreen() {
                                                         }
                                                     }}
                                                 >
-                                                    <Select.Trigger className=" py-0 h-11 ">
+                                                    <Select.Trigger
+                                                        className={`py-0 h-14 rounded-xl ${mmLeading} `}
+                                                        style={{
+                                                            backgroundColor: APP_COLORS.inputBackground,
+                                                            borderColor: APP_COLORS.border,
+                                                            borderWidth: 1
+                                                        }}
+
+                                                    >
                                                         <Select.Value
                                                             placeholder={t.placeholders.serviceType}
-                                                            style={compactLineInputTextStyle(locale)}
+                                                            className={`py-0 text-sm font-medium`}
+                                                            style={[{color: APP_COLORS.textPrimary}, compactLineInputTextStyle(locale)]}
                                                         />
                                                         <Select.TriggerIndicator/>
                                                     </Select.Trigger>
                                                     <Select.Portal>
                                                         <Select.Overlay/>
                                                         <Select.Content
-                                                            className="rounded-2xl text-xs border border-slate-200 bg-white"
+                                                            className="rounded-2xl"
+                                                            style={{
+                                                                backgroundColor: APP_COLORS.card,
+                                                                borderColor: APP_COLORS.border,
+                                                                borderWidth: 1
+                                                            }}
                                                             presentation="popover"
                                                             width="trigger"
                                                         >
-                                                            {serviceTypes.map((serviceType) => (
-                                                                <Select.Item
-                                                                    className=" text-xs!"
-                                                                    key={String(serviceType.id)}
-                                                                    value={serviceType.serviceType}
-                                                                    label={getServiceTypeLabel(serviceType, locale)}
-                                                                >
-                                                                    <Select.ItemLabel className={mmLeading}/>
-                                                                    <Select.ItemIndicator/>
-                                                                </Select.Item>
-                                                            ))}
+                                                            {serviceTypes.map((serviceType) => {
+
+                                                                const itemLabel = getServiceTypeLabel(serviceType, locale);
+                                                                const isSelected = serviceType.serviceType === value;
+
+                                                                    return (
+                                                                        <Select.Item
+                                                                            className=" text-xs"
+                                                                            key={String(serviceType.id)}
+                                                                            value={serviceType.serviceType}
+                                                                            label={itemLabel}
+                                                                            style={{
+                                                                                backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                                paddingVertical: 12,
+                                                                                paddingHorizontal: 16,
+                                                                            }}
+                                                                        >
+                                                                            <Select.ItemLabel
+                                                                                className={`text-xs ${mmLeading}`}
+                                                                                style={{
+                                                                                    color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                                    fontWeight: isSelected ? "600" : "400"
+                                                                                }}
+                                                                            />
+                                                                            <Select.ItemIndicator/>
+                                                                        </Select.Item>
+                                                                    )
+                                                                }
+                                                            )
+                                                            }
                                                         </Select.Content>
                                                     </Select.Portal>
                                                 </Select>
@@ -581,10 +649,12 @@ function PreviewRow({label, value, mmLeading, last}: PreviewRowProps) {
 function RequiredLabel({label, mmLeading}: RequiredLabelProps) {
     return (
         <View className="flex-row items-center gap-1">
-            <Text className={`text-sm font-medium text-slate-900 ${mmLeading}`}>
+            <Text
+                className={`text-sm font-medium  ${mmLeading}`}
+                style={{color: APP_COLORS.textSecondary}}
+            >
                 {label}
             </Text>
-            <Text className="text-red-500">*</Text>
         </View>
     );
 }
@@ -629,11 +699,19 @@ function FormInput({
                         value={String(value ?? "")}
                         onChangeText={onChange}
                         placeholder={placeholder}
+                        placeholderTextColor={APP_COLORS.textMuted}
                         keyboardType={keyboardType}
-                        className={`border py-0 h-11 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+                        className={`py-0 h-14  text-sm font-medium  ${mmLeading}  `}
+                        style={{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor: error ? APP_COLORS.error : APP_COLORS.border,
+                            borderWidth: 1,
+                            color: APP_COLORS.textPrimary
+                        }}
                     />
                     {!!error && (
-                        <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                        <Text className={`text-xs font-normal ${mmLeading} `}
+                              style={{color: APP_COLORS.error}}>
                             {String(error)}
                         </Text>
                     )}
