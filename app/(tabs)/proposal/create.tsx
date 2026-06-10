@@ -4,7 +4,7 @@ import {
     compactLineInputTextStyle,
     compactMultilineInputTextStyle,
 } from "@/constants/compact-input";
-import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
+import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useDebouncedValue} from "@/hooks/use-debounced-value";
 import {useLocaleStore, type AppLocale} from "@/stores/client/locale-store";
 import {useCreateProposal} from "@/stores/server/proposal/create-mutation";
@@ -85,6 +85,7 @@ function matchesTruckQuery(item: TruckItem, query: string): boolean {
 }
 
 export default function CreateProposalScreen() {
+
     const router = useRouter();
     const qc = useQueryClient();
     const insets = useSafeAreaInsets();
@@ -97,6 +98,8 @@ export default function CreateProposalScreen() {
     const debouncedTruckQuery = useDebouncedValue(truckQuery, 400);
 
     const mmLeading = getMyanmarLeadingClass(locale);
+    const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
+    const style = locale === "mm" ? mmTextStyle : undefined;
 
     const schema = useMemo(() => buildSchema(t), [t]);
     const {
@@ -349,7 +352,8 @@ export default function CreateProposalScreen() {
                                         name="truckId"
                                         render={() => (
                                             <View className="gap-1.5">
-                                                <RequiredLabel label={t.labels.truck} mmLeading={mmLeading}/>
+                                                <RequiredLabel label={t.labels.truck} mmLeading={mmLeading}
+                                                               style={style}/>
                                                 <Input
                                                     value={truckQuery}
                                                     onChangeText={(next) => {
@@ -366,12 +370,12 @@ export default function CreateProposalScreen() {
                                                         borderWidth: 1,
                                                         color: APP_COLORS.textPrimary
                                                     }}
-                                                    className={`py-0 h-14  text-sm font-medium ${mmLeading} ${truckPickerOpen ? "border-blue-500" : ""}`}
+                                                    className={`py-0 h-14  text-xs font-medium ${mmLeading} `}
                                                 />
                                                 {!!errors.truckId?.message && (
                                                     <Text
                                                         className={`text-xs font-normal ${mmLeading}`}
-                                                        style={{color: APP_COLORS.error}}
+                                                        style={[{color: APP_COLORS.error},style]}
                                                     >
                                                         {String(errors.truckId.message)}
                                                     </Text>
@@ -388,12 +392,12 @@ export default function CreateProposalScreen() {
                                                             }}
                                                             placeholder={t.placeholders.truckSearch}
                                                             placeholderTextColor={APP_COLORS.textMuted}
-                                                            style={{
+                                                            style={[{
                                                                 backgroundColor: APP_COLORS.inputBackground,
                                                                 borderColor: APP_COLORS.border,
                                                                 borderWidth: 1,
                                                                 color: APP_COLORS.textPrimary
-                                                            }}
+                                                            },style]}
                                                             className={`mb-2 border py-0 h-11 ${mmLeading} `}
                                                         />
                                                         {trucks.slice(0, 5).map((truck) => (
@@ -412,9 +416,7 @@ export default function CreateProposalScreen() {
                                                             >
                                                                 <Text
                                                                     className={`text-sm font-semibold  ${mmLeading}`}
-                                                                    style={{
-                                                                        color: APP_COLORS.textPrimary
-                                                                    }}
+                                                                    style={{color: APP_COLORS.textPrimary}}
                                                                 >
                                                                     {truck.plateNo}
                                                                 </Text>
@@ -438,11 +440,11 @@ export default function CreateProposalScreen() {
                                         name="proposalAmount"
                                         label={t.labels.amount}
                                         placeholder={t.placeholders.amount}
-                                        locale={locale}
                                         keyboardType="decimal-pad"
                                         required
                                         error={errors.proposalAmount?.message}
                                         mmLeading={mmLeading}
+                                        style={style}
                                     />
 
                                     {/* service type select box */}
@@ -451,7 +453,8 @@ export default function CreateProposalScreen() {
                                         name="serviceType"
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
-                                                <RequiredLabel label={t.labels.serviceType} mmLeading={mmLeading}/>
+                                                <RequiredLabel label={t.labels.serviceType} mmLeading={mmLeading}
+                                                               style={style}/>
                                                 <Select
                                                     value={getSelectedServiceType(value, serviceTypes, locale)}
                                                     onValueChange={(next) => {
@@ -471,8 +474,8 @@ export default function CreateProposalScreen() {
                                                     >
                                                         <Select.Value
                                                             placeholder={t.placeholders.serviceType}
-                                                            className={`py-0 text-sm font-medium`}
-                                                            style={[{color: APP_COLORS.textPrimary}, compactLineInputTextStyle(locale)]}
+                                                            className={`py-0 text-sm font-medium ${mmLeading}`}
+                                                            style={[{color: APP_COLORS.textPrimary}, style]}
                                                         />
                                                         <Select.TriggerIndicator/>
                                                     </Select.Trigger>
@@ -490,8 +493,8 @@ export default function CreateProposalScreen() {
                                                         >
                                                             {serviceTypes.map((serviceType) => {
 
-                                                                const itemLabel = getServiceTypeLabel(serviceType, locale);
-                                                                const isSelected = serviceType.serviceType === value;
+                                                                    const itemLabel = getServiceTypeLabel(serviceType, locale);
+                                                                    const isSelected = serviceType.serviceType === value;
 
                                                                     return (
                                                                         <Select.Item
@@ -507,10 +510,10 @@ export default function CreateProposalScreen() {
                                                                         >
                                                                             <Select.ItemLabel
                                                                                 className={`text-xs ${mmLeading}`}
-                                                                                style={{
+                                                                                style={[{
                                                                                     color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
                                                                                     fontWeight: isSelected ? "600" : "400"
-                                                                                }}
+                                                                                },style]}
                                                                             />
                                                                             <Select.ItemIndicator/>
                                                                         </Select.Item>
@@ -522,7 +525,10 @@ export default function CreateProposalScreen() {
                                                     </Select.Portal>
                                                 </Select>
                                                 {!!errors.serviceType?.message && (
-                                                    <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                                                    <Text
+                                                        className={`text-xs font-normal ${mmLeading}`}
+                                                        style={[{color:APP_COLORS.error},style]}
+                                                    >
                                                         {String(errors.serviceType.message)}
                                                     </Text>
                                                 )}
@@ -536,10 +542,10 @@ export default function CreateProposalScreen() {
                                         name="serviceShop"
                                         label={t.labels.serviceShop}
                                         placeholder={t.placeholders.serviceShop}
-                                        locale={locale}
                                         required
                                         error={errors.serviceShop?.message}
                                         mmLeading={mmLeading}
+                                        style={style}
                                     />
 
                                     {/* service date */}
@@ -548,16 +554,21 @@ export default function CreateProposalScreen() {
                                         name="serviceDate"
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
-                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading}/>
+                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading}
+                                                               style={style}/>
                                                 <ServiceDatePicker
                                                     locale={locale}
                                                     value={value}
                                                     onChange={onChange}
                                                     placeholder={t.placeholders.serviceDate}
                                                     doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                                                    style={style}
                                                 />
                                                 {!!errors.serviceDate?.message && (
-                                                    <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                                                    <Text
+                                                        className={`text-xs font-normal ${mmLeading}`}
+                                                        style={[{color:APP_COLORS.error},style]}
+                                                    >
                                                         {String(errors.serviceDate.message)}
                                                     </Text>
                                                 )}
@@ -572,7 +583,8 @@ export default function CreateProposalScreen() {
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
                                                 <Text
-                                                    className={`text-sm font-medium text-slate-900 ${mmLeading}`}
+                                                    className={`text-sm font-medium  ${mmLeading}`}
+                                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                                 >
                                                     {t.labels.description}
                                                 </Text>
@@ -580,23 +592,38 @@ export default function CreateProposalScreen() {
                                                     value={value}
                                                     onChangeText={onChange}
                                                     placeholder={t.placeholders.description}
-                                                    multiline
+                                                    placeholderTextColor={APP_COLORS.textMuted}
+                                                    multiline={true}
+                                                    numberOfLines={4}
+                                                    scrollEnabled={true}
+                                                    maxLength={511}
                                                     textAlignVertical="top"
-                                                    className="min-h-[126px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900"
-                                                    style={compactMultilineInputTextStyle(locale)}
+                                                    className={`min-h-[126px] rounded-xl p-3 text-sm font-medium ${mmLeading}`}
+                                                    style={[style,{
+                                                        backgroundColor:APP_COLORS.inputBackground,
+                                                        borderColor: APP_COLORS.border,
+                                                        borderWidth:1,
+                                                        color:APP_COLORS.textPrimary
+                                                    }]}
                                                 />
                                             </View>
                                         )}
                                     />
 
-                                    {/* step1 back && submit buttons */}
+                                    {/* step1 cancel && next buttons */}
                                     <View className="flex-row gap-3 pt-2">
                                         <Pressable
                                             onPress={onBack}
                                             disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl bg-slate-100 h-14 "
+                                            className="flex-1 items-center justify-center rounded-xl bg-slate-200 h-14 "
+                                            style={({pressed}) => ({
+                                                backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
+                                                opacity: isPending ? 0.7 : 1,
+                                                borderColor: APP_COLORS.border,
+                                                borderWidth: 1
+                                            })}
                                         >
-                                            <Text className={`font-semibold text-slate-700 ${mmLeading}`}>
+                                            <Text className={`text-sm font-semibold text-slate-700 ${mmLeading}`}>
                                                 {t.actions.cancel}
                                             </Text>
                                         </Pressable>
@@ -604,10 +631,12 @@ export default function CreateProposalScreen() {
                                             onPress={handleSubmit(onSubmit)}
                                             disabled={isPending}
                                             className="flex-1 items-center justify-center rounded-xl h-14"
-                                            style={{
-                                                backgroundColor: APP_COLORS.primary,
+                                            style={({pressed}) => ({
+                                                backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                                                 opacity: isPending ? 0.7 : 1,
-                                            }}
+                                                borderColor: APP_COLORS.border,
+                                                borderWidth: 1
+                                            })}
                                         >
                                             <Text className={`font-semibold text-white ${mmLeading}`}>
                                                 {t.actions.next}
@@ -626,6 +655,7 @@ export default function CreateProposalScreen() {
 type RequiredLabelProps = {
     label: string;
     mmLeading: string;
+    style: any;
 };
 
 type PreviewRowProps = {
@@ -646,12 +676,12 @@ function PreviewRow({label, value, mmLeading, last}: PreviewRowProps) {
     );
 }
 
-function RequiredLabel({label, mmLeading}: RequiredLabelProps) {
+function RequiredLabel({label, mmLeading, style}: RequiredLabelProps) {
     return (
         <View className="flex-row items-center gap-1">
             <Text
                 className={`text-sm font-medium  ${mmLeading}`}
-                style={{color: APP_COLORS.textSecondary}}
+                style={[{color: APP_COLORS.textSecondary}, style]}
             >
                 {label}
             </Text>
@@ -664,11 +694,11 @@ type FormInputProps = {
     name: keyof FormValues;
     label: string;
     placeholder: string;
-    locale: AppLocale;
     keyboardType?: "decimal-pad";
     required?: boolean;
     error?: string;
     mmLeading: string;
+    style: any;
 };
 
 function FormInput({
@@ -676,11 +706,11 @@ function FormInput({
                        name,
                        label,
                        placeholder,
-                       locale,
                        keyboardType,
                        required,
                        error,
                        mmLeading,
+                       style
                    }: FormInputProps) {
     return (
         <Controller
@@ -689,9 +719,9 @@ function FormInput({
             render={({field: {value, onChange}}) => (
                 <View className="gap-2">
                     {required ? (
-                        <RequiredLabel label={label} mmLeading={mmLeading}/>
+                        <RequiredLabel label={label} mmLeading={mmLeading} style={style}/>
                     ) : (
-                        <Text className={`text-sm font-medium text-slate-900 ${mmLeading}`}>
+                        <Text className={`text-sm font-medium text-slate-900 ${mmLeading}`} style={style}>
                             {label}
                         </Text>
                     )}
@@ -701,7 +731,7 @@ function FormInput({
                         placeholder={placeholder}
                         placeholderTextColor={APP_COLORS.textMuted}
                         keyboardType={keyboardType}
-                        className={`py-0 h-14  text-sm font-medium  ${mmLeading}  `}
+                        className={`py-0 h-14  text-xs font-medium  ${mmLeading}  `}
                         style={{
                             backgroundColor: APP_COLORS.inputBackground,
                             borderColor: error ? APP_COLORS.error : APP_COLORS.border,
@@ -711,7 +741,7 @@ function FormInput({
                     />
                     {!!error && (
                         <Text className={`text-xs font-normal ${mmLeading} `}
-                              style={{color: APP_COLORS.error}}>
+                              style={[{color: APP_COLORS.error},style]}>
                             {String(error)}
                         </Text>
                     )}
