@@ -15,7 +15,8 @@ type ProposalSearchToolbarProps = {
   onClearQuickQuery: () => void;
   onToggleAdvanced: () => void;
   onPressAdd: () => void;
-  mmLeading:any
+  mmLeading:any;
+  style:any
 };
 
 export function ProposalSearchToolbar({
@@ -27,7 +28,8 @@ export function ProposalSearchToolbar({
   onClearQuickQuery,
   onToggleAdvanced,
   onPressAdd,
-  mmLeading
+  mmLeading,
+  style
 }: ProposalSearchToolbarProps) {
   return (
     <View className="mb-4 flex-row items-center gap-2">
@@ -38,12 +40,12 @@ export function ProposalSearchToolbar({
           placeholder={placeholder}
           placeholderTextColor={APP_COLORS.textMuted}
           className={`flex-1 border h-11 py-0 text-sm font-medium ${mmLeading}`}
-          style={{
+          style={[style,{
             paddingRight: 44 ,
             backgroundColor:APP_COLORS.inputBackground,
             borderColor:APP_COLORS.border,
             borderWidth:1
-        }}
+        }]}
         />
 
         <Pressable

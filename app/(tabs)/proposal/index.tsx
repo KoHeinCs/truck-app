@@ -193,6 +193,7 @@ export default function ProposalScreen() {
                             }
                             onPressAdd={() => handleAddPress()}
                             mmLeading={mmLeading}
+                            style={style}
                         />
                         {ui.advancedOpen ? (
                             <ProposalAdvancedFiltersCard
@@ -230,6 +231,7 @@ export default function ProposalScreen() {
                                     });
                                     patchUi({advancedOpen: false});
                                 }}
+                                style={style}
                             />
                         ) : null}
                     </View>

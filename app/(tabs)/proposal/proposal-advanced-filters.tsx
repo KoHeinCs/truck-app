@@ -23,6 +23,7 @@ type ProposalAdvancedFiltersProps = {
     onChange: (next: Partial<ProposalAdvancedFilterValues>) => void;
     onReset: () => void;
     onApply: () => void;
+    style: any
 };
 
 export function ProposalAdvancedFilters({
@@ -33,9 +34,10 @@ export function ProposalAdvancedFilters({
                                             onChange,
                                             onReset,
                                             onApply,
+                                            style
                                         }: ProposalAdvancedFiltersProps) {
 
-    const {search:t} = useTranslation('proposal')
+    const {search: t} = useTranslation('proposal')
     const tCommon = useTranslation("common");
     const mmLeading = getMyanmarLeadingClass(locale);
 
@@ -76,16 +78,16 @@ export function ProposalAdvancedFilters({
         <Card
             className="mb-4 p-5"
             style={{
-                backgroundColor:APP_COLORS.card,
-                borderColor:APP_COLORS.border,
-                borderWidth:1
+                backgroundColor: APP_COLORS.card,
+                borderColor: APP_COLORS.border,
+                borderWidth: 1
             }}
         >
             <Card.Body className="gap-3">
                 {/* title */}
                 <Text
                     className={`text-sm font-medium  ${mmLeading}`}
-                    style={{color:APP_COLORS.textPrimary}}
+                    style={[{color: APP_COLORS.textPrimary}, style]}
                 >
                     {t.advancedTitle}
                 </Text>
@@ -99,6 +101,7 @@ export function ProposalAdvancedFilters({
                         locale={locale}
                         mmLeading={mmLeading}
                         onChangeText={(proposalNo) => onChange({proposalNo})}
+                        style={style}
                     />
                     <FilterInput
                         label={t.labels.plateNo}
@@ -107,6 +110,7 @@ export function ProposalAdvancedFilters({
                         locale={locale}
                         mmLeading={mmLeading}
                         onChangeText={(plateNo) => onChange({plateNo})}
+                        style={style}
                     />
                 </View>
 
@@ -118,9 +122,10 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.proposalDateFrom}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         mode="date"
                         onChange={(proposalDateFrom) => onChange({proposalDateFrom})}
+                        style={style}
                     />
                     <FilterDateField
                         label={t.labels.proposalDateTo}
@@ -128,9 +133,10 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.proposalDateTo}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         mode="date"
                         onChange={(proposalDateTo) => onChange({proposalDateTo})}
+                        style={style}
                     />
                 </View>
 
@@ -142,8 +148,9 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.serviceDateFrom}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         onChange={(serviceDateFrom) => onChange({serviceDateFrom})}
+                        style={style}
                     />
                     <FilterDateField
                         label={t.labels.serviceDateTo}
@@ -151,8 +158,9 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.serviceDateTo}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         onChange={(serviceDateTo) => onChange({serviceDateTo})}
+                        style={style}
                     />
                 </View>
 
@@ -202,7 +210,7 @@ export function ProposalAdvancedFilters({
                     <Pressable
                         onPress={onReset}
                         className="flex-1 items-center justify-center rounded-xl  py-2"
-                        style={({ pressed }) => ({
+                        style={({pressed}) => ({
                             backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
                             borderColor: APP_COLORS.border,
                             borderWidth: 1
@@ -210,7 +218,7 @@ export function ProposalAdvancedFilters({
                     >
                         <Text
                             className={`text-xs font-semibold  ${mmLeading}`}
-                            style={{color:APP_COLORS.error}}
+                            style={{color: APP_COLORS.error}}
                         >
                             {t.actions.reset}
                         </Text>
@@ -218,7 +226,7 @@ export function ProposalAdvancedFilters({
 
                     <Pressable
                         className="flex-1 items-center justify-center rounded-xl py-2"
-                        style={ ({pressed})=>({
+                        style={({pressed}) => ({
                             backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
                         })}
                         onPress={onApply}
@@ -240,6 +248,7 @@ type FilterInputProps = {
     locale: AppLocale;
     mmLeading: string;
     onChangeText: (next: string) => void;
+    style: any
 };
 
 function FilterInput({
@@ -249,12 +258,13 @@ function FilterInput({
                          locale,
                          mmLeading,
                          onChangeText,
+                         style
                      }: FilterInputProps) {
     return (
         <View className="flex-1 gap-1">
             <Text
                 className={`text-xs font-semibold ${mmLeading}`}
-                style={{color:APP_COLORS.textMuted}}
+                style={[{color: APP_COLORS.textMuted},style]}
             >
                 {label}
             </Text>
@@ -265,6 +275,7 @@ function FilterInput({
                 onChangeText={onChangeText}
                 placeholder={placeholder}
                 className={` ${mmLeading} ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                style={style}
             />
         </View>
     );
@@ -279,6 +290,7 @@ type FilterDateFieldProps = {
     doneLabel: string;
     mode?: "date" | "datetime";
     onChange: (next: string) => void;
+    style: any;
 };
 
 function FilterDateField({
@@ -290,12 +302,13 @@ function FilterDateField({
                              doneLabel,
                              mode = "datetime",
                              onChange,
+                             style
                          }: FilterDateFieldProps) {
     return (
         <View className="flex-1 gap-1">
             <Text
                 className={`text-xs font-semibold ${mmLeading}`}
-                style={{color:APP_COLORS.textMuted}}
+                style={[{color: APP_COLORS.textMuted},style]}
             >
                 {label}
             </Text>
@@ -307,6 +320,7 @@ function FilterDateField({
                 doneLabel={doneLabel}
                 mode={mode}
                 triggerClassName="h-11 min-h-11"
+                style={style}
             />
         </View>
     );
