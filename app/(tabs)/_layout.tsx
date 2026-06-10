@@ -33,7 +33,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ownership/index"
+        name="ownership"
         options={{
           title: "Truck",
           tabBarLabel: "Truck",

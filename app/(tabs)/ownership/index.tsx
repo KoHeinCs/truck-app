@@ -12,11 +12,11 @@ import type {
 import React, { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { OwnershipAdvancedFilters } from "./ownership-advanced-filters";
-import { OwnershipCard } from "./ownership-card";
-import { OwnershipHeader } from "./ownership-header";
-import { OwnershipSearchToolbar } from "./ownership-search-toolbar";
-import { OwnershipTabs } from "./ownership-tabs";
+import { OwnershipAdvancedFilters } from "./components/ownership-advanced-filters";
+import { OwnershipCard } from "./components/ownership-card";
+import { OwnershipHeader } from "./components/ownership-header";
+import { OwnershipSearchToolbar } from "./components/ownership-search-toolbar";
+import { OwnershipTabs } from "./components/ownership-tabs";
 
 type OwnershipListUiState = OwnershipAdvancedFilterValues & {
   quickQuery: string;
