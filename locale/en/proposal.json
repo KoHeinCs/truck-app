@@ -1,41 +1,50 @@
 {
   "proposal": {
     "tabs": {
-      "INFORM": "မရှင်းရသေး",
-      "APPROVED": "ရှင်းပြီး",
-      "TERMINATED": "ပယ်ဖျက်"
+      "INFORM": "စောင့်ဆိုင်းဆဲ",
+      "APPROVED": "အတည်ပြုပြီး",
+      "TERMINATED": "ပယ်ဖျက်ပြီး"
     },
     "master": {
-      "title": "အဆိုပြုချက်များ",
-      "welcome": "မင်္ဂလာပါ",
-      "searchPlaceholder": "ရှာဖွေရန်...",
-      "empty_INFORM": "ပိုက်ဆံရှင်းရန်ကျန်ရှိသော ကုန်ကျစရိတ်စာရင်းများ မရှိပါ။",
-      "empty_APPROVED": "ပိုက်ဆံရှင်းပြီးသော စာရင်းများ မရှိပါ။",
-      "empty_TERMINATED": "မှားယွင်းတင်ထားသော ကုန်ကျစရိတ် စာရင်းများ မရှိပါ။"
+      "title": "စာရင်းများ",
+      "searchPlaceholder": "စာရင်းနံပါတ်ဖြင့် ရှာဖွေရန်...",
+      "empty_INFORM": "မရှင်းရသေးသော စာရင်းများ မတွေ့ရှိပါ။",
+      "empty_APPROVED": "ရှင်းပြီးသော စာရင်းများ မတွေ့ရှိပါ။",
+      "empty_TERMINATED": "မှားယွင်းတင်မိသော စာရင်းများ မတွေ့ရှိပါ။"
+    },
+    "card": {
+      "amount": "ကျသင့်ငွေပမာဏ",
+      "plateNo": "ယာဉ်နံပါတ်",
+      "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ပေးသူ",
+      "proposalDate": "စာရင်းတင်ရက်",
+      "serviceType": "ဝန်ဆောင်မှုအမျိုးအစား",
+      "serviceDate": "ဝန်ဆောင်မှုပေးသည့်အချိန်",
+      "createdBy": "စာရင်းတင်သူ",
+      "viewDetail": "အသေးစိတ် ကြည့်ရန်"
     },
     "search": {
       "advancedTitle": "အဆင့်မြင့်ရှာဖွေမှု",
       "labels": {
-        "proposalNo": "အဆိုပြုလွှာနံပါတ်",
-        "ownerId": "ပိုင်ရှင်",
+        "proposalNo": "စာရင်းနံပါတ်",
+        "ownerId": "ယာဉ်ပိုင်ရှင်",
         "plateNo": "ယာဉ်နံပါတ်",
-        "proposalDateFrom": "အဆိုပြုရက် (မှ)",
-        "proposalDateTo": "အဆိုပြုရက် (ထိ)",
+        "proposalDateFrom": "စာရင်းတင်ရက် (မှ)",
+        "proposalDateTo": "စာရင်းတင်ရက် (အထိ)",
         "serviceType": "ဝန်ဆောင်မှုအမျိုးအစား",
-        "serviceDateFrom": "ပြင်ဆင်ရက် (မှ)",
-        "serviceDateTo": "ပြင်ဆင်ရက် (ထိ)",
-        "createdBy": "အဆိုပြုသူ"
+        "serviceDateFrom": "ဝန်ဆောင်မှုပေးသည့်အချိန် (မှ)",
+        "serviceDateTo": "ဝန်ဆောင်မှုပေးသည့်အချိန် (အထိ)",
+        "createdBy": "စာရင်းတင်သူ"
       },
       "placeholders": {
-        "proposalNo": "အဆိုပြုလွှာနံပါတ်",
-        "ownerId": "ပိုင်ရှင်",
-        "plateNo": "ယာဉ်နံပါတ်",
-        "proposalDateFrom": "အဆိုပြုရက် (မှ)",
-        "proposalDateTo": "အဆိုပြုရက် (ထိ)",
-        "serviceType": "ဝန်ဆောင်မှုအမျိုးအစား",
-        "serviceDateFrom": "ပြင်ဆင်ရက် (မှ)",
-        "serviceDateTo": "ပြင်ဆင်ရက် (ထိ)",
-        "createdBy": "အဆိုပြုသူ"
+        "proposalNo": "စာရင်းနံပါတ် ထည့်ပါ",
+        "ownerId": "ယာဉ်ပိုင်ရှင် ရွေးပါ",
+        "plateNo": "ယာဉ်နံပါတ် ထည့်ပါ",
+        "proposalDateFrom": "ရက်/လ/ခုနှစ် ရွေးပါ",
+        "proposalDateTo": "ရက်/လ/ခုနှစ် ရွေးပါ",
+        "serviceType": "ဝန်ဆောင်မှု ရွေးပါ",
+        "serviceDateFrom": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် ရွေးပါ",
+        "serviceDateTo": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် ရွေးပါ",
+        "createdBy": "စာရင်းတင်သူ ရွေးပါ"
       },
       "actions": {
         "reset": "ရှင်းလင်းမည်",
@@ -43,67 +52,107 @@
       }
     },
     "createProposal": {
-      "title": "အဆိုပြုချက်အသစ်",
+      "title": "စာရင်းအသစ် ထည့်ရန်",
       "reviewTitle": "အချက်အလက်ပြန်စစ်ရန်",
       "required": "ဖြည့်ရန်လိုအပ်သည်",
       "invalidAmount": "ပမာဏမှားယွင်းနေသည်",
       "invalidDate": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် သုံးပါ",
-      "successTitle": "အောင်မြင်သည်",
-      "successBody": "အဆိုပြုချက်အသစ်ထည့်ပြီးပါပြီ။",
-      "errorTitle": "အမှားအယွင်း",
-      "errorBody": "အဆိုပြုချက်ထည့်၍မရပါ။",
       "labels": {
         "truck": "ယာဉ်နံပါတ်",
-        "amount": "ကျသင့်ပမာဏ",
-        "serviceType": "ပြင်ဆင်မှု/ဝန်ဆောင်မှုအမျိုးအစား",
-        "serviceShop": "ဝပ်ရှော့/ဝန်ဆောင်မှုပေးသူ",
-        "serviceDate": "ပြင်ဆင်/ဝန်ဆောင် သည့်ရက်",
+        "amount": "ကျသင့်ငွေပမာဏ",
+        "serviceType": "ပြင်ဆင်မှု/ဝန်ဆောင်မှု အမျိုးအစား",
+        "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ပေးသူ",
+        "serviceDate": "ပြင်ဆင်/ဝန်ဆောင်မှု ပေးသည့်အချိန်",
         "description": "အသေးစိတ်အချက်အလက်"
       },
       "placeholders": {
         "truck": "ယာဉ်ရွေးချယ်ပါ",
-        "amount": "ကျသင့်ပမာဏ ထည့်ပါ",
+        "truckSearch": "ယာဉ်နံပါတ်ဖြင့်ရှာဖွေရန်...",
+        "amount": "ကျသင့်ငွေပမာဏ ထည့်ပါ",
         "serviceType": "အမျိုးအစားရွေးပါ",
-        "serviceShop": "ဝပ်ရှော့/ဝန်ဆောင်မှုပေးသူ ထည့်ပါ",
-        "serviceDate": "ရက်/လ/ခုနှစ်",
+        "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ထည့်ပါ",
+        "serviceDate": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် ရွေးပါ",
         "description": "အသေးစိတ်အချက်အလက် ရေးသားရန်"
       },
       "actions": {
-        "submit": "ဖန်တီးမည်",
+        "submit": "စာရင်းတင်မည်",
         "submitting": "သိမ်းဆည်းနေ...",
-        "edit": "ပြန်ပြင်မည်",
-        "confirm": "အတည်ပြုမည်",
+        "back": "နောက်သို့",
         "cancel": "မလုပ်တော့ပါ",
+        "next": "ရှေ့သို့",
         "done": "ပြီးပါပြီ"
+      },
+      "dialog": {
+        "successTitle": "အောင်မြင်သည်",
+        "successBody": "စာရင်းတင်ပြီးပါပြီ။",
+        "errorTitle": "အမှားအယွင်း",
+        "errorBody": "စာရင်းတင်မှု မအောင်မြင်ပါ။"
       }
     },
-    "updateProposal": {
-      "title": "အဆိုပြုချက် ပြင်ဆင်ရန်",
+    "editProposal": {
+      "title": "အချက်အလက် ပြင်ဆင်ရန်",
       "labels": {
-        "proposalNo": "အဆိုပြုလွှာနံပါတ်",
+        "truck": "ယာဉ်နံပါတ်",
+        "proposalNo": "စာရင်းနံပါတ်",
+        "amount": "ကျသင့်ငွေပမာဏ",
+        "serviceType": "ပြင်ဆင်မှု/ဝန်ဆောင်မှု အမျိုးအစား",
+        "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ပေးသူ",
+        "serviceDate": "ပြင်ဆင်/ဝန်ဆောင်မှု ပေးသည့်အချိန်",
+        "description": "အသေးစိတ်အချက်အလက်",
         "remark": "မှတ်ချက်"
       },
       "placeholders": {
-        "proposalNo": "PROP-9999",
-        "remark": "မှတ်ချက်ရေးရန်..."
+        "amount": "ကျသင့်ငွေပမာဏ ထည့်ပါ",
+        "serviceType": "အမျိုးအစားရွေးပါ",
+        "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ထည့်ပါ",
+        "serviceDate": "ရက်/လ/ခုနှစ် နာရီ:မိနစ် ရွေးပါ",
+        "description": "အသေးစိတ်အချက်အလက် ရေးသားရန်",
+        "remark": "မှတ်ချက် ထည့်ပါ"
       },
       "actions": {
-        "submit": "သိမ်းမည်",
-        "submitting": "သိမ်းဆည်းနေ...",
-        "accept": "လက်ခံမည်",
-        "terminate": "ပယ်ဖျက်မည်",
-        "confirmCancel": "ပယ်ဖျက်",
-        "confirmOk": "အတည်ပြု"
+        "update": "ပြင်ဆင်မည်",
+        "updating": "ပြင်ဆင်နေသည်...",
+        "done": "ပြီးပါပြီ",
+        "cancel": "မလုပ်တော့ပါ"
       },
       "dialog": {
-        "terminateConfirmTitle": "အဆိုပြုလွှာ ပယ်ဖျက်မလား",
-        "terminateConfirmBody": "ဤအဆိုပြုလွှာကို ပယ်ဖျက်ရန် သေချာပါသလား။",
+        "successTitle": "အောင်မြင်သည်",
+        "successBody": "စောင့်ဆိုင်းဆဲစာရင်း ပြင်ဆင်ပြီးပါပြီ။",
+        "errorTitle": "အမှားအယွင်း",
+        "errorBody": "စောင့်ဆိုင်းဆဲစာရင်း မပြင်ဆင်နိုင်ပါ။"
+      }
+    },
+    "detailProposal": {
+      "title": "စာရင်း အသေးစိတ်",
+      "actionHistoryTitle": "လုပ်ငန်းစဉ်အဆင့်ဆင့် မှတ်တမ်း",
+      "required": "လိုအပ်သောအချက်အလက်ဖြစ်သည်",
+      "labels": {
+        "truck": "ယာဉ်နံပါတ်",
+        "amount": "ကျသင့်ငွေပမာဏ",
+        "serviceType": "ဝန်ဆောင်မှု အမျိုးအစား",
+        "serviceShop": "ဆိုင်/ဝန်ဆောင်မှု ပေးသူ",
+        "serviceDate": "ဝန်ဆောင်မှု ပေးသည့်အချိန်",
+        "proposalDate": "စာရင်းတင်ရက်",
+        "createdBy": "စာရင်းတင်သူ",
+        "ownerId": "ယာဉ်ပိုင်ရှင်",
+        "description": "အသေးစိတ်အချက်အလက်",
+        "remark": "မှတ်ချက်",
+        "notes": "မှတ်တမ်း",
+        "done": "ပြီးပါပြီ"
+      },
+      "placeholders": {
+        "remark": "မှတ်ချက် ထည့်ပါ"
+      },
+      "actions": {
+        "approve": "လက်ခံရန်",
+        "terminate": "ရပ်ဆိုင်းရန်",
+        "cancel": "မလုပ်တော့ပါ"
+      },
+      "dialog": {
         "terminateSuccessTitle": "အောင်မြင်သည်",
         "terminateSuccessBody": "အဆိုပြုချက်ကို ရပ်ဆိုင်းပြီးပါပြီ။",
         "approveSuccessTitle": "အောင်မြင်သည်",
         "approveSuccessBody": "အဆိုပြုချက်ကို လက်ခံပြီးပါပြီ။",
-        "successTitle": "အောင်မြင်ပါသည်",
-        "successBody": "အဆိုပြုချက် ပြင်ဆင်ပြီးပါပြီ။",
         "errorTitle": "အမှားအယွင်း",
         "errorBody": "လုပ်ဆောင်ချက် မအောင်မြင်ပါ။"
       }

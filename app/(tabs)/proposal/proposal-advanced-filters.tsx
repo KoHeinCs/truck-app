@@ -23,6 +23,7 @@ type ProposalAdvancedFiltersProps = {
     onChange: (next: Partial<ProposalAdvancedFilterValues>) => void;
     onReset: () => void;
     onApply: () => void;
+    style: any
 };
 
 export function ProposalAdvancedFilters({
@@ -33,9 +34,10 @@ export function ProposalAdvancedFilters({
                                             onChange,
                                             onReset,
                                             onApply,
+                                            style
                                         }: ProposalAdvancedFiltersProps) {
 
-    const {search:t} = useTranslation('proposal')
+    const {search: t} = useTranslation('proposal')
     const tCommon = useTranslation("common");
     const mmLeading = getMyanmarLeadingClass(locale);
 
@@ -73,10 +75,20 @@ export function ProposalAdvancedFilters({
     );
 
     return (
-        <Card className="mb-4 p-5">
+        <Card
+            className="mb-4 p-5"
+            style={{
+                backgroundColor: APP_COLORS.card,
+                borderColor: APP_COLORS.border,
+                borderWidth: 1
+            }}
+        >
             <Card.Body className="gap-3">
                 {/* title */}
-                <Text className={`text-sm font-semibold text-slate-900 ${mmLeading}`}>
+                <Text
+                    className={`text-sm font-medium  ${mmLeading}`}
+                    style={[{color: APP_COLORS.textPrimary}, style]}
+                >
                     {t.advancedTitle}
                 </Text>
 
@@ -89,6 +101,7 @@ export function ProposalAdvancedFilters({
                         locale={locale}
                         mmLeading={mmLeading}
                         onChangeText={(proposalNo) => onChange({proposalNo})}
+                        style={style}
                     />
                     <FilterInput
                         label={t.labels.plateNo}
@@ -97,6 +110,7 @@ export function ProposalAdvancedFilters({
                         locale={locale}
                         mmLeading={mmLeading}
                         onChangeText={(plateNo) => onChange({plateNo})}
+                        style={style}
                     />
                 </View>
 
@@ -108,9 +122,10 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.proposalDateFrom}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         mode="date"
                         onChange={(proposalDateFrom) => onChange({proposalDateFrom})}
+                        style={style}
                     />
                     <FilterDateField
                         label={t.labels.proposalDateTo}
@@ -118,9 +133,10 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.proposalDateTo}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         mode="date"
                         onChange={(proposalDateTo) => onChange({proposalDateTo})}
+                        style={style}
                     />
                 </View>
 
@@ -132,8 +148,9 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.serviceDateFrom}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         onChange={(serviceDateFrom) => onChange({serviceDateFrom})}
+                        style={style}
                     />
                     <FilterDateField
                         label={t.labels.serviceDateTo}
@@ -141,8 +158,9 @@ export function ProposalAdvancedFilters({
                         placeholder={t.placeholders.serviceDateTo}
                         locale={locale}
                         mmLeading={mmLeading}
-                        doneLabel= {locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         onChange={(serviceDateTo) => onChange({serviceDateTo})}
+                        style={style}
                     />
                 </View>
 
@@ -187,19 +205,30 @@ export function ProposalAdvancedFilters({
                     </View>
                 ) : null}
 
+                {/* reset , search buttons */}
                 <View className="flex-row gap-2 pt-0.5">
                     <Pressable
                         onPress={onReset}
-                        className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
+                        className="flex-1 items-center justify-center rounded-xl  py-2"
+                        style={({pressed}) => ({
+                            backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1
+                        })}
                     >
-                        <Text className={`text-xs font-semibold text-slate-700 ${mmLeading}`}>
+                        <Text
+                            className={`text-xs font-semibold  ${mmLeading}`}
+                            style={{color: APP_COLORS.error}}
+                        >
                             {t.actions.reset}
                         </Text>
                     </Pressable>
 
                     <Pressable
-                        className="flex-1 items-center justify-center rounded-xl py-3"
-                        style={{backgroundColor: APP_COLORS.primary}}
+                        className="flex-1 items-center justify-center rounded-xl py-2"
+                        style={({pressed}) => ({
+                            backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+                        })}
                         onPress={onApply}
                     >
                         <Text className={`text-xs font-semibold text-white ${mmLeading}`}>
@@ -219,6 +248,7 @@ type FilterInputProps = {
     locale: AppLocale;
     mmLeading: string;
     onChangeText: (next: string) => void;
+    style: any
 };
 
 function FilterInput({
@@ -228,10 +258,14 @@ function FilterInput({
                          locale,
                          mmLeading,
                          onChangeText,
+                         style
                      }: FilterInputProps) {
     return (
         <View className="flex-1 gap-1">
-            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+            <Text
+                className={`text-xs font-semibold ${mmLeading}`}
+                style={[{color: APP_COLORS.textMuted},style]}
+            >
                 {label}
             </Text>
             <CompactTextInput
@@ -240,7 +274,8 @@ function FilterInput({
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
-                className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                className={` ${mmLeading} ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                style={style}
             />
         </View>
     );
@@ -255,6 +290,7 @@ type FilterDateFieldProps = {
     doneLabel: string;
     mode?: "date" | "datetime";
     onChange: (next: string) => void;
+    style: any;
 };
 
 function FilterDateField({
@@ -266,10 +302,14 @@ function FilterDateField({
                              doneLabel,
                              mode = "datetime",
                              onChange,
+                             style
                          }: FilterDateFieldProps) {
     return (
         <View className="flex-1 gap-1">
-            <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+            <Text
+                className={`text-xs font-semibold ${mmLeading}`}
+                style={[{color: APP_COLORS.textMuted},style]}
+            >
                 {label}
             </Text>
             <ServiceDatePicker
@@ -280,6 +320,7 @@ function FilterDateField({
                 doneLabel={doneLabel}
                 mode={mode}
                 triggerClassName="h-11 min-h-11"
+                style={style}
             />
         </View>
     );

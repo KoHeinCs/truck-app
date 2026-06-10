@@ -9,7 +9,7 @@ export const COMPACT_LINE_INPUT_CLASSNAME =
 
 /** Advanced filter single-line fields (12px) — en/mm share the same metrics. */
 export const COMPACT_ADVANCED_INPUT_CLASSNAME =
-  "h-11 py-0  px-2.5 text-[11px]";
+  " text-[11px] font-normal h-11 py-0";
 
 /** Search toolbar: outer shell with border; filter/clear render inside the row. */
 export const COMPACT_SEARCH_BAR_ROW_CLASSNAME =

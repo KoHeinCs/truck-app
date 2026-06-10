@@ -1,12 +1,8 @@
 import {ServiceDatePicker} from "@/components/service-date-picker";
 import {APP_COLORS} from "@/constants/colors";
-import {
-    compactLineInputTextStyle,
-    compactMultilineInputTextStyle,
-} from "@/constants/compact-input";
-import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
+import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useDebouncedValue} from "@/hooks/use-debounced-value";
-import {useLocaleStore, type AppLocale} from "@/stores/client/locale-store";
+import {useLocaleStore} from "@/stores/client/locale-store";
 import {useCreateProposal} from "@/stores/server/proposal/create-mutation";
 import {buildServiceTypeSearchColumns} from "@/stores/server/service-type/search-columns";
 import {useServiceTypesInfinite} from "@/stores/server/service-type/query";
@@ -36,6 +32,8 @@ import {
 } from "react-native-safe-area-context";
 import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
+import {formatAmount} from "@/utils/amountUtil"
+
 
 type FormValues = {
     truckId: string;
@@ -85,6 +83,7 @@ function matchesTruckQuery(item: TruckItem, query: string): boolean {
 }
 
 export default function CreateProposalScreen() {
+
     const router = useRouter();
     const qc = useQueryClient();
     const insets = useSafeAreaInsets();
@@ -97,6 +96,8 @@ export default function CreateProposalScreen() {
     const debouncedTruckQuery = useDebouncedValue(truckQuery, 400);
 
     const mmLeading = getMyanmarLeadingClass(locale);
+    const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
+    const style = locale === "mm" ? mmTextStyle : undefined;
 
     const schema = useMemo(() => buildSchema(t), [t]);
     const {
@@ -193,18 +194,22 @@ export default function CreateProposalScreen() {
         : undefined;
 
     return (
-        <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
 
             {/* back button , page title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
-                    className="h-11 w-11 items-center justify-center rounded-full bg-[#f1f5f9]"
+                    className="h-11 w-11 items-center justify-center rounded-full "
+                    style={({pressed}) => ({
+                        backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+                    })}
                 >
                     <Ionicons name="arrow-back" size={22} color="#475569"/>
                 </Pressable>
                 <Text
-                    className={`flex-1 px-3 text-center text-lg font-bold text-slate-900 ${mmLeading}`}
+                    className={`flex-1 px-3 text-center text-lg font-bold ${mmLeading}`}
+                    style={[style,{color: APP_COLORS.textPrimary}]}
                 >
                     {t.title}
                 </Text>
@@ -220,39 +225,58 @@ export default function CreateProposalScreen() {
                 }}
                 keyboardShouldPersistTaps="handled"
             >
-                <View className="mt-1 rounded-2xl bg-white p-4">
+                <View
+                    className="mt-1 rounded-2xl  p-4"
+                    style={{
+                        backgroundColor: APP_COLORS.card,
+                        borderColor: APP_COLORS.border,
+                        borderWidth: 1
+                    }}
+                >
                     {/* preview page && create page */}
                     {
                         reviewValues ?
                             (
-                                <View className="gap-4">
+                                <View className="gap-3">
 
                                     {/* step2 form */}
 
                                     {/* review page title */}
                                     <Text
-                                        className={`text-base font-bold text-slate-900 ${mmLeading}`}
+                                        className={`text-lg font-semibold ${mmLeading}`}
+                                        style={[style, {color: APP_COLORS.textPrimary}]}
                                     >
                                         {t.reviewTitle}
                                     </Text>
 
-                                    {/* step2/review form */}
-                                    <View className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                    {/* review form */}
+                                    <View
+                                        className="rounded-2xl  p-4"
+                                        style={{
+                                            backgroundColor:APP_COLORS.inputBackground,
+                                            borderColor:APP_COLORS.border,
+                                            borderWidth: 1
+                                        }}
+                                    >
 
                                         {/* selected truck info */}
                                         <View className="mb-3">
                                             <Text
-                                                className={`text-xs text-slate-500 ${mmLeading}`}
+                                                className={`text-sm font-medium ${mmLeading}`}
+                                                style={[{color: APP_COLORS.textMuted}, style]}
                                             >
                                                 {t.labels.truck}
                                             </Text>
                                             <Text
-                                                className={`mt-1 text-base font-bold text-slate-900 ${mmLeading}`}
+                                                className={`mt-1 text-sm font-semibold  ${mmLeading}`}
+                                                style={[{color:APP_COLORS.textSecondary}]}
                                             >
                                                 {selectedReviewTruck?.plateNo || truckQuery || "-"}
                                             </Text>
                                             <Text
-                                                className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}
+                                                className={`mt-0.5 text-xs font-medium ${mmLeading}`}
+                                                style={{color:APP_COLORS.textMuted}}
+
                                             >
                                                 {selectedReviewTruck ? getTruckSubtitle(selectedReviewTruck) : "-"}
                                             </Text>
@@ -263,8 +287,9 @@ export default function CreateProposalScreen() {
                                             {/* amount */}
                                             <PreviewRow
                                                 label={t.labels.amount}
-                                                value={reviewValues.proposalAmount}
+                                                value={formatAmount(reviewValues.proposalAmount)}
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* service type */}
                                             <PreviewRow
@@ -275,18 +300,21 @@ export default function CreateProposalScreen() {
                                                         : reviewValues.serviceType
                                                 }
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* service shop */}
                                             <PreviewRow
                                                 label={t.labels.serviceShop}
                                                 value={reviewValues.serviceShop}
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* service date */}
                                             <PreviewRow
                                                 label={t.labels.serviceDate}
                                                 value={reviewValues.serviceDate}
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* description */}
                                             <PreviewRow
@@ -294,6 +322,7 @@ export default function CreateProposalScreen() {
                                                 value={reviewValues.description || "-"}
                                                 mmLeading={mmLeading}
                                                 last
+                                                style={style}
                                             />
                                         </View>
 
@@ -314,12 +343,16 @@ export default function CreateProposalScreen() {
                                             onPress={() => createFromReview(reviewValues)}
                                             disabled={isPending}
                                             className="flex-1 items-center justify-center rounded-xl h-14"
-                                            style={{
-                                                backgroundColor: APP_COLORS.primary,
+                                            style={({pressed}) => ({
+                                                backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                                                 opacity: isPending ? 0.7 : 1,
-                                            }}
+                                                borderColor: APP_COLORS.border,
+                                                borderWidth: 1
+                                            })}
                                         >
-                                            <Text className={`font-semibold text-white ${mmLeading}`}>
+                                            <Text
+                                                className={`font-semibold text-white ${mmLeading}`}
+                                            >
                                                 {isPending ? t.actions.submitting : t.actions.submit}
                                             </Text>
                                         </Pressable>
@@ -328,7 +361,7 @@ export default function CreateProposalScreen() {
                                 </View>
                             ) :
                             (
-                                <View className="gap-4">
+                                <View className="gap-3">
 
                                     {/* step1 form */}
 
@@ -337,8 +370,9 @@ export default function CreateProposalScreen() {
                                         control={control}
                                         name="truckId"
                                         render={() => (
-                                            <View className="gap-2">
-                                                <RequiredLabel label={t.labels.truck} mmLeading={mmLeading}/>
+                                            <View className="gap-1.5">
+                                                <RequiredLabel label={t.labels.truck} mmLeading={mmLeading}
+                                                               style={style}/>
                                                 <Input
                                                     value={truckQuery}
                                                     onChangeText={(next) => {
@@ -348,15 +382,27 @@ export default function CreateProposalScreen() {
                                                     }}
                                                     onFocus={() => setTruckPickerOpen(true)}
                                                     placeholder={t.placeholders.truck}
-                                                    className={`border py-0 h-11 ${mmLeading} border-slate-200 bg-white ${truckPickerOpen ? "border-blue-500" : ""}`}
+                                                    placeholderTextColor={APP_COLORS.textMuted}
+                                                    style={{
+                                                        backgroundColor: APP_COLORS.inputBackground,
+                                                        borderColor: errors.truckId ? APP_COLORS.error : APP_COLORS.border,
+                                                        borderWidth: 1,
+                                                        color: APP_COLORS.textPrimary
+                                                    }}
+                                                    className={`py-0 h-14  text-xs font-medium ${mmLeading} `}
                                                 />
                                                 {!!errors.truckId?.message && (
-                                                    <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                                                    <Text
+                                                        className={`text-xs font-normal ${mmLeading}`}
+                                                        style={[{color: APP_COLORS.error},style]}
+                                                    >
                                                         {String(errors.truckId.message)}
                                                     </Text>
                                                 )}
                                                 {truckPickerOpen ? (
-                                                    <View className="rounded-2xl border border-slate-200 bg-white p-3">
+                                                    <View
+                                                        className="rounded-2xl border border-slate-200 bg-white p-3"
+                                                    >
                                                         <Input
                                                             value={truckQuery}
                                                             onChangeText={(next) => {
@@ -364,7 +410,14 @@ export default function CreateProposalScreen() {
                                                                 setValue("truckId", "");
                                                             }}
                                                             placeholder={t.placeholders.truckSearch}
-                                                            className={`mb-2 border py-0 h-11 ${mmLeading} border-slate-100 bg-slate-50`}
+                                                            placeholderTextColor={APP_COLORS.textMuted}
+                                                            style={[{
+                                                                backgroundColor: APP_COLORS.inputBackground,
+                                                                borderColor: APP_COLORS.border,
+                                                                borderWidth: 1,
+                                                                color: APP_COLORS.textPrimary
+                                                            },style]}
+                                                            className={`mb-2 border py-0 h-11 ${mmLeading} `}
                                                         />
                                                         {trucks.slice(0, 5).map((truck) => (
                                                             <Pressable
@@ -378,9 +431,11 @@ export default function CreateProposalScreen() {
                                                                     setTruckPickerOpen(false);
                                                                 }}
                                                                 className="py-2"
+
                                                             >
                                                                 <Text
-                                                                    className={`text-sm font-semibold text-slate-900 ${mmLeading}`}
+                                                                    className={`text-sm font-semibold  ${mmLeading}`}
+                                                                    style={{color: APP_COLORS.textPrimary}}
                                                                 >
                                                                     {truck.plateNo}
                                                                 </Text>
@@ -389,6 +444,7 @@ export default function CreateProposalScreen() {
                                                                 >
                                                                     {getTruckSubtitle(truck)}
                                                                 </Text>
+                                                                <View className="my-2 h-[0.5px] bg-slate-200/60"/>
                                                             </Pressable>
                                                         ))}
                                                     </View>
@@ -403,11 +459,11 @@ export default function CreateProposalScreen() {
                                         name="proposalAmount"
                                         label={t.labels.amount}
                                         placeholder={t.placeholders.amount}
-                                        locale={locale}
                                         keyboardType="decimal-pad"
                                         required
                                         error={errors.proposalAmount?.message}
                                         mmLeading={mmLeading}
+                                        style={style}
                                     />
 
                                     {/* service type select box */}
@@ -416,7 +472,8 @@ export default function CreateProposalScreen() {
                                         name="serviceType"
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
-                                                <RequiredLabel label={t.labels.serviceType} mmLeading={mmLeading}/>
+                                                <RequiredLabel label={t.labels.serviceType} mmLeading={mmLeading}
+                                                               style={style}/>
                                                 <Select
                                                     value={getSelectedServiceType(value, serviceTypes, locale)}
                                                     onValueChange={(next) => {
@@ -425,36 +482,72 @@ export default function CreateProposalScreen() {
                                                         }
                                                     }}
                                                 >
-                                                    <Select.Trigger className=" py-0 h-11 ">
+                                                    <Select.Trigger
+                                                        className={`py-0 h-14 rounded-xl ${mmLeading} `}
+                                                        style={{
+                                                            backgroundColor: APP_COLORS.inputBackground,
+                                                            borderColor: APP_COLORS.border,
+                                                            borderWidth: 1
+                                                        }}
+
+                                                    >
                                                         <Select.Value
                                                             placeholder={t.placeholders.serviceType}
-                                                            style={compactLineInputTextStyle(locale)}
+                                                            className={`py-0 text-sm font-medium ${mmLeading}`}
+                                                            style={[{color: APP_COLORS.textPrimary}, style]}
                                                         />
                                                         <Select.TriggerIndicator/>
                                                     </Select.Trigger>
                                                     <Select.Portal>
                                                         <Select.Overlay/>
                                                         <Select.Content
-                                                            className="rounded-2xl text-xs border border-slate-200 bg-white"
+                                                            className="rounded-2xl"
+                                                            style={{
+                                                                backgroundColor: APP_COLORS.card,
+                                                                borderColor: APP_COLORS.border,
+                                                                borderWidth: 1
+                                                            }}
                                                             presentation="popover"
                                                             width="trigger"
                                                         >
-                                                            {serviceTypes.map((serviceType) => (
-                                                                <Select.Item
-                                                                    className=" text-xs!"
-                                                                    key={String(serviceType.id)}
-                                                                    value={serviceType.serviceType}
-                                                                    label={getServiceTypeLabel(serviceType, locale)}
-                                                                >
-                                                                    <Select.ItemLabel className={mmLeading}/>
-                                                                    <Select.ItemIndicator/>
-                                                                </Select.Item>
-                                                            ))}
+                                                            {serviceTypes.map((serviceType) => {
+
+                                                                    const itemLabel = getServiceTypeLabel(serviceType, locale);
+                                                                    const isSelected = serviceType.serviceType === value;
+
+                                                                    return (
+                                                                        <Select.Item
+                                                                            className=" text-xs"
+                                                                            key={String(serviceType.id)}
+                                                                            value={serviceType.serviceType}
+                                                                            label={itemLabel}
+                                                                            style={{
+                                                                                backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                                paddingVertical: 12,
+                                                                                paddingHorizontal: 16,
+                                                                            }}
+                                                                        >
+                                                                            <Select.ItemLabel
+                                                                                className={`text-xs ${mmLeading}`}
+                                                                                style={[{
+                                                                                    color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                                    fontWeight: isSelected ? "600" : "400"
+                                                                                },style]}
+                                                                            />
+                                                                            <Select.ItemIndicator/>
+                                                                        </Select.Item>
+                                                                    )
+                                                                }
+                                                            )
+                                                            }
                                                         </Select.Content>
                                                     </Select.Portal>
                                                 </Select>
                                                 {!!errors.serviceType?.message && (
-                                                    <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                                                    <Text
+                                                        className={`text-xs font-normal ${mmLeading}`}
+                                                        style={[{color:APP_COLORS.error},style]}
+                                                    >
                                                         {String(errors.serviceType.message)}
                                                     </Text>
                                                 )}
@@ -468,10 +561,10 @@ export default function CreateProposalScreen() {
                                         name="serviceShop"
                                         label={t.labels.serviceShop}
                                         placeholder={t.placeholders.serviceShop}
-                                        locale={locale}
                                         required
                                         error={errors.serviceShop?.message}
                                         mmLeading={mmLeading}
+                                        style={style}
                                     />
 
                                     {/* service date */}
@@ -480,16 +573,21 @@ export default function CreateProposalScreen() {
                                         name="serviceDate"
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
-                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading}/>
+                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading}
+                                                               style={style}/>
                                                 <ServiceDatePicker
                                                     locale={locale}
                                                     value={value}
                                                     onChange={onChange}
                                                     placeholder={t.placeholders.serviceDate}
                                                     doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                                                    style={style}
                                                 />
                                                 {!!errors.serviceDate?.message && (
-                                                    <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                                                    <Text
+                                                        className={`text-xs font-normal ${mmLeading}`}
+                                                        style={[{color:APP_COLORS.error},style]}
+                                                    >
                                                         {String(errors.serviceDate.message)}
                                                     </Text>
                                                 )}
@@ -504,7 +602,8 @@ export default function CreateProposalScreen() {
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
                                                 <Text
-                                                    className={`text-sm font-medium text-slate-900 ${mmLeading}`}
+                                                    className={`text-sm font-medium  ${mmLeading}`}
+                                                    style={[{color: APP_COLORS.textSecondary}, style]}
                                                 >
                                                     {t.labels.description}
                                                 </Text>
@@ -512,23 +611,38 @@ export default function CreateProposalScreen() {
                                                     value={value}
                                                     onChangeText={onChange}
                                                     placeholder={t.placeholders.description}
-                                                    multiline
+                                                    placeholderTextColor={APP_COLORS.textMuted}
+                                                    multiline={true}
+                                                    numberOfLines={4}
+                                                    scrollEnabled={true}
+                                                    maxLength={511}
                                                     textAlignVertical="top"
-                                                    className="min-h-[126px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900"
-                                                    style={compactMultilineInputTextStyle(locale)}
+                                                    className={`min-h-[126px] rounded-xl p-3 text-sm font-medium ${mmLeading}`}
+                                                    style={[style,{
+                                                        backgroundColor:APP_COLORS.inputBackground,
+                                                        borderColor: APP_COLORS.border,
+                                                        borderWidth:1,
+                                                        color:APP_COLORS.textPrimary
+                                                    }]}
                                                 />
                                             </View>
                                         )}
                                     />
 
-                                    {/* step1 back && submit buttons */}
+                                    {/* step1 cancel && next buttons */}
                                     <View className="flex-row gap-3 pt-2">
                                         <Pressable
                                             onPress={onBack}
                                             disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl bg-slate-100 h-14 "
+                                            className="flex-1 items-center justify-center rounded-xl bg-slate-200 h-14 "
+                                            style={({pressed}) => ({
+                                                backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
+                                                opacity: isPending ? 0.7 : 1,
+                                                borderColor: APP_COLORS.border,
+                                                borderWidth: 1
+                                            })}
                                         >
-                                            <Text className={`font-semibold text-slate-700 ${mmLeading}`}>
+                                            <Text className={`text-sm font-semibold text-slate-700 ${mmLeading}`}>
                                                 {t.actions.cancel}
                                             </Text>
                                         </Pressable>
@@ -536,10 +650,12 @@ export default function CreateProposalScreen() {
                                             onPress={handleSubmit(onSubmit)}
                                             disabled={isPending}
                                             className="flex-1 items-center justify-center rounded-xl h-14"
-                                            style={{
-                                                backgroundColor: APP_COLORS.primary,
+                                            style={({pressed}) => ({
+                                                backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                                                 opacity: isPending ? 0.7 : 1,
-                                            }}
+                                                borderColor: APP_COLORS.border,
+                                                borderWidth: 1
+                                            })}
                                         >
                                             <Text className={`font-semibold text-white ${mmLeading}`}>
                                                 {t.actions.next}
@@ -558,6 +674,7 @@ export default function CreateProposalScreen() {
 type RequiredLabelProps = {
     label: string;
     mmLeading: string;
+    style: any;
 };
 
 type PreviewRowProps = {
@@ -565,26 +682,37 @@ type PreviewRowProps = {
     value: string;
     mmLeading: string;
     last?: boolean;
+    style: any;
 };
 
-function PreviewRow({label, value, mmLeading, last}: PreviewRowProps) {
+function PreviewRow({label, value, mmLeading, last,style}: PreviewRowProps) {
     return (
         <View className={`${last ? "" : "mb-3"}`}>
-            <Text className={`text-xs text-slate-500 ${mmLeading}`}>{label}</Text>
-            <Text className={`mt-1 text-sm font-semibold text-slate-900 ${mmLeading}`}>
+            <Text
+                className={`text-sm font-medium ${mmLeading}`}
+                style={[{color:APP_COLORS.textMuted} , style]}
+            >
+                {label}
+            </Text>
+            <Text
+                className={`mt-1 text-sm font-medium  ${mmLeading}`}
+                style={[{color:APP_COLORS.textSecondary}]}
+            >
                 {value || "-"}
             </Text>
         </View>
     );
 }
 
-function RequiredLabel({label, mmLeading}: RequiredLabelProps) {
+function RequiredLabel({label, mmLeading, style}: RequiredLabelProps) {
     return (
         <View className="flex-row items-center gap-1">
-            <Text className={`text-sm font-medium text-slate-900 ${mmLeading}`}>
+            <Text
+                className={`text-sm font-medium  ${mmLeading}`}
+                style={[{color: APP_COLORS.textSecondary}, style]}
+            >
                 {label}
             </Text>
-            <Text className="text-red-500">*</Text>
         </View>
     );
 }
@@ -594,11 +722,11 @@ type FormInputProps = {
     name: keyof FormValues;
     label: string;
     placeholder: string;
-    locale: AppLocale;
     keyboardType?: "decimal-pad";
     required?: boolean;
     error?: string;
     mmLeading: string;
+    style: any;
 };
 
 function FormInput({
@@ -606,11 +734,11 @@ function FormInput({
                        name,
                        label,
                        placeholder,
-                       locale,
                        keyboardType,
                        required,
                        error,
                        mmLeading,
+                       style
                    }: FormInputProps) {
     return (
         <Controller
@@ -619,9 +747,9 @@ function FormInput({
             render={({field: {value, onChange}}) => (
                 <View className="gap-2">
                     {required ? (
-                        <RequiredLabel label={label} mmLeading={mmLeading}/>
+                        <RequiredLabel label={label} mmLeading={mmLeading} style={style}/>
                     ) : (
-                        <Text className={`text-sm font-medium text-slate-900 ${mmLeading}`}>
+                        <Text className={`text-sm font-medium text-slate-900 ${mmLeading}`} style={style}>
                             {label}
                         </Text>
                     )}
@@ -629,11 +757,19 @@ function FormInput({
                         value={String(value ?? "")}
                         onChangeText={onChange}
                         placeholder={placeholder}
+                        placeholderTextColor={APP_COLORS.textMuted}
                         keyboardType={keyboardType}
-                        className={`border py-0 h-11 ${getMyanmarLeadingClass(locale)}  border-slate-200 bg-white`}
+                        className={`py-0 h-14  text-sm font-medium  ${mmLeading}  `}
+                        style={[{
+                            backgroundColor: APP_COLORS.inputBackground,
+                            borderColor: error ? APP_COLORS.error : APP_COLORS.border,
+                            borderWidth: 1,
+                            color: APP_COLORS.textPrimary
+                        },style]}
                     />
                     {!!error && (
-                        <Text className={`text-xs text-red-500 ${mmLeading}`}>
+                        <Text className={`text-xs font-normal ${mmLeading} `}
+                              style={[{color: APP_COLORS.error},style]}>
                             {String(error)}
                         </Text>
                     )}
