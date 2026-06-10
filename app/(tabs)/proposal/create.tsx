@@ -1,12 +1,8 @@
 import {ServiceDatePicker} from "@/components/service-date-picker";
 import {APP_COLORS} from "@/constants/colors";
-import {
-    compactLineInputTextStyle,
-    compactMultilineInputTextStyle,
-} from "@/constants/compact-input";
 import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useDebouncedValue} from "@/hooks/use-debounced-value";
-import {useLocaleStore, type AppLocale} from "@/stores/client/locale-store";
+import {useLocaleStore} from "@/stores/client/locale-store";
 import {useCreateProposal} from "@/stores/server/proposal/create-mutation";
 import {buildServiceTypeSearchColumns} from "@/stores/server/service-type/search-columns";
 import {useServiceTypesInfinite} from "@/stores/server/service-type/query";
@@ -36,6 +32,8 @@ import {
 } from "react-native-safe-area-context";
 import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
+import {formatAmount} from "@/utils/amountUtil"
+
 
 type FormValues = {
     truckId: string;
@@ -210,8 +208,8 @@ export default function CreateProposalScreen() {
                     <Ionicons name="arrow-back" size={22} color="#475569"/>
                 </Pressable>
                 <Text
-                    className={`flex-1 px-3 text-center text-sm font-bold ${mmLeading}`}
-                    style={{color: APP_COLORS.textPrimary}}
+                    className={`flex-1 px-3 text-center text-lg font-bold ${mmLeading}`}
+                    style={[style,{color: APP_COLORS.textPrimary}]}
                 >
                     {t.title}
                 </Text>
@@ -245,28 +243,40 @@ export default function CreateProposalScreen() {
 
                                     {/* review page title */}
                                     <Text
-                                        className={`text-base font-bold text-slate-900 ${mmLeading}`}
+                                        className={`text-lg font-semibold ${mmLeading}`}
+                                        style={[style, {color: APP_COLORS.textPrimary}]}
                                     >
                                         {t.reviewTitle}
                                     </Text>
 
-                                    {/* step2/review form */}
-                                    <View className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                    {/* review form */}
+                                    <View
+                                        className="rounded-2xl  p-4"
+                                        style={{
+                                            backgroundColor:APP_COLORS.inputBackground,
+                                            borderColor:APP_COLORS.border,
+                                            borderWidth: 1
+                                        }}
+                                    >
 
                                         {/* selected truck info */}
                                         <View className="mb-3">
                                             <Text
-                                                className={`text-xs text-slate-500 ${mmLeading}`}
+                                                className={`text-sm font-medium ${mmLeading}`}
+                                                style={[{color: APP_COLORS.textMuted}, style]}
                                             >
                                                 {t.labels.truck}
                                             </Text>
                                             <Text
-                                                className={`mt-1 text-base font-bold text-slate-900 ${mmLeading}`}
+                                                className={`mt-1 text-sm font-semibold  ${mmLeading}`}
+                                                style={[{color:APP_COLORS.textSecondary}]}
                                             >
                                                 {selectedReviewTruck?.plateNo || truckQuery || "-"}
                                             </Text>
                                             <Text
-                                                className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}
+                                                className={`mt-0.5 text-xs font-medium ${mmLeading}`}
+                                                style={{color:APP_COLORS.textMuted}}
+
                                             >
                                                 {selectedReviewTruck ? getTruckSubtitle(selectedReviewTruck) : "-"}
                                             </Text>
@@ -277,8 +287,9 @@ export default function CreateProposalScreen() {
                                             {/* amount */}
                                             <PreviewRow
                                                 label={t.labels.amount}
-                                                value={reviewValues.proposalAmount}
+                                                value={formatAmount(reviewValues.proposalAmount)}
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* service type */}
                                             <PreviewRow
@@ -289,18 +300,21 @@ export default function CreateProposalScreen() {
                                                         : reviewValues.serviceType
                                                 }
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* service shop */}
                                             <PreviewRow
                                                 label={t.labels.serviceShop}
                                                 value={reviewValues.serviceShop}
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* service date */}
                                             <PreviewRow
                                                 label={t.labels.serviceDate}
                                                 value={reviewValues.serviceDate}
                                                 mmLeading={mmLeading}
+                                                style={style}
                                             />
                                             {/* description */}
                                             <PreviewRow
@@ -308,6 +322,7 @@ export default function CreateProposalScreen() {
                                                 value={reviewValues.description || "-"}
                                                 mmLeading={mmLeading}
                                                 last
+                                                style={style}
                                             />
                                         </View>
 
@@ -328,12 +343,16 @@ export default function CreateProposalScreen() {
                                             onPress={() => createFromReview(reviewValues)}
                                             disabled={isPending}
                                             className="flex-1 items-center justify-center rounded-xl h-14"
-                                            style={{
-                                                backgroundColor: APP_COLORS.primary,
+                                            style={({pressed}) => ({
+                                                backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                                                 opacity: isPending ? 0.7 : 1,
-                                            }}
+                                                borderColor: APP_COLORS.border,
+                                                borderWidth: 1
+                                            })}
                                         >
-                                            <Text className={`font-semibold text-white ${mmLeading}`}>
+                                            <Text
+                                                className={`font-semibold text-white ${mmLeading}`}
+                                            >
                                                 {isPending ? t.actions.submitting : t.actions.submit}
                                             </Text>
                                         </Pressable>
@@ -663,13 +682,22 @@ type PreviewRowProps = {
     value: string;
     mmLeading: string;
     last?: boolean;
+    style: any;
 };
 
-function PreviewRow({label, value, mmLeading, last}: PreviewRowProps) {
+function PreviewRow({label, value, mmLeading, last,style}: PreviewRowProps) {
     return (
         <View className={`${last ? "" : "mb-3"}`}>
-            <Text className={`text-xs text-slate-500 ${mmLeading}`}>{label}</Text>
-            <Text className={`mt-1 text-sm font-semibold text-slate-900 ${mmLeading}`}>
+            <Text
+                className={`text-sm font-medium ${mmLeading}`}
+                style={[{color:APP_COLORS.textMuted} , style]}
+            >
+                {label}
+            </Text>
+            <Text
+                className={`mt-1 text-sm font-medium  ${mmLeading}`}
+                style={[{color:APP_COLORS.textSecondary}]}
+            >
                 {value || "-"}
             </Text>
         </View>
@@ -731,13 +759,13 @@ function FormInput({
                         placeholder={placeholder}
                         placeholderTextColor={APP_COLORS.textMuted}
                         keyboardType={keyboardType}
-                        className={`py-0 h-14  text-xs font-medium  ${mmLeading}  `}
-                        style={{
+                        className={`py-0 h-14  text-sm font-medium  ${mmLeading}  `}
+                        style={[{
                             backgroundColor: APP_COLORS.inputBackground,
                             borderColor: error ? APP_COLORS.error : APP_COLORS.border,
                             borderWidth: 1,
                             color: APP_COLORS.textPrimary
-                        }}
+                        },style]}
                     />
                     {!!error && (
                         <Text className={`text-xs font-normal ${mmLeading} `}

@@ -6,6 +6,7 @@ import React, {useState} from "react";
 import {Pressable, Text, View} from "react-native";
 import {useTranslation} from "@/hooks/use-translation";
 import {formatDate, formatDateTime} from "@/utils/dateUtil";
+import {formatAmount} from "@/utils/amountUtil";
 
 
 type ProposalCardProps = {
@@ -14,11 +15,6 @@ type ProposalCardProps = {
     onPressEdit: (item: ProposalItem) => void;
     mmLeading: any;
 };
-
-function formatAmount(value: number): string {
-    const safeValue = Number.isFinite(value) ? value : 0;
-    return `${safeValue.toLocaleString()} Ks`;
-}
 
 export function ProposalCard(
     {
