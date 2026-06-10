@@ -1,18 +1,21 @@
 import { CompactTextInput } from "@/components/compact-text-input";
 import { APP_COLORS } from "@/constants/colors";
 import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
-import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
+import { getMyanmarLeadingClass, myanmarUITextStyle } from "@/constants/myanmar-font";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useThrottledCallback } from '@/hooks/use-throttled-callback';
+import { useTranslation } from "@/hooks/use-translation";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useTrucksInfinite } from "@/stores/server/truck/query";
 import {
   buildTruckSearchColumns,
   type TruckAdvancedFilters,
 } from "@/stores/server/truck/search-columns";
+import { TruckItem } from "@/stores/server/truck/typed";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Card } from "heroui-native";
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -23,9 +26,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TruckCardItem } from "./components/truck-card";
 import { TruckSearchToolbar } from "./components/truck-search-toolbar";
-import {useThrottledCallback} from '@/hooks/use-throttled-callback'
-import {TruckItem} from "@/stores/server/truck/typed";
-import {useTranslation} from "@/hooks/use-translation";
 
 type TruckListUiState = {
   quickQuery: string;

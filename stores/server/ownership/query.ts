@@ -1,5 +1,6 @@
 import {
   useInfiniteQuery,
+  useQuery,
   type InfiniteData,
   type UseInfiniteQueryResult,
 } from "@tanstack/react-query";
@@ -11,7 +12,11 @@ import {
   type OwnershipListFilters,
   type OwnershipTruckStatus,
 } from "./search-columns";
-import type { OwnershipListResponse } from "./typed";
+import type {
+  OwnershipItem,
+  OwnershipListResponse,
+  OwnershipRunningBalanceResponse,
+} from "./typed";
 
 const OWNERSHIP_PAGE_SIZE = 10;
 
@@ -66,6 +71,68 @@ export function useOwnershipsInfinite(
     staleTime: 0,
     refetchOnWindowFocus: false,
     refetchOnMount: "always",
+  });
+}
+
+const fetchOwnershipByPlateNo = async (
+  plateNo: string,
+  status: OwnershipTruckStatus,
+): Promise<OwnershipItem | null> => {
+  const filters: OwnershipListFilters = {
+    quickQuery: "",
+    plateNo,
+    licenseCity: "",
+    licenseEndDate: "",
+    profit: "",
+    ownerIdCsv: "",
+  };
+  const columns = buildOwnershipSearchColumns(status, filters, false);
+  const response = await searchOwnerships({
+    page: 1,
+    pageSize: 1,
+    columns,
+  });
+  return response.data?.data?.[0] ?? null;
+};
+
+const fetchOwnershipRunningBalance = async (
+  ownershipId: string,
+): Promise<OwnershipRunningBalanceResponse> => {
+  const { data } = await axios.get(
+    `/ownership/runningBalance/${ownershipId}`,
+  );
+  return data;
+};
+
+export function useOwnershipByPlateNo(
+  plateNo: string,
+  status: OwnershipTruckStatus,
+  enabled = true,
+) {
+  const normalizedPlateNo = plateNo.trim();
+  const normalizedStatus = status || "ACTIVE";
+
+  return useQuery({
+    queryKey: ["ownership", "detail", normalizedPlateNo, normalizedStatus],
+    queryFn: () => fetchOwnershipByPlateNo(normalizedPlateNo, normalizedStatus),
+    enabled: enabled && !!normalizedPlateNo,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useOwnershipRunningBalance(
+  ownershipId: string,
+  enabled = true,
+) {
+  const normalizedId = ownershipId.trim();
+
+  return useQuery({
+    queryKey: ["ownership", "runningBalance", normalizedId],
+    queryFn: () => fetchOwnershipRunningBalance(normalizedId),
+    enabled: enabled && !!normalizedId,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
   });
 }
 

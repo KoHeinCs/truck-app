@@ -1,0 +1,226 @@
+import { APP_COLORS } from "@/constants/colors";
+import {
+  getMyanmarLeadingClass,
+  myanmarUITextStyle,
+} from "@/constants/myanmar-font";
+import { useTranslation } from "@/hooks/use-translation";
+import { useLocaleStore } from "@/stores/client/locale-store";
+import {
+  useOwnershipByPlateNo,
+  useOwnershipRunningBalance,
+} from "@/stores/server/ownership/query";
+import type { OwnershipTruckStatus } from "@/stores/server/ownership/search-columns";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useMemo } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { OwnershipRunningBalanceCard } from "./components/ownership-running-balance-card";
+import { OwnershipSummaryCard } from "./components/ownership-summary-card";
+
+function isOwnershipStatus(value: string): value is OwnershipTruckStatus {
+  return value === "ACTIVE" || value === "SOLD_OUT";
+}
+
+export default function OwnershipDetailScreen() {
+  const router = useRouter();
+  const qc = useQueryClient();
+  const insets = useSafeAreaInsets();
+  const locale = useLocaleStore((state) => state.locale);
+  const { detailOwnership: t } = useTranslation("ownership");
+
+  const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
+  const style = locale === "mm" ? mmTextStyle : undefined;
+  const mmLeading = getMyanmarLeadingClass(locale);
+
+  const params = useLocalSearchParams<{
+    ownershipId?: string;
+    plateNo?: string;
+    status?: string;
+  }>();
+
+  const ownershipId = String(params.ownershipId ?? "").trim();
+  const plateNo = String(params.plateNo ?? "").trim();
+  const statusParam = String(params.status ?? "ACTIVE").trim();
+  const status: OwnershipTruckStatus = isOwnershipStatus(statusParam)
+    ? statusParam
+    : "ACTIVE";
+
+  const hasRequiredParams = !!ownershipId && !!plateNo;
+
+  const { data: summaryItem, isPending: isSummaryPending } =
+    useOwnershipByPlateNo(plateNo, status, hasRequiredParams);
+
+  const { data: runningBalanceData, isPending: isRunningBalancePending } =
+    useOwnershipRunningBalance(ownershipId, hasRequiredParams);
+
+  const records = runningBalanceData?.data ?? [];
+  const isPending = isSummaryPending || isRunningBalancePending;
+  const itemCountLabel = t.labels.itemCount.replace(
+    "{count}",
+    String(records.length),
+  );
+
+  const onBack = useCallback(() => {
+    qc.invalidateQueries({ queryKey: ["ownership"] });
+    router.back();
+  }, [qc, router]);
+
+  return (
+    <SafeAreaView
+      className="flex-1 bg-[#f3f7fb]"
+      style={{ backgroundColor: APP_COLORS.background, flex: 1 }}
+      edges={["top", "left", "right"]}
+    >
+      <View className="flex-row items-center px-4 pb-3 pt-1">
+        <Pressable
+          onPress={onBack}
+          className="h-11 w-11 items-center justify-center rounded-full"
+          style={({ pressed }) => ({
+            backgroundColor: pressed
+              ? APP_COLORS.primary
+              : APP_COLORS.background,
+          })}
+        >
+          <Ionicons name="arrow-back" size={22} color="#475569" />
+        </Pressable>
+
+        <Text
+          className={`flex-1 px-3 text-center text-lg font-bold ${mmLeading}`}
+          style={[style, { color: APP_COLORS.textPrimary }]}
+        >
+          {t.title}
+        </Text>
+
+        <View className="flex-row items-center gap-2">
+          <Pressable
+            accessibilityRole="button"
+            className="h-11 w-11 items-center justify-center rounded-full"
+            style={({ pressed }) => ({
+              backgroundColor: pressed
+                ? APP_COLORS.primarySoft
+                : APP_COLORS.card,
+              borderColor: APP_COLORS.border,
+              borderWidth: 1,
+            })}
+          >
+            <Ionicons name="pricetag-outline" size={20} color="#475569" />
+          </Pressable>
+
+          <Pressable
+            accessibilityRole="button"
+            className="h-11 w-11 items-center justify-center rounded-full"
+            style={({ pressed }) => ({
+              backgroundColor: pressed
+                ? APP_COLORS.primarySoft
+                : APP_COLORS.card,
+              borderColor: APP_COLORS.border,
+              borderWidth: 1,
+            })}
+          >
+            <Ionicons name="create-outline" size={20} color="#475569" />
+          </Pressable>
+        </View>
+      </View>
+
+      {!hasRequiredParams ? (
+        <View
+          className="flex-1 items-center justify-center px-6"
+          style={{ backgroundColor: APP_COLORS.background }}
+        >
+          <Text
+            className={`text-center text-sm text-slate-500 ${mmLeading}`}
+            style={style}
+          >
+            {t.empty.summary}
+          </Text>
+        </View>
+      ) : isPending ? (
+        <View
+          className="flex-1 items-center justify-center"
+          style={{ backgroundColor: APP_COLORS.background }}
+        >
+          <ActivityIndicator color={APP_COLORS.primary} />
+        </View>
+      ) : (
+        <View
+          className="flex-1"
+          style={{ backgroundColor: APP_COLORS.background }}
+        >
+          <ScrollView
+            className="px-4"
+            contentContainerStyle={{
+              paddingBottom: insets.bottom + 24,
+              flexGrow: 1,
+              backgroundColor: APP_COLORS.background,
+            }}
+          >
+            <OwnershipSummaryCard
+              item={summaryItem}
+              locale={locale}
+              labels={t.labels}
+              style={style}
+            />
+
+            {!summaryItem ? (
+              <Text
+                className={`mt-4 text-center text-sm text-slate-500 ${mmLeading}`}
+                style={style}
+              >
+                {t.empty.summary}
+              </Text>
+            ) : null}
+
+            <View className="mt-5 flex-row items-center justify-between">
+              <Text
+                className={`text-base font-bold text-slate-900 ${mmLeading}`}
+                style={style}
+              >
+                {t.labels.financialRecords}
+              </Text>
+              <View className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1">
+                <Text
+                  className={`text-xs font-semibold text-sky-600 ${mmLeading}`}
+                  style={style}
+                >
+                  {itemCountLabel}
+                </Text>
+              </View>
+            </View>
+
+            {records.length > 0 ? (
+              <View className="mt-4 gap-3">
+                {records.map((record, index) => (
+                  <OwnershipRunningBalanceCard
+                    key={`${record.proposalNo ?? "record"}-${record.proposeDate ?? index}`}
+                    item={record}
+                    locale={locale}
+                    labels={t.labels}
+                    style={style}
+                  />
+                ))}
+              </View>
+            ) : (
+              <Text
+                className={`mt-4 text-center text-sm text-slate-500 ${mmLeading}`}
+                style={style}
+              >
+                {t.empty.records}
+              </Text>
+            )}
+          </ScrollView>
+        </View>
+      )}
+    </SafeAreaView>
+  );
+}

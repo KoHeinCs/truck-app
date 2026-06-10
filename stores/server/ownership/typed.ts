@@ -32,3 +32,19 @@ export interface OwnershipItem {
   soldPlace?: string | null;
   version?: number;
 }
+
+export interface OwnershipRunningBalanceItem {
+  ownershipId?: string;
+  proposeDate?: string;
+  proposalNo?: string;
+  serviceType?: string;
+  debit?: number;
+  credit?: number;
+  balance?: number;
+}
+
+export interface OwnershipRunningBalanceResponse {
+  data: OwnershipRunningBalanceItem[];
+  httpStatus: number;
+  message: string;
+}

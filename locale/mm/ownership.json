@@ -1,0 +1,23 @@
+{
+  "ownership": {
+    "detailOwnership": {
+      "title": "ကားအသေးစိတ်",
+      "labels": {
+        "profitLoss": "အမြတ်/အရှုံး",
+        "totalCost": "စုစုပေါင်းကျသငွေ",
+        "totalIncome": "စုစုပေါင်းဝင်ငွေ",
+        "notes": "မှတ်ချက်",
+        "financialRecords": "ငွေစာရင်းမှတ်တမ်း",
+        "debit": "ကုန်ကျ",
+        "credit": "ဝင်ငွေ",
+        "balance": "လက်ကျန်",
+        "itemCount": "{count} ခု",
+        "currencySuffix": "ကျပ်"
+      },
+      "empty": {
+        "summary": "ပိုင်ဆိုင်မှု အချက်အလက် မတွေ့ရှိပါ",
+        "records": "ငွေစာရင်းမှတ်တမ်း မရှိပါ"
+      }
+    }
+  }
+}

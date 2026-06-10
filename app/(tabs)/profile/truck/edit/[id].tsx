@@ -1,20 +1,20 @@
-import {APP_COLORS} from "@/constants/colors";
+import { APP_COLORS } from "@/constants/colors";
 import {
     getMyanmarLeadingClass,
     myanmarUITextStyle,
 } from "@/constants/myanmar-font";
-import {useTranslation} from "@/hooks/use-translation";
-import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
-import {useLocaleStore} from "@/stores/client/locale-store";
-import {useTruckDetail} from "@/stores/server/truck/query";
-import {useUpdateTruck} from "@/stores/server/truck/update-mutation";
+import { useTranslation } from "@/hooks/use-translation";
+import { getApiErrorAlertCopy } from "@/lib/api-error-alert";
+import { useLocaleStore } from "@/stores/client/locale-store";
+import { useTruckDetail } from "@/stores/server/truck/query";
+import { useUpdateTruck } from "@/stores/server/truck/update-mutation";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useQueryClient} from "@tanstack/react-query";
-import {useLocalSearchParams, useRouter} from "expo-router";
-import {Button, Input, Select} from "heroui-native";
-import React, {useCallback, useEffect, useMemo} from "react";
-import {Controller, useForm} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Button, Input, Select } from "heroui-native";
+import { useCallback, useEffect, useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
     ActivityIndicator,
     Alert,
@@ -27,7 +27,7 @@ import {
     SafeAreaView,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import {z} from "zod";
+import { z } from "zod";
 
 const YEAR_RE = /^\d{4}$/;
 

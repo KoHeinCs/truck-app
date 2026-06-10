@@ -9,8 +9,11 @@ import type {
   OwnershipAdvancedFilters as OwnershipAdvancedFilterValues,
   OwnershipTruckStatus,
 } from "@/stores/server/ownership/search-columns";
+import type { OwnershipItem } from "@/stores/server/ownership/typed";
 import React, { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useThrottledCallback } from "@/hooks/use-throttled-callback";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OwnershipAdvancedFilters } from "./components/ownership-advanced-filters";
 import { OwnershipCard } from "./components/ownership-card";
@@ -109,6 +112,7 @@ const ownershipCopy = {
 } as const;
 
 export default function OwnerShip() {
+  const router = useRouter();
   const locale = useLocaleStore((state) => state.locale);
   const fullName = useAuthStore((state) => state.fullName);
   const role = useAuthStore((state) => state.role);
@@ -157,6 +161,18 @@ export default function OwnerShip() {
     [ui],
   );
 
+  const openDetail = useThrottledCallback((item: OwnershipItem) => {
+    if (!item.id) return;
+    router.push({
+      pathname: "/(tabs)/ownership/detail",
+      params: {
+        ownershipId: item.id,
+        plateNo: String(item.truckPlateNo ?? ""),
+        status,
+      },
+    });
+  }, 600);
+
   return (
     <SafeAreaView
       style={{ flex: 1 }}
@@ -169,7 +185,12 @@ export default function OwnerShip() {
         style={{ flex: 1 }}
         keyExtractor={(item, index) => item.id || `${item.truckPlateNo}-${index}`}
         renderItem={({ item }) => (
-          <OwnershipCard item={item} locale={locale} labels={t.card} />
+          <OwnershipCard
+            item={item}
+            locale={locale}
+            labels={t.card}
+            onPress={() => openDetail(item)}
+          />
         )}
         onEndReachedThreshold={0.2}
         onEndReached={() => {

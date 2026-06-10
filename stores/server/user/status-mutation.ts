@@ -24,8 +24,9 @@ export function useUpdateUserActiveStatus() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: updateUserActiveStatus,
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: ["users"] });
+      qc.invalidateQueries({ queryKey: ["user", "detail", variables.id] });
     },
   });
 }
@@ -34,8 +35,9 @@ export function useUpdateUserLockStatus() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: updateUserLockStatus,
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: ["users"] });
+      qc.invalidateQueries({ queryKey: ["user", "detail", variables.id] });
     },
   });
 }

@@ -1,0 +1,23 @@
+{
+  "ownership": {
+    "detailOwnership": {
+      "title": "Truck Details",
+      "labels": {
+        "profitLoss": "Profit / Loss",
+        "totalCost": "Total Expense",
+        "totalIncome": "Total Income",
+        "notes": "Notes",
+        "financialRecords": "Financial Records",
+        "debit": "Expense",
+        "credit": "Income",
+        "balance": "Balance",
+        "itemCount": "{count} items",
+        "currencySuffix": "Ks"
+      },
+      "empty": {
+        "summary": "Ownership details not found",
+        "records": "No financial records found"
+      }
+    }
+  }
+}

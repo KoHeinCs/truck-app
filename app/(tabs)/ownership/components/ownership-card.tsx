@@ -6,7 +6,7 @@ import type { AppLocale } from "@/stores/client/locale-store";
 import type { OwnershipItem } from "@/stores/server/ownership/typed";
 import { Card } from "heroui-native";
 import React, { useMemo } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 type OwnershipCardLabels = {
   ownership: string;
@@ -22,6 +22,7 @@ type OwnershipCardProps = {
   item: OwnershipItem;
   locale: AppLocale;
   labels: OwnershipCardLabels;
+  onPress?: () => void;
 };
 
 function valueText(value: unknown): string {
@@ -43,7 +44,7 @@ function formatDays(value: number | undefined, daySuffix: string): string {
   return `${value} ${daySuffix}`;
 }
 
-export function OwnershipCard({ item, locale, labels }: OwnershipCardProps) {
+export function OwnershipCard({ item, locale, labels, onPress }: OwnershipCardProps) {
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
 
@@ -53,7 +54,8 @@ export function OwnershipCard({ item, locale, labels }: OwnershipCardProps) {
   const estimatedSellAmt = valueText(item.estimatedSellAmt);
 
   return (
-    <Card className="mb-3">
+    <Pressable onPress={onPress} disabled={!onPress}>
+      <Card className="mb-3">
       <Card.Body className="px-4 py-4">
         <View className="flex-row justify-between gap-3">
           <View className="flex-1">
@@ -125,6 +127,7 @@ export function OwnershipCard({ item, locale, labels }: OwnershipCardProps) {
         </View>
       </Card.Body>
     </Card>
+    </Pressable>
   );
 }
 
