@@ -10,7 +10,7 @@ import {useUpdateServiceType} from "@/stores/server/service-type/update-mutation
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useQueryClient} from "@tanstack/react-query";
-import {useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
+import {useLocalSearchParams, useRouter} from "expo-router";
 import {Input, Select} from "heroui-native";
 import React, {useCallback, useMemo} from "react";
 import {Controller, useForm} from "react-hook-form";
@@ -131,14 +131,6 @@ export default function EditServiceTypeScreen() {
         qc.invalidateQueries({queryKey: ["service-types"]});
         router.back();
     }, [qc, router]);
-
-    useFocusEffect(
-        useCallback(() => {
-            return () => {
-                qc.invalidateQueries({queryKey: ["service-types"]});
-            };
-        }, [qc]),
-    );
 
     const serviceFilterOptions = useMemo(() => {
         return [

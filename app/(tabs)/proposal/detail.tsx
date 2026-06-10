@@ -16,6 +16,7 @@ import type {
 } from "@/stores/server/proposal/typed";
 import {normalizeServiceDateForApi} from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {useQueryClient} from "@tanstack/react-query";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {Button} from "heroui-native";
 import React, {useCallback, useState} from "react";
@@ -81,6 +82,7 @@ function getOwnershipId(
 export default function ProposalDetailScreen() {
 
     const router = useRouter();
+    const qc = useQueryClient();
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const mmLeading = getMyanmarLeadingClass(locale);
@@ -104,6 +106,11 @@ export default function ProposalDetailScreen() {
     const [terminateRemark, setTerminateRemark] = useState("");
     const showActions = (detail?.status || "").toUpperCase() === "INFORM";
     const isSubmitting = isApproving || isTerminating;
+
+    const onBack = useCallback(() => {
+        qc.invalidateQueries({queryKey: ["proposal"]});
+        router.back();
+    }, [qc, router]);
 
     const closeApproveModal = useCallback(() => {
         setApproveModalOpen(false);
@@ -212,7 +219,7 @@ export default function ProposalDetailScreen() {
             {/* back button , page title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
-                    onPress={() => router.back()}
+                    onPress={onBack}
                     className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
                 >
                     <Ionicons name="arrow-back" size={22} color="#475569"/>

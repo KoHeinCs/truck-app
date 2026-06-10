@@ -11,7 +11,7 @@ import {useUpdateTruck} from "@/stores/server/truck/update-mutation";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useQueryClient} from "@tanstack/react-query";
-import {useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
+import {useLocalSearchParams, useRouter} from "expo-router";
 import {Button, Input, Select} from "heroui-native";
 import React, {useCallback, useEffect, useMemo} from "react";
 import {Controller, useForm} from "react-hook-form";
@@ -259,14 +259,6 @@ export default function EditTruckScreen() {
         qc.invalidateQueries({queryKey: ["trucks"]});
         router.back();
     }, [qc, router]);
-
-    useFocusEffect(
-        useCallback(() => {
-            return () => {
-                qc.invalidateQueries({queryKey: ["trucks"]});
-            };
-        }, [qc]),
-    );
 
     return (
         <SafeAreaView className="flex-1 " style={{backgroundColor: APP_COLORS.background}}>

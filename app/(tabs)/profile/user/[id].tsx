@@ -20,7 +20,7 @@ import DateTimePicker, {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useQueryClient} from "@tanstack/react-query";
-import {useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
+import {useLocalSearchParams, useRouter} from "expo-router";
 import {Input, Select, Switch} from "heroui-native";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
@@ -317,14 +317,6 @@ export default function TeamEditUserScreen() {
         qc.invalidateQueries({queryKey: ["users"]});
         router.back();
     }, [qc, router]);
-
-    useFocusEffect(
-        useCallback(() => {
-            return () => {
-                qc.invalidateQueries({queryKey: ["users"]});
-            };
-        }, [qc]),
-    );
 
     return (
         <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>

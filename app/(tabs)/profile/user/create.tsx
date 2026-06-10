@@ -14,7 +14,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import DateTimePicker, {
     type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import {useFocusEffect, useRouter} from "expo-router";
+import {useRouter} from "expo-router";
 import {Input, Select} from "heroui-native";
 import React, {useCallback, useMemo, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
@@ -213,14 +213,6 @@ export default function TeamCreateUserScreen() {
         qc.invalidateQueries({queryKey: ["users"]});
         router.back();
     }, [qc, router]);
-
-    useFocusEffect(
-        useCallback(() => {
-            return () => {
-                qc.invalidateQueries({queryKey: ["users"]});
-            };
-        }, [qc]),
-    );
 
     return (
         <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
