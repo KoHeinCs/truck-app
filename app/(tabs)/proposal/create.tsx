@@ -268,14 +268,14 @@ export default function CreateProposalScreen() {
                                                 {t.labels.truck}
                                             </Text>
                                             <Text
-                                                className={`mt-1 text-sm font-semibold  ${mmLeading}`}
-                                                style={[{color:APP_COLORS.textPrimary}]}
+                                                className={`mt-1 text-base font-medium  ${mmLeading}`}
+                                                style={[{color:APP_COLORS.textPrimary},style]}
                                             >
                                                 {selectedReviewTruck?.plateNo || truckQuery || "-"}
                                             </Text>
                                             <Text
-                                                className={`mt-0.5 text-xs font-medium ${mmLeading}`}
-                                                style={{color:APP_COLORS.textSecondary}}
+                                                className={`mt-0.5 text-sm font-medium ${mmLeading}`}
+                                                style={[{color:APP_COLORS.textSecondary},style]}
 
                                             >
                                                 {selectedReviewTruck ? getTruckSubtitle(selectedReviewTruck) : "-"}
@@ -383,13 +383,13 @@ export default function CreateProposalScreen() {
                                                     onFocus={() => setTruckPickerOpen(true)}
                                                     placeholder={t.placeholders.truck}
                                                     placeholderTextColor={APP_COLORS.textMuted}
-                                                    style={{
+                                                    style={[{
                                                         backgroundColor: APP_COLORS.inputBackground,
                                                         borderColor: errors.truckId ? APP_COLORS.error : APP_COLORS.border,
                                                         borderWidth: 1,
                                                         color: APP_COLORS.textPrimary
-                                                    }}
-                                                    className={`py-0 h-14  text-xs font-medium ${mmLeading} `}
+                                                    },style]}
+                                                    className={`p-3  text-base font-medium ${mmLeading} `}
                                                 />
                                                 {!!errors.truckId?.message && (
                                                     <Text
@@ -483,17 +483,17 @@ export default function CreateProposalScreen() {
                                                     }}
                                                 >
                                                     <Select.Trigger
-                                                        className={`py-0 h-14 rounded-xl ${mmLeading} `}
-                                                        style={{
+                                                        className={`p-3  ${mmLeading} `}
+                                                        style={[{
                                                             backgroundColor: APP_COLORS.inputBackground,
                                                             borderColor: APP_COLORS.border,
                                                             borderWidth: 1
-                                                        }}
+                                                        }]}
 
                                                     >
                                                         <Select.Value
                                                             placeholder={t.placeholders.serviceType}
-                                                            className={`py-0 text-sm font-medium ${mmLeading}`}
+                                                            className={`py-0 text-base font-medium ${mmLeading}`}
                                                             style={[{color: APP_COLORS.textPrimary}, style]}
                                                         />
                                                         <Select.TriggerIndicator/>
@@ -573,8 +573,7 @@ export default function CreateProposalScreen() {
                                         name="serviceDate"
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
-                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading}
-                                                               style={style}/>
+                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading} style={style}/>
                                                 <ServiceDatePicker
                                                     locale={locale}
                                                     value={value}
@@ -617,7 +616,7 @@ export default function CreateProposalScreen() {
                                                     scrollEnabled={true}
                                                     maxLength={511}
                                                     textAlignVertical="top"
-                                                    className={`min-h-[126px] rounded-xl p-3 text-sm font-medium ${mmLeading}`}
+                                                    className={`min-h-[126px] rounded-xl p-3 text-base font-medium ${mmLeading}`}
                                                     style={[style,{
                                                         backgroundColor:APP_COLORS.inputBackground,
                                                         borderColor: errors.description ? APP_COLORS.error : APP_COLORS.border,
@@ -709,7 +708,7 @@ function PreviewRow({label, value, mmLeading, last,style}: PreviewRowProps) {
                 {label}
             </Text>
             <Text
-                className={`mt-1 text-sm font-medium  ${mmLeading}`}
+                className={`mt-1 text-base font-medium  ${mmLeading}`}
                 style={[{color:APP_COLORS.textPrimary},style]}
             >
                 {value || "-"}
@@ -763,7 +762,8 @@ function FormInput({
                     {required ? (
                         <RequiredLabel label={label} mmLeading={mmLeading} style={style}/>
                     ) : (
-                        <Text className={`text-sm font-medium text-slate-900 ${mmLeading}`} style={style}>
+                        <Text className={`text-sm font-medium  ${mmLeading}`}
+                              style={[style,{color: APP_COLORS.textSecondary}]}>
                             {label}
                         </Text>
                     )}
@@ -773,7 +773,7 @@ function FormInput({
                         placeholder={placeholder}
                         placeholderTextColor={APP_COLORS.textMuted}
                         keyboardType={keyboardType}
-                        className={`py-0 h-14  text-sm font-medium  ${mmLeading}  `}
+                        className={`p-3  text-base font-medium  ${mmLeading}  `}
                         style={[{
                             backgroundColor: APP_COLORS.inputBackground,
                             borderColor: error ? APP_COLORS.error : APP_COLORS.border,

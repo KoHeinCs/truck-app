@@ -57,14 +57,14 @@ export function ProposalCard(
 
                         <View className="flex-1">
                             <Text
-                                className={`text-xs font-bold ${mmLeading}`}
+                                className={`text-sm font-bold ${mmLeading}`}
                                 style={[{color: APP_COLORS.primary}]}
                                 numberOfLines={1}
                             >
                                 {item.proposalNo}
                             </Text>
                             <Text
-                                className={`mt-0.5 text-xs font-semibold ${mmLeading}`}
+                                className={`mt-0.5 text-sm font-semibold ${mmLeading}`}
                                 style={[{color: APP_COLORS.textMuted}]}
                             >
                                 {formatDate(item.proposalDate)}
@@ -94,7 +94,7 @@ export function ProposalCard(
                                             </Text>
                                             <Text
                                                 className={`text-xs font-semibold  ${mmLeading}`}
-                                                style={{color: APP_COLORS.textSecondary}}
+                                                style={{color: APP_COLORS.textPrimary}}
                                                 numberOfLines={1}
                                                 ellipsizeMode={"tail"}
 
@@ -112,7 +112,7 @@ export function ProposalCard(
                                             </Text>
                                             <Text
                                                 className={`text-xs font-semibold  ${mmLeading}`}
-                                                style={{color: APP_COLORS.textSecondary}}
+                                                style={{color: APP_COLORS.textPrimary}}
                                                 numberOfLines={1}
                                                 ellipsizeMode={"tail"}
                                             >
@@ -134,7 +134,7 @@ export function ProposalCard(
                                             </Text>
                                             <Text
                                                 className={`text-xs font-semibold  ${mmLeading}`}
-                                                style={{color:APP_COLORS.textSecondary}}
+                                                style={{color:APP_COLORS.textPrimary}}
                                                 numberOfLines={2}
                                                 ellipsizeMode={"clip"}
                                             >
@@ -148,7 +148,7 @@ export function ProposalCard(
                                             </Text>
                                             <Text
                                                 className={`text-xs font-semibold  ${mmLeading}`}
-                                                style={{color: APP_COLORS.textSecondary}}
+                                                style={{color: APP_COLORS.textPrimary}}
                                                 numberOfLines={2}
                                                 ellipsizeMode={"tail"}
                                             >
@@ -171,7 +171,7 @@ export function ProposalCard(
                                             </Text>
                                             <Text
                                                 className={`text-xs font-semibold  ${mmLeading}`}
-                                                style={{color:APP_COLORS.textSecondary}}
+                                                style={{color:APP_COLORS.textPrimary}}
                                                 numberOfLines={2}
                                                 ellipsizeMode={"clip"}
                                             >
@@ -188,7 +188,7 @@ export function ProposalCard(
                                             </Text>
                                             <Text
                                                 className={`text-xs font-semibold  ${mmLeading}`}
-                                                style={{color:APP_COLORS.textSecondary}}
+                                                style={{color:APP_COLORS.textPrimary}}
                                                 numberOfLines={1}
                                                 ellipsizeMode={"tail"}
                                             >

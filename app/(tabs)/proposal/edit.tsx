@@ -241,7 +241,7 @@ export default function EditProposalScreen() {
                                         {t.labels.proposalNo}
                                     </Text>
                                     <Text
-                                        className={`text-sm font-bold  ${mmLeading}`}
+                                        className={`text-base font-bold  ${mmLeading}`}
                                         style={[style, {color: APP_COLORS.textPrimary}]}
                                     >
                                         {detail?.proposalNo || "-"}
@@ -284,7 +284,7 @@ export default function EditProposalScreen() {
                                                     }}
                                                 >
                                                     <Select.Trigger
-                                                        className={`py-0 h-13 ${mmLeading} `}
+                                                        className={`p-3 ${mmLeading} `}
                                                         style={{
                                                             backgroundColor: APP_COLORS.inputBackground,
                                                             borderColor: APP_COLORS.border,
@@ -293,7 +293,7 @@ export default function EditProposalScreen() {
                                                     >
                                                         <Select.Value
                                                             placeholder={t.placeholders.serviceType}
-                                                            className={`py-0 text-sm font-medium ${mmLeading}`}
+                                                            className={`text-base font-medium ${mmLeading}`}
                                                             style={[{color: APP_COLORS.textPrimary}, style]}
                                                         />
                                                         <Select.TriggerIndicator/>
@@ -418,7 +418,7 @@ export default function EditProposalScreen() {
                                                     scrollEnabled={true}
                                                     maxLength={511}
                                                     textAlignVertical="top"
-                                                    className={`min-h-[126px] rounded-xl p-3 text-sm font-medium ${mmLeading}`}
+                                                    className={`min-h-[126px] rounded-xl p-3 text-base font-medium ${mmLeading}`}
                                                     style={[style, {
                                                         backgroundColor: APP_COLORS.inputBackground,
                                                         borderColor: errors.description ? APP_COLORS.error : APP_COLORS.border,
@@ -572,7 +572,7 @@ function FormInput({
                             borderWidth: 1,
                             color: APP_COLORS.textPrimary
                         }, style]}
-                        className={`h-13 text-sm font-medium  ${mmLeading}`}
+                        className={`p-3 text-base font-medium  ${mmLeading}`}
                     />
                     {!!error && (
                         <Text

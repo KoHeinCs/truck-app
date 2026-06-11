@@ -89,7 +89,7 @@ export function ServiceDatePicker({
         <View>
             <Pressable
                 onPress={openPicker}
-                className={`min-h-13 flex-row items-center justify-between rounded-xl px-3 py-2 ${triggerClassName ?? ""}`}
+                className={`flex-row items-center justify-between rounded-xl p-3 ${triggerClassName ?? ""}`}
                 style={{
                     backgroundColor:APP_COLORS.inputBackground,
                     borderColor:APP_COLORS.border,
@@ -99,10 +99,8 @@ export function ServiceDatePicker({
                 <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
-                    className={`text-sm font-medium flex-1 pr-1 ${value ? "text-slate-900" : "text-slate-400"} ${mmLeading}`}
-                    style={[{
-                        color:APP_COLORS.textPrimary
-                    },style]}
+                    className={`text-base font-medium  ${value ? APP_COLORS.textPrimary : APP_COLORS.textMuted} ${mmLeading}`}
+                    style={style}
                 >
                     {value || placeholder}
                 </Text>
