@@ -1,5 +1,55 @@
 {
   "ownership": {
+    "searchOwnership": {
+      "title": "ထရပ်ကားရှာဖွေရန်",
+      "infoText": "ကားနံပါတ်ဖြင့်ရှာပါက အချက်အလက်များ အလိုအလျောက် ဖြည့်ပေးပါမည်။ ကိုယ်တိုင်ထည့်သွင်းခြင်းလည်း လုပ်ဆောင်နိုင်ပါသည်။",
+      "plateLabel": "ကားနံပါတ်ထည့်ပါ",
+      "platePlaceholder": "ဥပမာ: 3R-9999",
+      "searchButton": "ရှာမည်",
+      "searching": "ရှာဖွေနေသည်...",
+      "or": "သို့မဟုတ်",
+      "manualButton": "ကိုယ်တိုင်ထည့်သွင်းမည်",
+      "invalidPlateTitle": "ဖော်မတ်မမှန်",
+      "invalidPlateBody": "ယာဉ်နံပါတ် ဖော်မတ်မမှန်ပါ။ (ဥပမာ - 3R-9999)",
+      "notFoundTitle": "မတွေ့ရှိပါ",
+      "notFoundBody": "ဤကားနံပါတ်ဖြင့် ထရပ်ကား မတွေ့ရှိပါ။"
+    },
+    "createOwnership": {
+      "title": "ထရပ်ကားအသစ်ထည့်ရန်",
+      "basicInfoTitle": "အခြေခံအချက်အလက်",
+      "tireAndExtraTitle": "တာယာနှင့် နည်းပညာအချက်အလက်",
+      "submit": "သိမ်းမည်",
+      "submitting": "သိမ်းဆည်းနေသည်...",
+      "successTitle": "အောင်မြင်သည်",
+      "successBody": "ထရပ်ကားအသစ် ထည့်သွင်းပြီးပါပြီ။",
+      "errorTitle": "အမှား",
+      "errorBody": "ထရပ်ကားအသစ် ထည့်သွင်း၍ မရပါ။",
+      "unauthorizedTitle": "ခွင့်ပြုချက်မရှိ",
+      "unauthorizedBody": "ဤလုပ်ဆောင်ချက်ကို လုပ်ဆောင်၍ မရပါ။",
+      "ownerRequired": "ပိုင်ရှင်ကို ရွေးချယ်ပေးပါ",
+      "labels": {
+        "ownerId": "ပိုင်ရှင်",
+        "plateNo": "ယာဉ်အမှတ်",
+        "model": "အမျိုးအစား",
+        "modelYear": "လုပ်နှစ်",
+        "fuelType": "လောင်စာအမျိုးအစား",
+        "frontTire": "ရှေ့တာယာ",
+        "backTire": "နောက်တာယာ",
+        "chassisNo": "ကိုယ်ထည်အမှတ်",
+        "engineNo": "အင်ဂျင်အမှတ်"
+      },
+      "placeholders": {
+        "ownerId": "ပိုင်ရှင် ရွေးပါ",
+        "plateNo": "ဥပမာ - 3R-9999",
+        "model": "e.g. Canter, ISUZU S",
+        "modelYear": "2008",
+        "fuelType": "လောင်စာအမျိုးအစား ရွေးပါ",
+        "frontTire": "200 15R",
+        "backTire": "207 75R",
+        "chassisNo": "CHS-67890",
+        "engineNo": "123456789"
+      }
+    },
     "detailOwnership": {
       "title": "ကားအသေးစိတ်",
       "labels": {

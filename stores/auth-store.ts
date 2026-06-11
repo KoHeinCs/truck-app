@@ -12,12 +12,14 @@ export type AuthSession = {
   token: string;
   fullName: string;
   role: string;
+  userId?: string | null;
 };
 
 type AuthStore = {
   token: string | null;
   fullName: string | null;
   role: string | null;
+  userId: string | null;
   signIn: (session: AuthSession) => void;
   signOut: () => void;
 };
@@ -28,13 +30,16 @@ export const useAuthStore = create<AuthStore>()(
       token: null,
       fullName: null,
       role: null,
+      userId: null,
       signIn: (session) =>
         set({
           token: session.token,
           fullName: session.fullName,
           role: session.role,
+          userId: session.userId ?? null,
         }),
-      signOut: () => set({ token: null, fullName: null, role: null }),
+      signOut: () =>
+        set({ token: null, fullName: null, role: null, userId: null }),
     }),
     {
       name: "hero-auth-storage",
@@ -43,6 +48,7 @@ export const useAuthStore = create<AuthStore>()(
         token: state.token,
         fullName: state.fullName,
         role: state.role,
+        userId: state.userId,
       }),
     },
   ),

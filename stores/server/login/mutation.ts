@@ -11,6 +11,7 @@ export interface LoginPayload {
 type LoginResponse = {
   code?: string;
   data?: {
+    id?: string;
     fullName?: string;
     role?: string;
   };
@@ -42,10 +43,14 @@ export const useLogin = () => {
         typeof body?.data?.fullName === "string" &&
         typeof body?.data?.role === "string"
       ) {
+        const userId =
+          typeof body.data.id === "string" ? body.data.id : null;
+
         useAuthStore.getState().signIn({
           token,
           fullName: body.data.fullName,
           role: body.data.role,
+          userId,
         });
         router.replace("/(tabs)");
       }

@@ -11,8 +11,8 @@ import type {
 } from "@/stores/server/ownership/search-columns";
 import type { OwnershipItem } from "@/stores/server/ownership/typed";
 import React, { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Text, View } from "react-native";
-import { useRouter } from "expo-router";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { type Href, useRouter } from "expo-router";
 import { useThrottledCallback } from "@/hooks/use-throttled-callback";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OwnershipAdvancedFilters } from "./components/ownership-advanced-filters";
@@ -227,7 +227,7 @@ export default function OwnerShip() {
                 }))
               }
               onPressAdd={() =>
-                Alert.alert(t.addComingSoonTitle, t.addComingSoonBody)
+                router.push("/(tabs)/ownership/search" as Href)
               }
             />
             {ui.advancedOpen ? (

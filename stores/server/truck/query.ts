@@ -6,8 +6,10 @@ import {
 } from "@tanstack/react-query";
 import { axios } from "../api";
 import type { Column } from "../user/query";
+import { buildTruckSearchColumns } from "./search-columns";
 import type {
   TruckDetailResponse,
+  TruckItem,
   TruckListResponse,
   TruckSearchResponse,
 } from "./typed";
@@ -84,5 +86,36 @@ export function useTruckDetail(id: string) {
     queryKey: ["truck", "detail", id],
     queryFn: () => fetchTruckById(id),
     enabled: !!id,
+  });
+}
+
+const fetchTruckByPlateNo = async (
+  plateNo: string,
+): Promise<TruckItem | null> => {
+  const columns = buildTruckSearchColumns({
+    quickQuery: "",
+    plateNo,
+    model: "",
+    modelYear: "",
+    engineNo: "",
+    chassisNo: "",
+  });
+  const response = await searchTrucks({
+    page: 1,
+    pageSize: 1,
+    columns,
+  });
+  return response.data?.data?.[0] ?? null;
+};
+
+export function useTruckByPlateNo(plateNo: string, enabled = false) {
+  const normalizedPlateNo = plateNo.trim();
+
+  return useQuery({
+    queryKey: ["truck", "by-plate", normalizedPlateNo],
+    queryFn: () => fetchTruckByPlateNo(normalizedPlateNo),
+    enabled: enabled && !!normalizedPlateNo,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
   });
 }

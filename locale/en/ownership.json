@@ -1,5 +1,55 @@
 {
   "ownership": {
+    "searchOwnership": {
+      "title": "Search Truck",
+      "infoText": "Searching by plate number will auto-fill details. You can also enter information manually.",
+      "plateLabel": "Enter plate number",
+      "platePlaceholder": "e.g. 3R-9999",
+      "searchButton": "Search",
+      "searching": "Searching...",
+      "or": "or",
+      "manualButton": "Enter manually",
+      "invalidPlateTitle": "Invalid format",
+      "invalidPlateBody": "Invalid plate number format. (e.g., 3R-9999)",
+      "notFoundTitle": "Not found",
+      "notFoundBody": "No truck found with this plate number."
+    },
+    "createOwnership": {
+      "title": "Add New Truck",
+      "basicInfoTitle": "Basic Information",
+      "tireAndExtraTitle": "Tire & Technical Information",
+      "submit": "Save",
+      "submitting": "Saving...",
+      "successTitle": "Success",
+      "successBody": "Truck ownership has been created.",
+      "errorTitle": "Error",
+      "errorBody": "Could not create truck ownership.",
+      "unauthorizedTitle": "Unauthorized",
+      "unauthorizedBody": "You are not allowed to perform this action.",
+      "ownerRequired": "Please select an owner",
+      "labels": {
+        "ownerId": "Owner",
+        "plateNo": "Plate No",
+        "model": "Type",
+        "modelYear": "Year",
+        "fuelType": "Fuel Type",
+        "frontTire": "Front Tire",
+        "backTire": "Rear Tire",
+        "chassisNo": "Chassis No",
+        "engineNo": "Engine No"
+      },
+      "placeholders": {
+        "ownerId": "Select owner",
+        "plateNo": "e.g. 3R-9999",
+        "model": "e.g. Canter, ISUZU S",
+        "modelYear": "2008",
+        "fuelType": "Select fuel type",
+        "frontTire": "200 15R",
+        "backTire": "207 75R",
+        "chassisNo": "CHS-67890",
+        "engineNo": "123456789"
+      }
+    },
     "detailOwnership": {
       "title": "Truck Details",
       "labels": {

@@ -43,16 +43,6 @@ export default function LoginScreen() {
 
     const onSubmit = (values: FormValues) => {
         mutate(values, {
-            onSuccess: ({body, token}) => {
-                if (
-                    body?.code === "MSG6001" &&
-                    token &&
-                    typeof body?.data?.fullName === "string" &&
-                    typeof body?.data?.role === "string"
-                ) {
-                    return;
-                }
-            },
             onError: (err: unknown) => {
                 const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
                     title: t.errorTitle,

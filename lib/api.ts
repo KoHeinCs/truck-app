@@ -52,6 +52,7 @@ export type LoginPayload = {
 export type LoginResponse = {
   code?: string;
   data?: {
+    id?: string;
     fullName?: string;
     role?: string;
   };
@@ -75,6 +76,7 @@ export async function login(payload: LoginPayload) {
 export type ProfileResponse = {
   code?: string;
   data?: {
+    id?: string;
     fullName?: string;
     role?: string;
   };
