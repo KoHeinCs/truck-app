@@ -63,7 +63,7 @@ function buildSchema(t: any) {
             .refine((value) => parseServiceDateDisplayToApi(value) !== null, {
                 message: t.invalidDate,
             }),
-        description: z.string().max(1000),
+        description: z.string().min(1, t.required).max(1000),
     });
 }
 
@@ -269,13 +269,13 @@ export default function CreateProposalScreen() {
                                             </Text>
                                             <Text
                                                 className={`mt-1 text-sm font-semibold  ${mmLeading}`}
-                                                style={[{color:APP_COLORS.textSecondary}]}
+                                                style={[{color:APP_COLORS.textPrimary}]}
                                             >
                                                 {selectedReviewTruck?.plateNo || truckQuery || "-"}
                                             </Text>
                                             <Text
                                                 className={`mt-0.5 text-xs font-medium ${mmLeading}`}
-                                                style={{color:APP_COLORS.textMuted}}
+                                                style={{color:APP_COLORS.textSecondary}}
 
                                             >
                                                 {selectedReviewTruck ? getTruckSubtitle(selectedReviewTruck) : "-"}
@@ -620,11 +620,19 @@ export default function CreateProposalScreen() {
                                                     className={`min-h-[126px] rounded-xl p-3 text-sm font-medium ${mmLeading}`}
                                                     style={[style,{
                                                         backgroundColor:APP_COLORS.inputBackground,
-                                                        borderColor: APP_COLORS.border,
+                                                        borderColor: errors.description ? APP_COLORS.error : APP_COLORS.border,
                                                         borderWidth:1,
                                                         color:APP_COLORS.textPrimary
                                                     }]}
                                                 />
+                                                {!!errors.description?.message && (
+                                                    <Text
+                                                        className={`text-xs font-normal ${mmLeading}`}
+                                                        style={[{color:APP_COLORS.error},style]}
+                                                    >
+                                                        {String(errors.description.message)}
+                                                    </Text>
+                                                )}
                                             </View>
                                         )}
                                     />
@@ -642,7 +650,10 @@ export default function CreateProposalScreen() {
                                                 borderWidth: 1
                                             })}
                                         >
-                                            <Text className={`text-sm font-semibold text-slate-700 ${mmLeading}`}>
+                                            <Text
+                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                style={style}
+                                            >
                                                 {t.actions.cancel}
                                             </Text>
                                         </Pressable>
@@ -657,7 +668,10 @@ export default function CreateProposalScreen() {
                                                 borderWidth: 1
                                             })}
                                         >
-                                            <Text className={`font-semibold text-white ${mmLeading}`}>
+                                            <Text
+                                                className={`font-semibold text-white ${mmLeading}`}
+                                                style={style}
+                                            >
                                                 {t.actions.next}
                                             </Text>
                                         </Pressable>
@@ -696,7 +710,7 @@ function PreviewRow({label, value, mmLeading, last,style}: PreviewRowProps) {
             </Text>
             <Text
                 className={`mt-1 text-sm font-medium  ${mmLeading}`}
-                style={[{color:APP_COLORS.textSecondary}]}
+                style={[{color:APP_COLORS.textPrimary},style]}
             >
                 {value || "-"}
             </Text>

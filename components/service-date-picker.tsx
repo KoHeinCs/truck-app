@@ -89,7 +89,7 @@ export function ServiceDatePicker({
         <View>
             <Pressable
                 onPress={openPicker}
-                className={`min-h-14 flex-row items-center justify-between rounded-xl px-3 py-2 ${triggerClassName ?? ""}`}
+                className={`min-h-13 flex-row items-center justify-between rounded-xl px-3 py-2 ${triggerClassName ?? ""}`}
                 style={{
                     backgroundColor:APP_COLORS.inputBackground,
                     borderColor:APP_COLORS.border,

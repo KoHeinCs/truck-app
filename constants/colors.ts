@@ -106,14 +106,14 @@ export const APP_COLORS = {
    * WHEN: Displaying the absolute highest priority text piece that the user's eyes must look at first.
    * WHERE: Full names, main page header titles, primary card numbers, large navigation text. (Maximum readability weight).
    */
-  textPrimary: "#455c7a",
+  textPrimary: "#334155",
 
   /**
    * Secondary description metadata.
    * WHEN: Displaying contextual help details, subtext, or supporting data fields that supplement primary titles.
    * WHERE: User emails, license plate values, phone fields, sub-labels, inline status captions. (Optimized for quick scanning on mobile).
    */
-  textSecondary: "#334155",
+  textSecondary: "#455C7A",
 
   /**
    * Muted accessory decoration.
