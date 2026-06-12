@@ -19,7 +19,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {Input, Select} from "heroui-native";
 import React, {useCallback, useEffect, useMemo} from "react";
-import {Controller, useForm} from "react-hook-form";
+import {Controller, useForm,Control} from "react-hook-form";
 import {
     ActivityIndicator,
     Alert,
@@ -37,14 +37,11 @@ import {useQueryClient} from "@tanstack/react-query";
 import {z} from "zod";
 
 
-type FormValues = z.infer<ReturnType<typeof buildSchema>>;
+
 
 function buildSchema(locale: "en" | "mm") {
 
     return z.object({
-
-        truckId: z.string()
-            .min(1, locale === "mm" ? "ယာဉ်ရွေးချယ်ရန် လိုအပ်သည်" : "Truck is required"),
         proposalAmount: z
             .string()
             .min(1, locale === "mm" ? "ကျသင့်ပမာဏ လိုအပ်သည်" : "Proposal amount is required")
@@ -69,7 +66,10 @@ function buildSchema(locale: "en" | "mm") {
             .min(1, locale === "mm" ? "မှတ်ချက် ထည့်သွင်းရန် လိုအပ်သည်" : "Remark is required")
             .max(500, locale === "mm" ? "မှတ်ချက်သည် စာလုံး 500 ထက်မကျော်ရပါ" : "Remark cannot exceed 500 characters"),
     });
+
 }
+
+type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 
 function getOwnershipId(
@@ -527,7 +527,7 @@ function RequiredLabel({label, mmLeading, style}: RequiredLabelProps) {
 }
 
 type FormInputProps = {
-    control: ReturnType<typeof useForm<FormValues>>["control"];
+    control: Control<FormValues>;
     name: keyof FormValues;
     label: string;
     placeholder: string;

@@ -209,7 +209,7 @@ export function ProposalAdvancedFilters({
                 <View className="flex-row gap-2 pt-0.5">
                     <Pressable
                         onPress={onReset}
-                        className="flex-1 items-center justify-center rounded-xl  py-2"
+                        className="flex-1 py-3 items-center justify-center rounded-xl  "
                         style={({pressed}) => ({
                             backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
                             borderColor: APP_COLORS.border,
@@ -225,7 +225,7 @@ export function ProposalAdvancedFilters({
                     </Pressable>
 
                     <Pressable
-                        className="flex-1 items-center justify-center rounded-xl py-2"
+                        className="flex-1 py-3 items-center justify-center rounded-xl "
                         style={({pressed}) => ({
                             backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
                         })}
