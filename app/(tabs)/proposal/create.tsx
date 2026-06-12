@@ -389,7 +389,7 @@ export default function CreateProposalScreen() {
                                                         borderWidth: 1,
                                                         color: APP_COLORS.textPrimary
                                                     },style]}
-                                                    className={`p-3  text-base font-medium ${mmLeading} `}
+                                                    className={` text-base font-medium ${mmLeading} `}
                                                 />
                                                 {!!errors.truckId?.message && (
                                                     <Text
@@ -483,7 +483,6 @@ export default function CreateProposalScreen() {
                                                     }}
                                                 >
                                                     <Select.Trigger
-                                                        className={`p-3  ${mmLeading} `}
                                                         style={[{
                                                             backgroundColor: APP_COLORS.inputBackground,
                                                             borderColor: APP_COLORS.border,
@@ -493,7 +492,7 @@ export default function CreateProposalScreen() {
                                                     >
                                                         <Select.Value
                                                             placeholder={t.placeholders.serviceType}
-                                                            className={`py-0 text-base font-medium ${mmLeading}`}
+                                                            className={`text-base font-medium ${mmLeading}`}
                                                             style={[{color: APP_COLORS.textPrimary}, style]}
                                                         />
                                                         <Select.TriggerIndicator/>
@@ -641,7 +640,7 @@ export default function CreateProposalScreen() {
                                         <Pressable
                                             onPress={onBack}
                                             disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl bg-slate-200 h-14 "
+                                            className="flex-1 items-center justify-center rounded-xl h-13 "
                                             style={({pressed}) => ({
                                                 backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
                                                 opacity: isPending ? 0.7 : 1,
@@ -659,7 +658,7 @@ export default function CreateProposalScreen() {
                                         <Pressable
                                             onPress={handleSubmit(onSubmit)}
                                             disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl h-14"
+                                            className="flex-1 items-center justify-center rounded-xl h-13"
                                             style={({pressed}) => ({
                                                 backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                                                 opacity: isPending ? 0.7 : 1,
@@ -773,7 +772,7 @@ function FormInput({
                         placeholder={placeholder}
                         placeholderTextColor={APP_COLORS.textMuted}
                         keyboardType={keyboardType}
-                        className={`p-3  text-base font-medium  ${mmLeading}  `}
+                        className={`  text-base font-medium  ${mmLeading}  `}
                         style={[{
                             backgroundColor: APP_COLORS.inputBackground,
                             borderColor: error ? APP_COLORS.error : APP_COLORS.border,

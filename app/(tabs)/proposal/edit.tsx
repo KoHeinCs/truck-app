@@ -241,7 +241,7 @@ export default function EditProposalScreen() {
                                         {t.labels.proposalNo}
                                     </Text>
                                     <Text
-                                        className={`text-base font-bold  ${mmLeading}`}
+                                        className={`text-base font-medium  ${mmLeading}`}
                                         style={[style, {color: APP_COLORS.textPrimary}]}
                                     >
                                         {detail?.proposalNo || "-"}
@@ -456,7 +456,7 @@ export default function EditProposalScreen() {
                                         <Pressable
                                             onPress={onBack}
                                             disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl  h-14 "
+                                            className="flex-1 items-center justify-center rounded-xl  h-13 "
                                             style={({pressed}) => ({
                                                 backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
                                                 opacity: isPending ? 0.7 : 1,
@@ -474,7 +474,7 @@ export default function EditProposalScreen() {
                                         <Pressable
                                             onPress={handleSubmit(onSubmit)}
                                             disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl h-14"
+                                            className="flex-1 items-center justify-center rounded-xl h-13"
                                             style={({pressed}) => ({
                                                 backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
                                                 opacity: isPending ? 0.7 : 1,
