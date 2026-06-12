@@ -45,7 +45,7 @@ export function CompactSelect({
     return (
         <View className="flex-1 gap-1">
             <Text
-                    className={`text-xs font-semibold ${getMyanmarLeadingClass(locale)}`}
+                    className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
                     style={[style, {color: APP_COLORS.textMuted}]}>
                 {label}
             </Text>
@@ -72,7 +72,7 @@ export function CompactSelect({
                     }}
                 >
                     <Select.Value
-                        className={`text-[10px] font-normal py-0  ${getMyanmarLeadingClass(locale)} `}
+                        className={`text-[12px] font-medium py-0  ${getMyanmarLeadingClass(locale)} `}
                         placeholder={placeholder}
                         style={[{ color: APP_COLORS.textPrimary }, style]}
                     />

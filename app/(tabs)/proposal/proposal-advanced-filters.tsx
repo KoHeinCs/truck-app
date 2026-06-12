@@ -1,5 +1,5 @@
 import {CompactTextInput} from "@/components/compact-text-input";
-import {ServiceDatePicker} from "@/components/service-date-picker";
+import {AdvanceSearchDatePicker} from "@/components/advance-search-date-picker"
 import {APP_COLORS} from "@/constants/colors";
 import {COMPACT_ADVANCED_INPUT_CLASSNAME} from "@/constants/compact-input";
 import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
@@ -191,7 +191,10 @@ export function ProposalAdvancedFilters({
                 {/* created user */}
                 {showCreatedBy ? (
                     <View className="gap-1">
-                        <Text className={`text-[10px] text-slate-500 ${mmLeading}`}>
+                        <Text
+                            className={`text-sm font-medium ${mmLeading}`}
+                            style={[style,{color:APP_COLORS.textMuted}]}
+                        >
                             {t.labels.createdBy}
                         </Text>
                         <CompactTextInput
@@ -200,7 +203,7 @@ export function ProposalAdvancedFilters({
                             value={filters.createdByCsv}
                             onChangeText={(createdByCsv) => onChange({createdByCsv})}
                             placeholder={t.placeholders.createdBy}
-                            className={`border border-slate-200 bg-white ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
+                            className={` ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                         />
                     </View>
                 ) : null}
@@ -263,7 +266,7 @@ function FilterInput({
     return (
         <View className="flex-1 gap-1">
             <Text
-                className={`text-xs font-semibold ${mmLeading}`}
+                className={`text-sm font-medium ${mmLeading}`}
                 style={[{color: APP_COLORS.textMuted},style]}
             >
                 {label}
@@ -307,12 +310,12 @@ function FilterDateField({
     return (
         <View className="flex-1 gap-1">
             <Text
-                className={`text-xs font-semibold ${mmLeading}`}
+                className={`text-sm font-medium ${mmLeading}`}
                 style={[{color: APP_COLORS.textMuted},style]}
             >
                 {label}
             </Text>
-            <ServiceDatePicker
+            <AdvanceSearchDatePicker
                 locale={locale}
                 value={value}
                 onChange={onChange}
