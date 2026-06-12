@@ -1,6 +1,6 @@
 import {CompactTextInput} from "@/components/compact-text-input";
-import {APP_COLORS} from "@/constants/colors";
-import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
+import {APP_COLORS, getStatusBadgeStyle} from "@/constants/colors";
+import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useTranslation} from "@/hooks/use-translation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useLocaleStore} from "@/stores/client/locale-store";
@@ -19,7 +19,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useQueryClient} from "@tanstack/react-query";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {Button} from "heroui-native";
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -33,44 +33,9 @@ import {
     SafeAreaView,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import {formatDateTime,formatDate} from "@/utils/dateUtil"
+import {formatAmount} from "@/utils/amountUtil"
 
-function formatDateTime(value: string): string {
-    if (!value) return "-";
-    const normalized = value.includes("T") ? value : value.replace(" ", "T");
-    const parsed = new Date(normalized);
-    if (Number.isNaN(parsed.getTime())) return value;
-    const dd = String(parsed.getDate()).padStart(2, "0");
-    const mm = String(parsed.getMonth() + 1).padStart(2, "0");
-    const yyyy = String(parsed.getFullYear());
-    const hh = String(parsed.getHours()).padStart(2, "0");
-    const min = String(parsed.getMinutes()).padStart(2, "0");
-    return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
-}
-
-function formatAmount(value: number): string {
-    const safeValue = Number.isFinite(value) ? value : 0;
-    return `${safeValue.toLocaleString()} Ks`;
-}
-
-function getHistoryBadgeContainerClass(action: string): string {
-    const normalized = action.toUpperCase();
-    if (normalized.includes("APPROV")) {
-        return "border-emerald-200 bg-emerald-50";
-    }
-    if (normalized.includes("TERMINAT") || normalized.includes("REJECT")) {
-        return "border-red-200 bg-red-50";
-    }
-    return "border-sky-200 bg-sky-50";
-}
-
-function getHistoryBadgeTextClass(action: string): string {
-    const normalized = action.toUpperCase();
-    if (normalized.includes("APPROV")) return "text-emerald-600";
-    if (normalized.includes("TERMINAT") || normalized.includes("REJECT")) {
-        return "text-red-600";
-    }
-    return "text-sky-600";
-}
 
 function getOwnershipId(
     detail: ProposalDetail | undefined,
@@ -86,6 +51,8 @@ export default function ProposalDetailScreen() {
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const mmLeading = getMyanmarLeadingClass(locale);
+    const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
+    const style = locale === "mm" ? mmTextStyle : undefined;
     const errorCatalog = useTranslation("error");
     const {detailProposal: t} = useTranslation('proposal')
     const params = useLocalSearchParams<{
@@ -214,19 +181,21 @@ export default function ProposalDetailScreen() {
     ]);
 
     return (
-        <SafeAreaView className="flex-1 bg-[#f3f7fb]">
+        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
 
             {/* back button , page title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
-                    className="h-11 w-11 items-center justify-center rounded-full bg-[#eef2f6]"
-                >
+                    className="h-11 w-11 items-center justify-center rounded-full "
+                    style={({pressed}) => ({
+                        backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.background
+                    })}>
                     <Ionicons name="arrow-back" size={22} color="#475569"/>
                 </Pressable>
                 <Text
-                    className={`flex-1 px-3 text-center text-lg font-bold text-slate-900 ${mmLeading}`}
-                >
+                    className={`flex-1 px-3 text-center text-lg font-bold ${mmLeading}`}
+                    style={[style, {color: APP_COLORS.textPrimary}]}>
                     {t.title}
                 </Text>
                 <View className="h-11 w-11"/>
@@ -250,112 +219,185 @@ export default function ProposalDetailScreen() {
                         >
 
                             {/* details form */}
-                            <View className="mt-1 rounded-2xl bg-white p-4">
+                            <View
+                                className="mt-1 rounded-2xl  p-4"
+                                style={{
+                                    backgroundColor: APP_COLORS.card,
+                                    borderColor: APP_COLORS.border,
+                                    borderWidth: 1
+                                }}
+                            >
 
                                 {/* proposal number && proposal status */}
                                 <View className="flex-row items-start justify-between gap-2">
                                     <View className="flex-1">
-                                        <Text className={`text-xl font-bold text-primary ${mmLeading}`}>
+                                        <Text
+                                            className={`text-xl font-bold tracking-tight  ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.primary}]}
+                                            numberOfLines={1}
+                                        >
                                             {detail?.proposalNo || "-"}
                                         </Text>
-                                        <Text className={`mt-1 text-sm text-slate-500 ${mmLeading}`}>
-                                            {detail?.plateNo || "-"}
-                                        </Text>
                                     </View>
-                                    <View className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5">
+                                    <View
+                                        className="rounded-xl  px-3 py-1.5"
+                                        style={{
+                                            backgroundColor: getStatusBadgeStyle(detail?.status ?? "INFORM").backgroundColor,
+                                            borderColor: getStatusBadgeStyle(detail?.status ?? "INFORM").borderColor
+                                        }}
+                                    >
                                         <Text
-                                            className={`text-xs font-semibold uppercase text-rose-700 ${mmLeading}`}
+                                            className={`text-sm font-semibold uppercase  ${mmLeading}`}
+                                            style={[
+                                                {color: getStatusBadgeStyle(detail?.status ?? "INFORM").textColor}, style
+                                            ]}
                                         >
                                             {detail?.status || "-"}
                                         </Text>
                                     </View>
                                 </View>
 
-                                <View className="mt-4 gap-3">
+                                {/* proposal details form */}
+                                <View className="mt-5 gap-y-3">
 
-                                    {/* service type */}
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                                            {t.labels.serviceType}
+                                    {/* truck  plate no */}
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
+                                            {t.labels.truck}
                                         </Text>
                                         <Text
-                                            className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                            className={`text-base font-semibold  ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textSecondary}]}
                                         >
-                                            {detail?.serviceType || "-"}
+                                            {detail?.plateNo || "-"}
                                         </Text>
                                     </View>
 
-                                    <View className="h-px bg-slate-200"/>
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* amount */}
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
                                             {t.labels.amount}
                                         </Text>
                                         <Text
-                                            className={`text-2xl font-bold text-primary ${mmLeading}`}
+                                            numberOfLines={1}
+                                            ellipsizeMode="tail"
+                                            className={`text-2xl font-bold tracking-tight ${mmLeading}`}
+                                            style={[
+                                                style,
+                                                {color: APP_COLORS.textPrimary}
+                                            ]}
                                         >
                                             {formatAmount(Number(detail?.proposalAmount ?? 0))}
                                         </Text>
                                     </View>
 
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
+
+                                    {/* service type */}
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
+                                            {t.labels.serviceType}
+                                        </Text>
+                                        <Text
+                                            className={`text-sm font-semibold  ${mmLeading}`}
+                                            style={[
+                                                style,
+                                                {color: APP_COLORS.textPrimary}
+                                            ]}
+                                        >
+                                            {detail?.serviceType || "-"}
+                                        </Text>
+                                    </View>
+
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
+
                                     {/* service shop */}
-                                    <View className="h-px bg-slate-200"/>
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
                                             {t.labels.serviceShop}
                                         </Text>
                                         <Text
-                                            className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                            className={`text-sm font-semibold  ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textPrimary}]}
                                         >
                                             {detail?.serviceShop || "-"}
                                         </Text>
                                     </View>
 
-                                    <View className="h-px bg-slate-200"/>
-
-                                    {/* proposal date */}
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className={`text-xs text-slate-500 ${mmLeading}`}>
-                                            {t.labels.proposalDate}
-                                        </Text>
-                                        <Text
-                                            className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
-                                        >
-                                            {formatDateTime(detail?.proposalDate || "")}
-                                        </Text>
-                                    </View>
-
-                                    <View className="h-px bg-slate-200"/>
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* service date */}
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
                                             {t.labels.serviceDate}
                                         </Text>
                                         <Text
-                                            className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                            className={`text-sm font-semibold  ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textPrimary}]}
                                         >
                                             {formatDateTime(detail?.serviceDate || "")}
                                         </Text>
                                     </View>
 
-                                    <View className="h-px bg-slate-200"/>
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
+
+                                    {/* proposal date */}
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
+                                            {t.labels.proposalDate}
+                                        </Text>
+                                        <Text
+                                            className={`text-sm font-semibold  ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textPrimary}]}
+
+                                        >
+                                            {formatDate(detail?.proposalDate || "")}
+                                        </Text>
+                                    </View>
+
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* created user && his phone number */}
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
                                             {t.labels.createdBy}
                                         </Text>
                                         <View className="items-end">
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-sm font-semibold ${mmLeading}`}
+                                                style={[style, {color: APP_COLORS.textPrimary}]}
+
                                             >
                                                 {detail?.createdUserFullName || detail?.createdBy || "-"}
                                             </Text>
                                             {detail?.createdUserPhone ? (
                                                 <Text
-                                                    className={`mt-0.5 text-xs text-slate-400 ${mmLeading}`}
+                                                    className={`mt-0.5 text-xs  ${mmLeading}`}
+                                                    style={[style, {color: APP_COLORS.textSecondary}]}
+
                                                 >
                                                     {detail.createdUserPhone}
                                                 </Text>
@@ -363,22 +405,27 @@ export default function ProposalDetailScreen() {
                                         </View>
                                     </View>
 
-                                    <View className="h-px bg-slate-200"/>
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* owner && his phone number */}
-                                    <View className="flex-row items-center justify-between">
-                                        <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
                                             {t.labels.ownerId}
                                         </Text>
                                         <View className="items-end">
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                                className={`text-sm font-semibold  ${mmLeading}`}
+                                                style={[style, {color: APP_COLORS.textPrimary}]}
                                             >
                                                 {detail?.ownerFullName || "-"}
                                             </Text>
                                             {detail?.ownerPhone ? (
                                                 <Text
-                                                    className={`mt-0.5 text-xs text-slate-400 ${mmLeading}`}
+                                                    className={`mt-0.5 text-xs  ${mmLeading}`}
+                                                    style={[style, {color: APP_COLORS.textSecondary}]}
                                                 >
                                                     {detail.ownerPhone}
                                                 </Text>
@@ -386,11 +433,14 @@ export default function ProposalDetailScreen() {
                                         </View>
                                     </View>
 
-                                    <View className="h-px bg-slate-200"/>
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* description */}
                                     <View>
-                                        <Text className={`mb-1 text-xs text-slate-500 ${mmLeading}`}>
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
                                             {t.labels.description}
                                         </Text>
                                         <Text
@@ -401,14 +451,25 @@ export default function ProposalDetailScreen() {
                                     </View>
 
                                 </View>
+
                             </View>
 
                             {/* action histories */}
                             {
                                 histories.length > 0 ?
                                     (
-                                        <View className="mt-5 rounded-2xl bg-white p-4">
-                                            <Text className={`text-base font-bold text-slate-900 ${mmLeading}`}>
+                                        <View
+                                            className="mt-5 rounded-2xl  p-4"
+                                            style={{
+                                                backgroundColor: APP_COLORS.card,
+                                                borderColor: APP_COLORS.border,
+                                                borderWidth: 1
+                                            }}
+                                        >
+                                            <Text
+                                                className={`text-base font-bold text-slate-900 ${mmLeading}`}
+                                                style={[style]}
+                                            >
                                                 {t.actionHistoryTitle}
                                             </Text>
                                             <View className="mt-4 gap-3">
@@ -418,6 +479,7 @@ export default function ProposalDetailScreen() {
                                                         labels={t.labels}
                                                         item={history}
                                                         mmLeading={mmLeading}
+                                                        style={style}
                                                     />
                                                 ))}
                                             </View>
@@ -435,9 +497,20 @@ export default function ProposalDetailScreen() {
                                                 onPress={() => setTerminateModalOpen(true)}
                                                 variant="outline"
                                                 className=" w-1/2 rounded-md "
+                                                animation={{
+                                                    highlight: {
+                                                        backgroundColor: {
+                                                            value: APP_COLORS.errorSoft, // Safely injects #456385 on click!
+                                                        }
+                                                    },
+                                                }}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                }}
                                             >
                                                 <Text
-                                                    className={`text-sm font-semibold text-red-600 ${mmLeading}`}
+                                                    className={`text-sm font-semibold  ${mmLeading}`}
+                                                    style={[style, {color: APP_COLORS.error}]}
                                                 >
                                                     {t.actions.terminate}
                                                 </Text>
@@ -446,10 +519,21 @@ export default function ProposalDetailScreen() {
                                             <Button
                                                 isDisabled={isSubmitting}
                                                 onPress={() => setApproveModalOpen(true)}
-                                                className="  w-1/2 rounded-md bg-primary"
+                                                className="  w-1/2 rounded-md "
+                                                animation={{
+                                                    highlight: {
+                                                        backgroundColor: {
+                                                            value: APP_COLORS.primaryPressed, // Safely injects #456385 on click!
+                                                        }
+                                                    },
+                                                }}
+                                                style={{
+                                                    backgroundColor: APP_COLORS.primary
+                                                }}
                                             >
                                                 <Text
-                                                    className={`text-sm font-semibold  text-white ${mmLeading}`}
+                                                    className={`text-sm font-semibold  ${mmLeading}`}
+                                                    style={[style, {color: APP_COLORS.card}]}
                                                 >
                                                     {t.actions.approve}
                                                 </Text>
@@ -620,25 +704,41 @@ type ProposalHistoryCardProps = {
     item: ProposalHistoryItem;
     labels: HistoryLabels;
     mmLeading: string;
+    style: any
 };
 
-function ProposalHistoryCard({
-                                 labels,
-                                 item,
-                                 mmLeading,
-                             }: ProposalHistoryCardProps) {
+function ProposalHistoryCard(
+    {
+        labels,
+        item,
+        mmLeading,
+        style
+    }: ProposalHistoryCardProps
+) {
     const remark = String(item.remark ?? "").trim();
     const notes = String(item.notes ?? "").trim();
 
     return (
-        <View className="rounded-2xl border border-slate-100 bg-[#fbfcfe] p-3">
+        <View
+            className="rounded-2xl border border-slate-100 bg-[#fbfcfe] p-3"
+            style={{
+                backgroundColor: APP_COLORS.card,
+                borderColor: APP_COLORS.border,
+                borderWidth: 1
+            }}
+        >
             <View className="flex-row items-start gap-3">
+
+                {/* person icon */}
                 <View className="h-9 w-9 items-center justify-center rounded-full border border-slate-100 bg-white">
-                    <Ionicons name="person-outline" size={18} color="#64748b"/>
+                    <Ionicons name="person-outline" size={22} color="#64748b"/>
                 </View>
 
+                {/* action history details */}
                 <View className="flex-1">
                     <View className="flex-row items-start justify-between gap-2">
+
+                        {/* actor name , created date */}
                         <View className="flex-1">
                             <Text className={`text-sm font-bold text-slate-700 ${mmLeading}`}>
                                 {item.actorName || "-"}
@@ -648,27 +748,37 @@ function ProposalHistoryCard({
                             </Text>
                         </View>
 
+                        {/* action status */}
                         <View
-                            className={`rounded-lg border px-3 py-1 ${getHistoryBadgeContainerClass(
-                                item.action,
-                            )}`}
+                            className={`rounded-lg border px-3 py-1`}
+                            style={{
+                                backgroundColor: getStatusBadgeStyle(item.action).backgroundColor,
+                                borderColor: getStatusBadgeStyle(item.action).borderColor,
+                            }}
+
                         >
                             <Text
-                                className={`text-xs font-semibold uppercase ${getHistoryBadgeTextClass(
-                                    item.action,
-                                )} ${mmLeading}`}
+                                className={`text-xs font-bold uppercase tracking-wide  ${mmLeading}`}
+                                style={[{color: getStatusBadgeStyle(item.action).textColor}, style]}
                             >
                                 {item.action || "-"}
                             </Text>
                         </View>
+
                     </View>
 
                     {remark ? (
                         <View className="mt-3 rounded-xl border border-slate-100 bg-white p-3">
-                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                            <Text
+                                className={`text-sm font-medium ${mmLeading}`}
+                                style={[style,{color:APP_COLORS.textMuted}]}
+                            >
                                 {labels.remark}
                             </Text>
-                            <Text className={`mt-1 text-sm text-slate-700 ${mmLeading}`}>
+                            <Text
+                                className={`mt-1 text-sm font-medium  ${mmLeading}`}
+                                style={[style,{color:APP_COLORS.textPrimary}]}
+                            >
                                 {remark}
                             </Text>
                         </View>
@@ -676,10 +786,16 @@ function ProposalHistoryCard({
 
                     {notes ? (
                         <View className="mt-3 rounded-xl border border-slate-100 bg-white p-3">
-                            <Text className={`text-xs text-slate-500 ${mmLeading}`}>
+                            <Text
+                                className={`text-sm font-medium ${mmLeading}`}
+                                style={[style,{color:APP_COLORS.textMuted}]}
+                            >
                                 {labels.notes}
                             </Text>
-                            <Text className={`mt-1 text-sm text-slate-700 ${mmLeading}`}>
+                            <Text
+                                className={`mt-1 text-sm font-medium ${mmLeading}`}
+                                style={[style,{color:APP_COLORS.textPrimary}]}
+                            >
                                 {notes}
                             </Text>
                         </View>

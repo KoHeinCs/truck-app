@@ -1,3 +1,4 @@
+
 export const APP_COLORS = {
   // ==========================================
   // 1. CORE BRAND IDENTITY TOKENS
@@ -122,3 +123,43 @@ export const APP_COLORS = {
    */
   textMuted: "#94A3B8",
 };
+
+interface BadgeTheme {
+  backgroundColor: string;
+  borderColor: string;
+  textColor: string;
+}
+
+export function getStatusBadgeStyle(action: string): BadgeTheme {
+  const normalized = (action ?? "").toUpperCase();
+
+  if (normalized.includes("APPROVED")) {
+    return {
+      backgroundColor: APP_COLORS.successSoft, // #e6f6f1
+      borderColor: `${APP_COLORS.success}25`,  // Soft transparency stroke wrapper
+      textColor: APP_COLORS.success,            // #10a37f
+    };
+  }
+
+  if (normalized.includes("TERMINATED")) {
+    return {
+      backgroundColor: APP_COLORS.errorSoft,   // #fceaea
+      borderColor: `${APP_COLORS.error}25`,
+      textColor: APP_COLORS.error,             // #dc4c4c
+    };
+  }
+
+  if (normalized.includes("UPDATE")) {
+    return {
+      backgroundColor: APP_COLORS.warningSoft, // #fef9ec
+      borderColor: `${APP_COLORS.warning}25`,
+      textColor: APP_COLORS.warning,           // #b45309
+    };
+  }
+
+  return {
+    backgroundColor: APP_COLORS.primarySoft,   // #eaf1f8
+    borderColor: `${APP_COLORS.primary}25`,
+    textColor: APP_COLORS.primary,             // #5a80ab
+  };
+}
