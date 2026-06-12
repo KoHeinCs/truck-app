@@ -92,6 +92,46 @@ export function formatDateTime(value: string | null | undefined): string {
     return `${dd}/${mm}/${yyyy} ${hh}:${min} ${ampm}`;
 }
 
+/**
+ * Formats a local date-time string from "DD/MM/YYYY HH:mm[:ss]" to "DD/MM/YYYY hh:mm AM/PM"
+ * @param value Incoming raw date-time string value from local state or backend
+ */
+export function formatLocalDateTime(value: string | null | undefined): string {
+    if (!value || typeof value !== 'string') return "—";
+    const trimmed = value.trim();
+    if (!trimmed) return "—";
+
+    // 1. Split string into localized Date and Time segments
+    // "12/06/2026 21:35" -> ["12/06/2026", "21:35"]
+    const parts = trimmed.split(" ");
+    if (parts.length < 2) return trimmed; // Fallback if format is completely unexpected
+
+    const datePart = parts[0]; // "12/06/2026"
+    const timePart = parts[1]; // "21:35"
+
+    // 2. Extract Day, Month, and Year segments from the slash dividers
+    const dateSegments = datePart.split("/");
+    if (dateSegments.length !== 3) return trimmed; // Fallback if not matching DD/MM/YYYY
+    const [dd, mm, yyyy] = dateSegments;
+
+    // 3. Extract Hours and Minutes (ignores trailing seconds if present)
+    const timeSegments = timePart.split(":");
+    if (timeSegments.length < 2) return trimmed;
+    const [rawHoursStr, min] = timeSegments;
+
+    const rawHours = parseInt(rawHoursStr, 10);
+    if (Number.isNaN(rawHours)) return trimmed;
+
+    // 4. Calculate 12-hour AM/PM clock mapping metrics manually
+    const ampm = rawHours >= 12 ? "PM" : "AM";
+    const hours12 = rawHours % 12 || 12; // Converts 0 (midnight) or 12 to 12 cleanly
+    const hh = hours12.toString().padStart(2, "0");
+
+    // Unified Premium Output Layout: 12/06/2026 09:35 PM
+    return `${dd.padStart(2, "0")}/${mm.padStart(2, "0")}/${yyyy} ${hh}:${min.padStart(2, "0")} ${ampm}`;
+}
+
+
 
 
 

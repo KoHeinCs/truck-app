@@ -33,6 +33,7 @@ import {
 import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
 import {formatAmount} from "@/utils/amountUtil"
+import { formatLocalDateTime} from "@/utils/dateUtil";
 
 
 type FormValues = {
@@ -312,7 +313,11 @@ export default function CreateProposalScreen() {
                                             {/* service date */}
                                             <PreviewRow
                                                 label={t.labels.serviceDate}
-                                                value={reviewValues.serviceDate}
+                                                value={(
+                                                    () => {
+                                                        return formatLocalDateTime(reviewValues.serviceDate);
+                                                    }
+                                                )()}
                                                 mmLeading={mmLeading}
                                                 style={style}
                                             />
