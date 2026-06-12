@@ -22,7 +22,7 @@ import React, {useCallback, useEffect, useMemo} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {
     ActivityIndicator,
-    Alert, Platform,
+    Alert,
     Pressable,
     ScrollView,
     Text,
@@ -36,35 +36,41 @@ import {
 import {useQueryClient} from "@tanstack/react-query";
 import {z} from "zod";
 
-type FormValues = {
-    proposalAmount: string;
-    serviceType: string;
-    serviceShop: string;
-    serviceDate: string;
-    description: string;
-    remark: string;
-};
 
-function buildSchema(createLabels: any) {
+type FormValues = z.infer<ReturnType<typeof buildSchema>>;
+
+function buildSchema(locale: "en" | "mm") {
+
     return z.object({
+
+        truckId: z.string()
+            .min(1, locale === "mm" ? "ယာဉ်ရွေးချယ်ရန် လိုအပ်သည်" : "Truck is required"),
         proposalAmount: z
             .string()
-            .min(1, createLabels.required)
+            .min(1, locale === "mm" ? "ကျသင့်ပမာဏ လိုအပ်သည်" : "Proposal amount is required")
             .refine((value) => /^\d{1,9}(\.\d{1,2})?$/.test(value.trim()), {
-                message: createLabels.invalidAmount,
+                message: locale === "mm" ? "ပမာဏမှားယွင်းနေသည် (အများဆုံး ၉ လုံး)" : "Invalid format (max 9 digits)",
             }),
-        serviceType: z.string().min(1, createLabels.required),
-        serviceShop: z.string().min(1, createLabels.required).max(200),
+        serviceType: z.string()
+            .min(1, locale === "mm" ? "ပြင်ဆင်မှုအမျိုးအစား လိုအပ်သည်" : "Service type is required"),
+        serviceShop: z.string()
+            .min(1, locale === "mm" ? "ဝပ်ရှော့အမည် လိုအပ်သည်" : "Service shop is required")
+            .max(200, locale === "mm" ? "ဝပ်ရှော့အမည်သည် စာလုံး ၂၀၀ ထက်မကျော်ရပါ" : "Service shop cannot exceed 200 characters"),
         serviceDate: z
             .string()
-            .min(1, createLabels.required)
+            .min(1, locale === "mm" ? "ပြင်ဆင်သည့်ရက် လိုအပ်သည်" : "Service date is required")
             .refine((value) => parseServiceDateDisplayToApi(value) !== null, {
-                message: createLabels.invalidDate,
+                message: locale === "mm" ? "ရက်/လ/ခုနှစ် နာရီ:မိနစ် သုံးပါ" : "Use correct format date dd/mm/yyyy HH:mm",
             }),
-        description: z.string().min(1, createLabels.required).max(1000),
-        remark: z.string().min(1, createLabels.required).max(1000),
+        description: z.string()
+            .min(1, locale === "mm" ? "အသေးစိတ်အချက်အလက် လိုအပ်သည်" : "Description is required")
+            .max(500, locale === "mm" ? "အသေးစိတ်အချက်အလက်သည် စာလုံး 500 ထက်မကျော်ရပါ" : "Description cannot exceed 500 characters"),
+        remark: z.string()
+            .min(1, locale === "mm" ? "မှတ်ချက် ထည့်သွင်းရန် လိုအပ်သည်" : "Remark is required")
+            .max(500, locale === "mm" ? "မှတ်ချက်သည် စာလုံး 500 ထက်မကျော်ရပါ" : "Remark cannot exceed 500 characters"),
     });
 }
+
 
 function getOwnershipId(
     detail: ProposalDetail | undefined,
@@ -97,7 +103,7 @@ export default function EditProposalScreen() {
     const mmLeading = getMyanmarLeadingClass(locale);
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
-    const schema = useMemo(() => buildSchema(t), [t]);
+    const schema = useMemo(() => buildSchema(locale), [locale]);
 
     const {
         control,
@@ -384,6 +390,7 @@ export default function EditProposalScreen() {
                                                     doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                                                     locale={locale}
                                                     style={style}
+                                                    maximumDate={new Date()}
                                                 />
                                                 {!!errors.serviceDate?.message && (
                                                     <Text

@@ -33,7 +33,7 @@ import {
 import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
 import {formatAmount} from "@/utils/amountUtil"
-import { formatLocalDateTime} from "@/utils/dateUtil";
+import {formatLocalDateTime} from "@/utils/dateUtil";
 
 
 type FormValues = {
@@ -47,24 +47,32 @@ type FormValues = {
 
 type ReviewValues = FormValues;
 
-function buildSchema(t: any) {
+function buildSchema(locale: "en" | "mm") {
+
     return z.object({
-        truckId: z.string().min(1, t.required),
+
+        truckId: z.string()
+            .min(1, locale === "mm" ? "ယာဉ်ရွေးချယ်ရန် လိုအပ်သည်" : "Truck is required"),
         proposalAmount: z
             .string()
-            .min(1, t.required)
+            .min(1, locale === "mm" ? "ကျသင့်ပမာဏ လိုအပ်သည်" : "Proposal amount is required")
             .refine((value) => /^\d{1,9}(\.\d{1,2})?$/.test(value.trim()), {
-                message: t.invalidAmount,
+                message: locale === "mm" ? "ပမာဏမှားယွင်းနေသည် (အများဆုံး ၉ လုံး)" : "Invalid format (max 9 digits)",
             }),
-        serviceType: z.string().min(1, t.required),
-        serviceShop: z.string().min(1, t.required).max(100),
+        serviceType: z.string()
+            .min(1, locale === "mm" ? "ပြင်ဆင်မှုအမျိုးအစား လိုအပ်သည်" : "Service type is required"),
+        serviceShop: z.string()
+            .min(1, locale === "mm" ? "ဝပ်ရှော့အမည် လိုအပ်သည်" : "Service shop is required")
+            .max(200, locale === "mm" ? "ဝပ်ရှော့အမည်သည် စာလုံး ၂၀၀ ထက်မကျော်ရပါ" : "Service shop cannot exceed 200 characters"),
         serviceDate: z
             .string()
-            .min(1, t.required)
+            .min(1, locale === "mm" ? "ပြင်ဆင်သည့်ရက် လိုအပ်သည်" : "Service date is required")
             .refine((value) => parseServiceDateDisplayToApi(value) !== null, {
-                message: t.invalidDate,
+                message: locale === "mm" ? "ရက်/လ/ခုနှစ် နာရီ:မိနစ် သုံးပါ" : "Use correct format date dd/mm/yyyy HH:mm",
             }),
-        description: z.string().min(1, t.required).max(1000),
+        description: z.string()
+            .min(1, locale === "mm" ? "အသေးစိတ်အချက်အလက် လိုအပ်သည်" : "Description is required")
+            .max(500, locale === "mm" ? "အသေးစိတ်အချက်အလက်သည် စာလုံး 500 ထက်မကျော်ရပါ" : "Description cannot exceed 500 characters")
     });
 }
 
@@ -100,7 +108,7 @@ export default function CreateProposalScreen() {
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
 
-    const schema = useMemo(() => buildSchema(t), [t]);
+    const schema = useMemo(() => buildSchema(locale), [locale]);
     const {
         control,
         handleSubmit,
@@ -210,7 +218,7 @@ export default function CreateProposalScreen() {
                 </Pressable>
                 <Text
                     className={`flex-1 px-3 text-center text-lg font-bold ${mmLeading}`}
-                    style={[style,{color: APP_COLORS.textPrimary}]}
+                    style={[style, {color: APP_COLORS.textPrimary}]}
                 >
                     {t.title}
                 </Text>
@@ -254,8 +262,8 @@ export default function CreateProposalScreen() {
                                     <View
                                         className="rounded-2xl  p-4"
                                         style={{
-                                            backgroundColor:APP_COLORS.inputBackground,
-                                            borderColor:APP_COLORS.border,
+                                            backgroundColor: APP_COLORS.inputBackground,
+                                            borderColor: APP_COLORS.border,
                                             borderWidth: 1
                                         }}
                                     >
@@ -270,13 +278,13 @@ export default function CreateProposalScreen() {
                                             </Text>
                                             <Text
                                                 className={`mt-1 text-base font-medium  ${mmLeading}`}
-                                                style={[{color:APP_COLORS.textPrimary},style]}
+                                                style={[{color: APP_COLORS.textPrimary}, style]}
                                             >
                                                 {selectedReviewTruck?.plateNo || truckQuery || "-"}
                                             </Text>
                                             <Text
                                                 className={`mt-0.5 text-sm font-medium ${mmLeading}`}
-                                                style={[{color:APP_COLORS.textSecondary},style]}
+                                                style={[{color: APP_COLORS.textSecondary}, style]}
 
                                             >
                                                 {selectedReviewTruck ? getTruckSubtitle(selectedReviewTruck) : "-"}
@@ -393,13 +401,13 @@ export default function CreateProposalScreen() {
                                                         borderColor: errors.truckId ? APP_COLORS.error : APP_COLORS.border,
                                                         borderWidth: 1,
                                                         color: APP_COLORS.textPrimary
-                                                    },style]}
+                                                    }, style]}
                                                     className={` text-base font-medium ${mmLeading} `}
                                                 />
                                                 {!!errors.truckId?.message && (
                                                     <Text
                                                         className={`text-xs font-normal ${mmLeading}`}
-                                                        style={[{color: APP_COLORS.error},style]}
+                                                        style={[{color: APP_COLORS.error}, style]}
                                                     >
                                                         {String(errors.truckId.message)}
                                                     </Text>
@@ -421,7 +429,7 @@ export default function CreateProposalScreen() {
                                                                 borderColor: APP_COLORS.border,
                                                                 borderWidth: 1,
                                                                 color: APP_COLORS.textPrimary
-                                                            },style]}
+                                                            }, style]}
                                                             className={`mb-2 border py-0 h-11 ${mmLeading} `}
                                                         />
                                                         {trucks.slice(0, 5).map((truck) => (
@@ -536,7 +544,7 @@ export default function CreateProposalScreen() {
                                                                                 style={[{
                                                                                     color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
                                                                                     fontWeight: isSelected ? "600" : "400"
-                                                                                },style]}
+                                                                                }, style]}
                                                                             />
                                                                             <Select.ItemIndicator/>
                                                                         </Select.Item>
@@ -550,7 +558,7 @@ export default function CreateProposalScreen() {
                                                 {!!errors.serviceType?.message && (
                                                     <Text
                                                         className={`text-xs font-normal ${mmLeading}`}
-                                                        style={[{color:APP_COLORS.error},style]}
+                                                        style={[{color: APP_COLORS.error}, style]}
                                                     >
                                                         {String(errors.serviceType.message)}
                                                     </Text>
@@ -577,7 +585,8 @@ export default function CreateProposalScreen() {
                                         name="serviceDate"
                                         render={({field: {value, onChange}}) => (
                                             <View className="gap-2">
-                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading} style={style}/>
+                                                <RequiredLabel label={t.labels.serviceDate} mmLeading={mmLeading}
+                                                               style={style}/>
                                                 <ServiceDatePicker
                                                     locale={locale}
                                                     value={value}
@@ -585,11 +594,12 @@ export default function CreateProposalScreen() {
                                                     placeholder={t.placeholders.serviceDate}
                                                     doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                                                     style={style}
+                                                    maximumDate={new Date()}
                                                 />
                                                 {!!errors.serviceDate?.message && (
                                                     <Text
                                                         className={`text-xs font-normal ${mmLeading}`}
-                                                        style={[{color:APP_COLORS.error},style]}
+                                                        style={[{color: APP_COLORS.error}, style]}
                                                     >
                                                         {String(errors.serviceDate.message)}
                                                     </Text>
@@ -618,20 +628,19 @@ export default function CreateProposalScreen() {
                                                     multiline={true}
                                                     numberOfLines={4}
                                                     scrollEnabled={true}
-                                                    maxLength={511}
                                                     textAlignVertical="top"
                                                     className={`min-h-[126px] rounded-xl p-3 text-base font-medium ${mmLeading}`}
-                                                    style={[style,{
-                                                        backgroundColor:APP_COLORS.inputBackground,
+                                                    style={[style, {
+                                                        backgroundColor: APP_COLORS.inputBackground,
                                                         borderColor: errors.description ? APP_COLORS.error : APP_COLORS.border,
-                                                        borderWidth:1,
-                                                        color:APP_COLORS.textPrimary
+                                                        borderWidth: 1,
+                                                        color: APP_COLORS.textPrimary
                                                     }]}
                                                 />
                                                 {!!errors.description?.message && (
                                                     <Text
                                                         className={`text-xs font-normal ${mmLeading}`}
-                                                        style={[{color:APP_COLORS.error},style]}
+                                                        style={[{color: APP_COLORS.error}, style]}
                                                     >
                                                         {String(errors.description.message)}
                                                     </Text>
@@ -702,18 +711,18 @@ type PreviewRowProps = {
     style: any;
 };
 
-function PreviewRow({label, value, mmLeading, last,style}: PreviewRowProps) {
+function PreviewRow({label, value, mmLeading, last, style}: PreviewRowProps) {
     return (
         <View className={`${last ? "" : "mb-3"}`}>
             <Text
                 className={`text-sm font-medium ${mmLeading}`}
-                style={[{color:APP_COLORS.textMuted} , style]}
+                style={[{color: APP_COLORS.textMuted}, style]}
             >
                 {label}
             </Text>
             <Text
                 className={`mt-1 text-base font-medium  ${mmLeading}`}
-                style={[{color:APP_COLORS.textPrimary},style]}
+                style={[{color: APP_COLORS.textPrimary}, style]}
             >
                 {value || "-"}
             </Text>
@@ -767,7 +776,7 @@ function FormInput({
                         <RequiredLabel label={label} mmLeading={mmLeading} style={style}/>
                     ) : (
                         <Text className={`text-sm font-medium  ${mmLeading}`}
-                              style={[style,{color: APP_COLORS.textSecondary}]}>
+                              style={[style, {color: APP_COLORS.textSecondary}]}>
                             {label}
                         </Text>
                     )}
@@ -783,11 +792,11 @@ function FormInput({
                             borderColor: error ? APP_COLORS.error : APP_COLORS.border,
                             borderWidth: 1,
                             color: APP_COLORS.textPrimary
-                        },style]}
+                        }, style]}
                     />
                     {!!error && (
                         <Text className={`text-xs font-normal ${mmLeading} `}
-                              style={[{color: APP_COLORS.error},style]}>
+                              style={[{color: APP_COLORS.error}, style]}>
                             {String(error)}
                         </Text>
                     )}

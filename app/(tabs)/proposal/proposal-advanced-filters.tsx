@@ -321,6 +321,7 @@ function FilterDateField({
                 mode={mode}
                 triggerClassName="h-11 min-h-11"
                 style={style}
+                maximumDate={new Date()}
             />
         </View>
     );
