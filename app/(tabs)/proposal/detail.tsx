@@ -73,6 +73,7 @@ export default function ProposalDetailScreen() {
     const style = locale === "mm" ? mmTextStyle : undefined;
     const errorCatalog = useTranslation("error");
     const {detailProposal: t} = useTranslation('proposal')
+    const {actionStatus : tActionStatus } = useTranslation('lookup')
     const params = useLocalSearchParams<{
         proposalNo?: string;
         ownershipId?: string;
@@ -270,7 +271,7 @@ export default function ProposalDetailScreen() {
                                                 {color: getStatusBadgeStyle(detail?.status ?? "INFORM").textColor}, style
                                             ]}
                                         >
-                                            {detail?.status || "-"}
+                                            {tActionStatus[(detail?.status ?? "INFORM") as keyof typeof tActionStatus]}
                                         </Text>
                                     </View>
                                 </View>
@@ -286,12 +287,22 @@ export default function ProposalDetailScreen() {
                                         >
                                             {t.labels.truck}
                                         </Text>
-                                        <Text
-                                            className={`text-base font-semibold  ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textSecondary}]}
-                                        >
-                                            {detail?.plateNo || "-"}
-                                        </Text>
+                                        <View className="items-end">
+                                            <Text
+                                                className={`text-sm font-semibold  ${mmLeading}`}
+                                                style={[style, {color: APP_COLORS.textPrimary}]}
+                                            >
+                                                {detail?.ownerFullName || "-"}
+                                            </Text>
+                                            {detail?.ownerPhone ? (
+                                                <Text
+                                                    className={`mt-0.5 text-xs  ${mmLeading}`}
+                                                    style={[style, {color: APP_COLORS.textSecondary}]}
+                                                >
+                                                    {detail.ownerPhone}
+                                                </Text>
+                                            ) : null}
+                                        </View>
                                     </View>
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
@@ -498,6 +509,7 @@ export default function ProposalDetailScreen() {
                                                         item={history}
                                                         mmLeading={mmLeading}
                                                         style={style}
+                                                        tActionStatus = {tActionStatus}
                                                     />
                                                 ))}
                                             </View>
@@ -722,7 +734,8 @@ type ProposalHistoryCardProps = {
     item: ProposalHistoryItem;
     labels: HistoryLabels;
     mmLeading: string;
-    style: any
+    style: any,
+    tActionStatus:any
 };
 
 function ProposalHistoryCard(
@@ -730,7 +743,8 @@ function ProposalHistoryCard(
         labels,
         item,
         mmLeading,
-        style
+        style,
+        tActionStatus
     }: ProposalHistoryCardProps
 ) {
     const remark = String(item.remark ?? "").trim();
@@ -779,7 +793,7 @@ function ProposalHistoryCard(
                                 className={`text-xs font-bold uppercase tracking-wide  ${mmLeading}`}
                                 style={[{color: getStatusBadgeStyle(item.action).textColor}, style]}
                             >
-                                {item.action || "-"}
+                                {tActionStatus[(item.action ?? "INFORM") as keyof typeof tActionStatus]}
                             </Text>
                         </View>
 

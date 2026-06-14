@@ -26,6 +26,12 @@
     "serviceTypeStatus": {
       "true": "Active",
       "false": "Inactive"
+    },
+    "actionStatus": {
+      "INFORM": "INFORMED",
+      "APPROVED": "APPROVED",
+      "UPDATE": "UPDATED",
+      "TERMINATED": "TERMINATED"
     }
   }
 }

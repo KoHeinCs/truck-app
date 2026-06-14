@@ -26,6 +26,12 @@
     "serviceTypeStatus": {
       "true": "အသုံးပြုဆဲ",
       "false": "ရပ်ဆိုင်းထား"
+    },
+    "actionStatus": {
+      "INFORM": "စာရင်းတင်သည်",
+      "UPDATE": "စာရင်းပြင်သည်",
+      "APPROVED": "စာရင်းရှင်းသည်",
+      "TERMINATED": "စာရင်းပယ်ဖျက်သည်"
     }
   }
 }
