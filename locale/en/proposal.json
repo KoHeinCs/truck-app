@@ -138,7 +138,8 @@
         "done": "Done"
       },
       "placeholders": {
-        "remark": "Enter termination reason or remark"
+        "terminatedRemark": "Enter termination reason or remark",
+        "approvedRemark": "Enter approval reason or remark"
       },
       "actions": {
         "approve": "Approve",

@@ -585,14 +585,14 @@ export default function ProposalDetailScreen() {
                         </Text>
 
                         <Text className={`mb-2 mt-4 text-xs text-slate-500 ${mmLeading}`}>
-                            {t.labels.remark}
+                            {t.labels.remark}{locale === 'mm' ? ' (မထည့်လည်းရ)' : ' (Optional)'}
                         </Text>
                         <CompactTextInput
                             locale={locale}
                             compactVariant="advanced"
                             value={approveRemark}
                             onChangeText={setApproveRemark}
-                            placeholder={t.placeholders.remark}
+                            placeholder={t.placeholders.approvedRemark}
                             multiline
                             numberOfLines={4}
                             className="min-h-[96px] border border-slate-200 bg-white px-3 py-2 text-sm"
@@ -668,7 +668,7 @@ export default function ProposalDetailScreen() {
                                 compactVariant="advanced"
                                 value={terminateRemark}
                                 onChangeText={setTerminateRemark}
-                                placeholder={t.placeholders.remark}
+                                placeholder={t.placeholders.terminatedRemark}
                                 multiline
                                 numberOfLines={4}
                                 className="min-h-[96px] border bg-white px-3 py-2 text-sm"
