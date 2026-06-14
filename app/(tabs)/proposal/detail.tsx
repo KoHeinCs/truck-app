@@ -287,22 +287,12 @@ export default function ProposalDetailScreen() {
                                         >
                                             {t.labels.truck}
                                         </Text>
-                                        <View className="items-end">
-                                            <Text
-                                                className={`text-sm font-semibold  ${mmLeading}`}
-                                                style={[style, {color: APP_COLORS.textPrimary}]}
-                                            >
-                                                {detail?.ownerFullName || "-"}
-                                            </Text>
-                                            {detail?.ownerPhone ? (
-                                                <Text
-                                                    className={`mt-0.5 text-xs  ${mmLeading}`}
-                                                    style={[style, {color: APP_COLORS.textSecondary}]}
-                                                >
-                                                    {detail.ownerPhone}
-                                                </Text>
-                                            ) : null}
-                                        </View>
+                                        <Text
+                                            className={`text-base font-semibold  ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textSecondary}]}
+                                        >
+                                            {detail?.plateNo || "-"}
+                                        </Text>
                                     </View>
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
