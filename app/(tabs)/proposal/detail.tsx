@@ -44,6 +44,24 @@ function getOwnershipId(
     return String(detail?.ownershipRefId ?? fallback).trim();
 }
 
+function handleNotes(notes:any){
+    if (!notes || typeof notes !== 'string') return '';
+
+    return notes.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/g, (match) => {
+        const date = new Date(match + 'Z');
+        return date.toLocaleString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+            timeZone: 'UTC'
+        });
+    });
+
+}
+
 export default function ProposalDetailScreen() {
 
     const router = useRouter();
@@ -796,7 +814,7 @@ function ProposalHistoryCard(
                                 className={`mt-1 text-sm font-medium ${mmLeading}`}
                                 style={[style,{color:APP_COLORS.textPrimary}]}
                             >
-                                {notes}
+                                {handleNotes(notes)}
                             </Text>
                         </View>
                     ) : null}
