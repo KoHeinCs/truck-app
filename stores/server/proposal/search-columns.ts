@@ -132,8 +132,8 @@ export function buildProposalSearchColumns(
     columns.push(
       column("proposalNo", {
         value: proposalNo,
-        type: "eq",
-        matchCase: true,
+        type: "contains",
+        matchCase: false,
       }),
     );
   } else if (quickQuery) {
@@ -156,7 +156,7 @@ export function buildProposalSearchColumns(
   const plateNo = f.plateNo.trim();
   if (plateNo) {
     columns.push(
-      column("plateNo", { value: plateNo, type: "eq", matchCase: true }),
+      column("plateNo", { value: plateNo, type: "contains", matchCase: false }),
     );
   }
 
