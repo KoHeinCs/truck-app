@@ -13,7 +13,6 @@ import {parseServiceDateDisplayToApi} from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useQueryClient} from "@tanstack/react-query";
-import {isAxiosError} from "axios";
 import {useRouter} from "expo-router";
 import {Input, Select} from "heroui-native";
 import React, {useCallback, useMemo, useState} from "react";
@@ -34,6 +33,7 @@ import {z} from "zod";
 import {useTranslation} from "@/hooks/use-translation";
 import {formatAmount} from "@/utils/amountUtil"
 import {formatLocalDateTime} from "@/utils/dateUtil";
+import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 
 
 type FormValues = {
@@ -58,15 +58,18 @@ function buildSchema(locale: "en" | "mm") {
             .min(1, locale === "mm" ? "ကျသင့်ပမာဏ လိုအပ်သည်" : "Proposal amount is required")
             .refine((value) => /^\d{1,9}(\.\d{1,2})?$/.test(value.trim()), {
                 message: locale === "mm" ? "ပမာဏမှားယွင်းနေသည် (အများဆုံး ၉ လုံး)" : "Invalid format (max 9 digits)",
+            })
+            .refine((value) => parseFloat(value) > 0, {
+                message: locale === "mm" ? "ပမာဏသည် သုညထက် ကြီးရမည်" : "Amount must be greater than zero",
             }),
         serviceType: z.string()
-            .min(1, locale === "mm" ? "ပြင်ဆင်မှုအမျိုးအစား လိုအပ်သည်" : "Service type is required"),
+            .min(1, locale === "mm" ? "ဝန်ဆောင်မှုအမျိုးအစား လိုအပ်သည်" : "Service type is required"),
         serviceShop: z.string()
             .min(1, locale === "mm" ? "ဝပ်ရှော့အမည် လိုအပ်သည်" : "Service shop is required")
             .max(200, locale === "mm" ? "ဝပ်ရှော့အမည်သည် စာလုံး ၂၀၀ ထက်မကျော်ရပါ" : "Service shop cannot exceed 200 characters"),
         serviceDate: z
             .string()
-            .min(1, locale === "mm" ? "ပြင်ဆင်သည့်ရက် လိုအပ်သည်" : "Service date is required")
+            .min(1, locale === "mm" ? "ဝန်ဆောင်မှု ပေးသည့်အချိန် လိုအပ်သည်" : "Service date is required")
             .refine((value) => parseServiceDateDisplayToApi(value) !== null, {
                 message: locale === "mm" ? "ရက်/လ/ခုနှစ် နာရီ:မိနစ် သုံးပါ" : "Use correct format date dd/mm/yyyy HH:mm",
             }),
@@ -98,6 +101,7 @@ export default function CreateProposalScreen() {
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const {createProposal: t} = useTranslation('proposal')
+    const errorCatalog = useTranslation("error");
     const {mutate, isPending} = useCreateProposal();
     const [truckQuery, setTruckQuery] = useState("");
     const [truckPickerOpen, setTruckPickerOpen] = useState(false);
@@ -176,15 +180,11 @@ export default function CreateProposalScreen() {
                     ]);
                 },
                 onError: (err: unknown) => {
-                    const data = isAxiosError(err) ? err.response?.data : undefined;
-                    const message =
-                        data &&
-                        typeof data === "object" &&
-                        "message" in data &&
-                        typeof (data as { message?: unknown }).message === "string"
-                            ? (data as { message: string }).message
-                            : t.dialog.errorBody;
-                    Alert.alert(t.dialog.errorTitle, message);
+                    const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
+                        title: t.dialog.errorTitle,
+                        message: t.dialog.errorBody,
+                    });
+                    Alert.alert(title, message);
                 },
             },
         );
