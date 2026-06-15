@@ -99,7 +99,7 @@ const fetchOwnershipRunningBalance = async (
   ownershipId: string,
 ): Promise<OwnershipRunningBalanceResponse> => {
   const { data } = await axios.get(
-    `/ownership/runningBalance/${ownershipId}`,
+    `/ownership/running-balance/${ownershipId}`,
   );
   return data;
 };
