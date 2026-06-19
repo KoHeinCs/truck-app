@@ -114,7 +114,7 @@ export default function EditServiceTypeScreen() {
             {
                 onSuccess: () => {
                     Alert.alert(t.successTitle, t.successBody);
-                    router.replace("/(tabs)/profile/service");
+                    router.back();
                 },
                 onError: (err: unknown) => {
                     const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {

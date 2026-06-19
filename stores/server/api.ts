@@ -20,9 +20,15 @@ function handleUnauthorized() {
 
 axios.interceptors.request.use(
   async (config) => {
-    const token = useAuthStore.getState().token;
-    if (token) {
-      config.headers?.set("Authorization", `Bearer ${token}`);
+    const rawUrl = config.url;
+    const url = typeof rawUrl === "string" ? rawUrl : "";
+    const isLoginRequest = url.includes("/auth/login");
+
+    if (!isLoginRequest) {
+      const token = useAuthStore.getState().token;
+      if (token) {
+        config.headers?.set("Authorization", `Bearer ${token}`);
+      }
     }
     return config;
   },
