@@ -15,6 +15,7 @@ export default function ProfileStackLayout() {
       <Stack.Screen name="user/create" />
       <Stack.Screen name="security" />
       <Stack.Screen name="language" />
+      <Stack.Screen name="profit/index" />
     </Stack>
   );
 }

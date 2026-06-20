@@ -1,0 +1,51 @@
+{
+  "profit": {
+    "master": {
+      "title": "အမြတ်ခွဲဝေစနစ်"
+    },
+    "step1": {
+      "labels": {
+        "totalPerson":  "စုစုပေါင်း လူဦးရေ"
+      },
+      "placeholders": {
+        "totalPerson": "လူဦးရေ အရေအတွက် ထည့်ပါ"
+      },
+      "actions": {
+        "next": "ရှေ့သို့"
+      }
+    },
+    "step2": {
+      "labels": {
+        "totalCost": "စုစုပေါင်း ကုန်ကျစရိတ်",
+        "individualInfo": "တစ်ဦးချင်းစီ၏ အချက်အလက်များ"
+      },
+      "placeholders": {
+        "totalCost": "စုစုပေါင်း ကုန်ကျစရိတ် ထည့်ပါ",
+        "name": "အမည်",
+        "amount":  "ကျသင့်ငွေ ထည့်ပါ"
+      },
+      "actions": {
+        "autoEvenSplit": "ညီတူညီမျှ အလိုအလျောက်ခွဲဝေမည်",
+        "back": "နောက်သို့",
+        "next": "ရှေ့သို့"
+      }
+
+    },
+    "step3": {
+      "labels": {
+        "totalProfit": "စုစုပေါင်း အမြတ်ငွေပမာဏ",
+        "profitInfo": "ခွဲဝေမှု အသေးစိတ် အချက်အလက်များ",
+        "percentage": "အမြတ်ဝေစု",
+        "amount":  "ကျသင့်ငွေ"
+      },
+      "placeholders": {
+        "totalProfit": "စုစုပေါင်း အမြတ်ငွေ ထည့်ပါ"
+      },
+      "actions": {
+        "calculate": "တွက်ချက်မည်",
+        "back": "နောက်သို့",
+        "done": "ပြီးပါပြီ"
+      }
+    }
+  }
+}
