@@ -128,8 +128,8 @@ function buildSchema(locale: "en" | "mm") {
                     code: z.ZodIssueCode.custom,
                     message:
                         locale === "mm"
-                            ? " ကြည့်ရှုသူ ရာထူးအတွက် ယာဉ်ပိုင်ရှင်ကို ရွေးချယ်ပေးပါ"
-                            : " VIEWER role must choose one owner",
+                            ? "စာရင်းစစ်ဆေးသူ ရာထူးအတွက် ယာဉ်ပိုင်ရှင်ကို ရွေးချယ်ပေးပါ"
+                            : "Owner In-Check role requires an OWNER.",
                     path: ["parentOwnerId"],
                 });
             }

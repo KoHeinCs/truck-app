@@ -25,7 +25,7 @@
     "createUser": {
       "title": "Create User",
       "infoTitle": "Before you start",
-      "infoBody": "Username must be unique (English letters + 09 + 9 digits). Password: at least 8 characters. Date format: dd/mm/yyyy. VIEWER role requires an OWNER",
+      "infoBody": "Username must be unique (English letters + 09 + 9 digits). Password: at least 8 characters. Date format: dd/mm/yyyy. Owner In-Check role requires an OWNER",
       "labels": {
         "username": "Username",
         "password": "Password",
@@ -62,7 +62,7 @@
     "updateUser": {
       "title": "Update User",
       "infoTitle": "Before you save",
-      "infoBody": "Phone must be 09 followed by 9 digits (11 total). Dates use dd/mm/yyyy. VIEWER role requires to select Owner .",
+      "infoBody": "Phone must be 09 followed by 9 digits (11 total). Dates use dd/mm/yyyy. Owner In-Check role requires an OWNER.",
       "labels": {
         "username": "Username",
         "password": "Password",
