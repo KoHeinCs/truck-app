@@ -1,17 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axios } from "../api";
 
-export interface PurchaseOwnershipPayload {
-  ownerId: string;
-  plateNo: string;
-  model: string;
-  modelYear: number;
-  feet: number;
-  fuelType: string;
-  frontTire: string;
-  backTire: string;
-  chassisNo?: string;
-  engineNo?: string;
+export interface UpdateOwnershipPayload {
+  ownershipId: string;
+  version: number;
   equipmentName: string;
   buyDate: string;
   licenseCity: string;
@@ -21,30 +13,27 @@ export interface PurchaseOwnershipPayload {
   notes?: string;
 }
 
-const purchaseOwnership = async (payload: PurchaseOwnershipPayload) => {
+const updateOwnership = async (payload: UpdateOwnershipPayload) => {
   const body: Record<string, unknown> = { ...payload };
-  if (!String(payload.chassisNo ?? "").trim()) {
-    delete body.chassisNo;
-  }
-  if (!String(payload.engineNo ?? "").trim()) {
-    delete body.engineNo;
-  }
   if (!String(payload.estimatedSellAmt ?? "").trim()) {
     delete body.estimatedSellAmt;
   }
   if (!String(payload.notes ?? "").trim()) {
     delete body.notes;
   }
-  const { data } = await axios.post("/ownership/purchase-ownership", body);
+  const { data } = await axios.put("/ownership/update-ownership", body);
   return data;
 };
 
-export function usePurchaseOwnership() {
+export function useUpdateOwnership() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: purchaseOwnership,
-    onSuccess: () => {
+    mutationFn: updateOwnership,
+    onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: ["ownership", "infinite"] });
+      qc.invalidateQueries({
+        queryKey: ["ownership", "find", variables.ownershipId],
+      });
     },
   });
 }

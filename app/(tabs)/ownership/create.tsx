@@ -1,4 +1,5 @@
 import { APP_COLORS } from "@/constants/colors";
+import { ServiceDatePicker } from "@/components/service-date-picker";
 import {
   getMyanmarLeadingClass,
   myanmarUITextStyle,
@@ -10,9 +11,9 @@ import { useLocaleStore } from "@/stores/client/locale-store";
 import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
 import { usePurchaseOwnership } from "@/stores/server/ownership/purchase-mutation";
 import { useTruckByPlateNo } from "@/stores/server/truck/query";
+import { toIsoDate } from "@/utils/dateUtil";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 import { type Href, useLocalSearchParams, useRouter } from "expo-router";
 import { Button, Input, Select } from "heroui-native";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -25,6 +26,10 @@ import {
 import { z } from "zod";
 
 const YEAR_RE = /^\d{4}$/;
+const DATE_MSG = {
+  en: "Use dd/mm/yyyy",
+  mm: "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ",
+} as const;
 const FUEL_TYPES = [
   "DIESEL",
   "DIESEL_PREMIUM",
@@ -79,6 +84,21 @@ function buildSchema(locale: "en" | "mm", showOwnerId: boolean) {
         message:
           locale === "mm" ? "4 လုံးပါ နှစ်ကိုထည့်ပါ" : "Enter a valid 4-digit year",
       }),
+    feet: z
+      .string()
+      .min(
+        1,
+        locale === "mm" ? "ပေအရှည်သည် လိုအပ်သည်" : "Feet length is required",
+      )
+      .max(
+        100,
+        locale === "mm"
+          ? "အများဆုံး ပေ ၁၀၀ ထက်မကျော်ရပါ"
+          : "Feet length cannot exceed 100",
+      )
+      .refine((v) => Number(v.trim()) > 3 && Number(v.trim()) < 101, {
+        message: locale === "mm" ? "4 ပေမှ 100 ပေအထိသာ" : "From 4-100 feet",
+      }),
     fuelType: z
       .string()
       .min(1, locale === "mm" ? "လောင်စာအမျိုးအစား ရွေးပါ" : "Fuel type is required")
@@ -130,10 +150,92 @@ function buildSchema(locale: "en" | "mm", showOwnerId: boolean) {
       )
       .optional()
       .or(z.literal("").or(z.null())),
+    equipmentName: z
+      .string()
+      .min(
+        1,
+        locale === "mm" ? "ကားအမည် လိုအပ်သည်" : "Equipment name is required",
+      )
+      .max(
+        200,
+        locale === "mm"
+          ? "ကားအမည်သည် စာလုံး 200 ထက်မကျော်ရပါ"
+          : "Equipment name cannot exceed 200 characters",
+      ),
+    buyDate: z
+      .string()
+      .min(1, locale === "mm" ? "ဝယ်ယူရက် လိုအပ်သည်" : "Buy date is required")
+      .refine((value) => !!toIsoDate(value), {
+        message: DATE_MSG[locale],
+      }),
+    licenseCity: z
+      .string()
+      .min(
+        1,
+        locale === "mm" ? "လိုင်စင်မြို့ လိုအပ်သည်" : "License city is required",
+      )
+      .max(
+        100,
+        locale === "mm"
+          ? "လိုင်စင်မြို့သည် စာလုံး 100 ထက်မကျော်ရပါ"
+          : "License city cannot exceed 100 characters",
+      ),
+    licenseEndDate: z
+      .string()
+      .min(
+        1,
+        locale === "mm"
+          ? "လိုင်စင်ကုန်ဆုံးရက် လိုအပ်သည်"
+          : "License end date is required",
+      )
+      .refine((value) => !!toIsoDate(value), {
+        message: DATE_MSG[locale],
+      }),
+    estimatedSellAmt: z
+      .string()
+      .max(
+        200,
+        locale === "mm"
+          ? "ခန့်မှန်းရောင်းဈေးသည် စာလုံး 200 ထက်မကျော်ရပါ"
+          : "Estimated sell amount cannot exceed 200 characters",
+      )
+      .optional()
+      .or(z.literal("").or(z.null())),
+    purchasePlace: z
+      .string()
+      .min(
+        1,
+        locale === "mm"
+          ? "ဝယ်ယူသည့်နေရာ လိုအပ်သည်"
+          : "Purchase place is required",
+      )
+      .max(
+        200,
+        locale === "mm"
+          ? "ဝယ်ယူသည့်နေရာသည် စာလုံး 200 ထက်မကျော်ရပါ"
+          : "Purchase place cannot exceed 200 characters",
+      ),
+    notes: z
+      .string()
+      .max(
+        500,
+        locale === "mm"
+          ? "မှတ်ချက်သည် စာလုံး 500 ထက်မကျော်ရပါ"
+          : "Notes cannot exceed 500 characters",
+      )
+      .optional()
+      .or(z.literal("").or(z.null())),
   });
 }
 
 type FormValues = z.infer<ReturnType<typeof buildSchema>>;
+
+type TextFieldKey = keyof Omit<
+  FormValues,
+  "fuelType" | "ownerId" | "buyDate" | "licenseEndDate"
+>;
+
+type DateFieldKey = "buyDate" | "licenseEndDate";
 
 function normalizeFuelType(value: unknown): string {
   const raw = String(value ?? "").trim().toUpperCase();
@@ -145,7 +247,6 @@ function normalizeFuelType(value: unknown): string {
 
 export default function OwnershipCreateScreen() {
   const router = useRouter();
-  const qc = useQueryClient();
   const insets = useSafeAreaInsets();
   const locale = useLocaleStore((state) => state.locale);
   const role = useAuthStore((state) => state.role);
@@ -188,11 +289,19 @@ export default function OwnershipCreateScreen() {
       plateNo: "",
       model: "",
       modelYear: "",
+      feet: "",
       fuelType: "DIESEL",
       frontTire: "",
       backTire: "",
       chassisNo: "",
       engineNo: "",
+      equipmentName: "",
+      buyDate: "",
+      licenseCity: "",
+      licenseEndDate: "",
+      estimatedSellAmt: "",
+      purchasePlace: "",
+      notes: "",
     },
   });
 
@@ -204,13 +313,30 @@ export default function OwnershipCreateScreen() {
       plateNo: String(truck.plateNo ?? plateNoParam).trim().toUpperCase(),
       model: String(truck.model ?? "").trim(),
       modelYear: String(truck.modelYear ?? "").trim(),
+      feet: String(truck.feet ?? "").trim(),
       fuelType: normalizeFuelType(truck.fuelType),
-      frontTire: "",
-      backTire: "",
-      chassisNo: "",
-      engineNo: "",
+      frontTire: String(truck.frontTire ?? "").trim(),
+      backTire: String(truck.backTire ?? "").trim(),
+      chassisNo: String(truck.chassisNo ?? "").trim(),
+      engineNo: String(truck.engineNo ?? "").trim(),
+      equipmentName: [
+        truck.modelYear,
+        truck.model,
+        truck.feet
+          ? `${truck.feet} ${locale === "mm" ? "ပေ" : "ft"}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .trim(),
+      buyDate: "",
+      licenseCity: "",
+      licenseEndDate: "",
+      estimatedSellAmt: "",
+      purchasePlace: "",
+      notes: "",
     });
-  }, [isSearchMode, truck, plateNoParam, reset]);
+  }, [isSearchMode, truck, plateNoParam, reset, locale]);
 
   const fuelTypeFilterOptions = useMemo(() => {
     return Object.entries(fuelTypes || {}).map(([key, localizedValue]) => ({
@@ -247,21 +373,35 @@ export default function OwnershipCreateScreen() {
       return;
     }
 
+    const buyDateIso = toIsoDate(values.buyDate);
+    const licenseEndDateIso = toIsoDate(values.licenseEndDate);
+    if (!buyDateIso || !licenseEndDateIso) {
+      Alert.alert(t.errorTitle, t.errorBody);
+      return;
+    }
+
     mutate(
       {
         ownerId,
         plateNo: values.plateNo.trim(),
         model: values.model.trim(),
         modelYear: Number(values.modelYear),
+        feet: Number(values.feet),
         fuelType: values.fuelType.trim(),
         frontTire: values.frontTire.trim(),
         backTire: values.backTire.trim(),
         chassisNo: values.chassisNo?.trim() || undefined,
         engineNo: values.engineNo?.trim() || undefined,
+        equipmentName: values.equipmentName.trim(),
+        buyDate: buyDateIso,
+        licenseCity: values.licenseCity.trim(),
+        licenseEndDate: licenseEndDateIso,
+        estimatedSellAmt: values.estimatedSellAmt?.trim() || undefined,
+        purchasePlace: values.purchasePlace.trim(),
+        notes: values.notes?.trim() || undefined,
       },
       {
         onSuccess: () => {
-          qc.invalidateQueries({ queryKey: ["ownership"] });
           Alert.alert(t.successTitle, t.successBody);
           router.replace("/(tabs)/ownership" as Href);
         },
@@ -277,8 +417,12 @@ export default function OwnershipCreateScreen() {
   };
 
   const renderTextInput = (
-    key: keyof Omit<FormValues, "fuelType" | "ownerId">,
-    options?: { required?: boolean; keyboardType?: "number-pad" },
+    key: TextFieldKey,
+    options?: {
+      required?: boolean;
+      keyboardType?: "number-pad";
+      multiline?: boolean;
+    },
   ) => (
     <View className="gap-1.5">
       <View className="flex-row items-center gap-1">
@@ -308,6 +452,9 @@ export default function OwnershipCreateScreen() {
             value={String(value ?? "")}
             onChangeText={onChange}
             keyboardType={options?.keyboardType}
+            multiline={options?.multiline}
+            numberOfLines={options?.multiline ? 4 : 1}
+            textAlignVertical={options?.multiline ? "top" : "center"}
             placeholder={t.placeholders[key]}
             placeholderTextColor={APP_COLORS.textMuted}
             autoCapitalize="none"
@@ -317,10 +464,49 @@ export default function OwnershipCreateScreen() {
                 borderColor: errors[key] ? APP_COLORS.error : APP_COLORS.border,
                 borderWidth: 1,
                 color: APP_COLORS.textPrimary,
+                minHeight: options?.multiline ? 96 : undefined,
               },
               style,
             ]}
-            className={`h-12 py-0 text-sm font-medium ${mmLeading}`}
+            className={`py-0 text-sm font-medium ${mmLeading} ${options?.multiline ? "pt-3" : "h-12"}`}
+          />
+        )}
+      />
+      {!!errors[key]?.message && (
+        <Text
+          className={`text-xs font-normal ${mmLeading}`}
+          style={[{ color: APP_COLORS.error }, style]}
+        >
+          {String(errors[key]?.message)}
+        </Text>
+      )}
+    </View>
+  );
+
+  const renderDateInput = (key: DateFieldKey) => (
+    <View className="gap-1.5">
+      <View className="flex-row items-center gap-1">
+        <Text
+          className={`text-sm font-medium ${mmLeading}`}
+          style={[{ color: APP_COLORS.textSecondary }, style]}
+        >
+          {t.labels[key]}
+          <Text style={{ color: APP_COLORS.error }}> *</Text>
+        </Text>
+      </View>
+      <Controller
+        control={control}
+        name={key}
+        render={({ field: { onChange, value } }) => (
+          <ServiceDatePicker
+            locale={locale}
+            value={String(value ?? "")}
+            onChange={onChange}
+            placeholder={t.placeholders[key]}
+            doneLabel={t.dateDone}
+            mode="date"
+            style={style}
+            triggerClassName={`h-12 px-3 ${mmLeading}`}
           />
         )}
       />
@@ -504,7 +690,10 @@ export default function OwnershipCreateScreen() {
 
               <View className="flex-row gap-2">
                 <View className="flex-1">
-                  {renderTextInput("model", { required: true })}
+                  {renderTextInput("feet", {
+                    required: true,
+                    keyboardType: "number-pad",
+                  })}
                 </View>
                 <View className="flex-1">
                   {renderTextInput("modelYear", {
@@ -513,6 +702,8 @@ export default function OwnershipCreateScreen() {
                   })}
                 </View>
               </View>
+
+              {renderTextInput("model", { required: true })}
 
               <View className="gap-1.5">
                 <Text
@@ -648,6 +839,36 @@ export default function OwnershipCreateScreen() {
 
               {renderTextInput("chassisNo")}
               {renderTextInput("engineNo")}
+            </View>
+          </View>
+
+          <View
+            className="rounded-2xl p-4"
+            style={{
+              backgroundColor: APP_COLORS.card,
+              borderColor: APP_COLORS.border,
+              borderWidth: 1,
+            }}
+          >
+            <View className="gap-3">
+              <Text
+                className={`text-sm font-bold ${mmLeading}`}
+                style={[style, { color: APP_COLORS.textPrimary }]}
+              >
+                {t.ownershipDetailsTitle}
+              </Text>
+
+              {renderTextInput("equipmentName", { required: true })}
+
+              <View className="flex-row gap-2">
+                <View className="flex-1">{renderDateInput("buyDate")}</View>
+                <View className="flex-1">{renderDateInput("licenseEndDate")}</View>
+              </View>
+
+              {renderTextInput("licenseCity", { required: true })}
+              {renderTextInput("purchasePlace", { required: true })}
+              {renderTextInput("estimatedSellAmt")}
+              {renderTextInput("notes", { multiline: true })}
             </View>
           </View>
         </View>

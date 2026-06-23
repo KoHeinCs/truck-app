@@ -6,13 +6,13 @@ import {
 import { useTranslation } from "@/hooks/use-translation";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import {
-  useOwnershipByPlateNo,
+  useOwnershipDetail,
   useOwnershipRunningBalance,
 } from "@/stores/server/ownership/query";
-import type { OwnershipTruckStatus } from "@/stores/server/ownership/search-columns";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useThrottledCallback } from "@/hooks/use-throttled-callback";
 import { useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -28,10 +28,6 @@ import {
 import { OwnershipRunningBalanceCard } from "./components/ownership-running-balance-card";
 import { OwnershipSummaryCard } from "./components/ownership-summary-card";
 
-function isOwnershipStatus(value: string): value is OwnershipTruckStatus {
-  return value === "ACTIVE" || value === "SOLD_OUT";
-}
-
 export default function OwnershipDetailScreen() {
   const router = useRouter();
   const qc = useQueryClient();
@@ -45,36 +41,37 @@ export default function OwnershipDetailScreen() {
 
   const params = useLocalSearchParams<{
     ownershipId?: string;
-    plateNo?: string;
-    status?: string;
   }>();
 
   const ownershipId = String(params.ownershipId ?? "").trim();
-  const plateNo = String(params.plateNo ?? "").trim();
-  const statusParam = String(params.status ?? "ACTIVE").trim();
-  const status: OwnershipTruckStatus = isOwnershipStatus(statusParam)
-    ? statusParam
-    : "ACTIVE";
+  const hasRequiredParams = !!ownershipId;
 
-  const hasRequiredParams = !!ownershipId && !!plateNo;
-
-  const { data: summaryItem, isPending: isSummaryPending } =
-    useOwnershipByPlateNo(plateNo, status, hasRequiredParams);
+  const { data: detailResponse, isPending: isDetailPending } =
+    useOwnershipDetail(ownershipId, hasRequiredParams);
 
   const { data: runningBalanceData, isPending: isRunningBalancePending } =
     useOwnershipRunningBalance(ownershipId, hasRequiredParams);
 
+  const summaryItem = detailResponse?.data;
   const records = runningBalanceData?.data ?? [];
-  const isPending = isSummaryPending || isRunningBalancePending;
+  const isPending = isDetailPending || isRunningBalancePending;
   const itemCountLabel = t.labels.itemCount.replace(
     "{count}",
     String(records.length),
   );
 
   const onBack = useCallback(() => {
-    qc.invalidateQueries({ queryKey: ["ownership"] });
+    qc.invalidateQueries({ queryKey: ["ownership", "infinite"] });
     router.back();
   }, [qc, router]);
+
+  const onEdit = useThrottledCallback(() => {
+    if (!ownershipId) return;
+    router.push({
+      pathname: "/(tabs)/ownership/edit/[id]",
+      params: { id: ownershipId },
+    });
+  }, 600);
 
   return (
     <SafeAreaView
@@ -119,6 +116,8 @@ export default function OwnershipDetailScreen() {
 
           <Pressable
             accessibilityRole="button"
+            onPress={onEdit}
+            disabled={!ownershipId}
             className="h-11 w-11 items-center justify-center rounded-full"
             style={({ pressed }) => ({
               backgroundColor: pressed
@@ -126,6 +125,7 @@ export default function OwnershipDetailScreen() {
                 : APP_COLORS.card,
               borderColor: APP_COLORS.border,
               borderWidth: 1,
+              opacity: ownershipId ? 1 : 0.5,
             })}
           >
             <Ionicons name="create-outline" size={20} color="#475569" />

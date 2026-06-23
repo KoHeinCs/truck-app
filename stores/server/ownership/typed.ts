@@ -48,3 +48,9 @@ export interface OwnershipRunningBalanceResponse {
   httpStatus: number;
   message: string;
 }
+
+export interface OwnershipDetailResponse {
+  data: OwnershipItem;
+  httpStatus: number;
+  message: string;
+}

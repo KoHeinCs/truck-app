@@ -165,11 +165,7 @@ export default function OwnerShip() {
     if (!item.id) return;
     router.push({
       pathname: "/(tabs)/ownership/detail",
-      params: {
-        ownershipId: item.id,
-        plateNo: String(item.truckPlateNo ?? ""),
-        status,
-      },
+      params: { ownershipId: item.id },
     });
   }, 600);
 

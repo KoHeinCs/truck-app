@@ -13,7 +13,7 @@ import {
   type OwnershipTruckStatus,
 } from "./search-columns";
 import type {
-  OwnershipItem,
+  OwnershipDetailResponse,
   OwnershipListResponse,
   OwnershipRunningBalanceResponse,
 } from "./typed";
@@ -70,30 +70,8 @@ export function useOwnershipsInfinite(
     },
     staleTime: 0,
     refetchOnWindowFocus: false,
-    refetchOnMount: "always",
   });
 }
-
-const fetchOwnershipByPlateNo = async (
-  plateNo: string,
-  status: OwnershipTruckStatus,
-): Promise<OwnershipItem | null> => {
-  const filters: OwnershipListFilters = {
-    quickQuery: "",
-    plateNo,
-    licenseCity: "",
-    licenseEndDate: "",
-    profit: "",
-    ownerIdCsv: "",
-  };
-  const columns = buildOwnershipSearchColumns(status, filters, false);
-  const response = await searchOwnerships({
-    page: 1,
-    pageSize: 1,
-    columns,
-  });
-  return response.data?.data?.[0] ?? null;
-};
 
 const fetchOwnershipRunningBalance = async (
   ownershipId: string,
@@ -104,23 +82,6 @@ const fetchOwnershipRunningBalance = async (
   return data;
 };
 
-export function useOwnershipByPlateNo(
-  plateNo: string,
-  status: OwnershipTruckStatus,
-  enabled = true,
-) {
-  const normalizedPlateNo = plateNo.trim();
-  const normalizedStatus = status || "ACTIVE";
-
-  return useQuery({
-    queryKey: ["ownership", "detail", normalizedPlateNo, normalizedStatus],
-    queryFn: () => fetchOwnershipByPlateNo(normalizedPlateNo, normalizedStatus),
-    enabled: enabled && !!normalizedPlateNo,
-    staleTime: 0,
-    refetchOnWindowFocus: false,
-  });
-}
-
 export function useOwnershipRunningBalance(
   ownershipId: string,
   enabled = true,
@@ -130,6 +91,27 @@ export function useOwnershipRunningBalance(
   return useQuery({
     queryKey: ["ownership", "runningBalance", normalizedId],
     queryFn: () => fetchOwnershipRunningBalance(normalizedId),
+    enabled: enabled && !!normalizedId,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
+  });
+}
+
+const fetchOwnershipById = async (
+  ownershipId: string,
+): Promise<OwnershipDetailResponse> => {
+  const { data } = await axios.get<OwnershipDetailResponse>(
+    `/ownership/find/${ownershipId}`,
+  );
+  return data;
+};
+
+export function useOwnershipDetail(ownershipId: string, enabled = true) {
+  const normalizedId = ownershipId.trim();
+
+  return useQuery({
+    queryKey: ["ownership", "find", normalizedId],
+    queryFn: () => fetchOwnershipById(normalizedId),
     enabled: enabled && !!normalizedId,
     staleTime: 0,
     refetchOnWindowFocus: false,
