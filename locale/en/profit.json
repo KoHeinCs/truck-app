@@ -1,0 +1,51 @@
+{
+  "profit": {
+    "master": {
+      "title": "Split-Cost Commander"
+    },
+    "step1": {
+      "labels": {
+        "totalPerson":   "Total Number of People"
+      },
+      "placeholders": {
+        "totalPerson": "e.g., 4"
+      },
+      "actions": {
+        "next": "Next"
+      }
+    },
+    "step2": {
+      "labels": {
+        "totalCost": "Total Cost Amount",
+        "individualInfo": "Individual Form Fields"
+      },
+      "placeholders": {
+        "totalCost": "e.g., 500000",
+        "name": "Name",
+        "amount":  "Enter amount"
+      },
+      "actions": {
+        "autoEvenSplit": "Auto Even Split Shortcut",
+        "back": "Back",
+        "next": "Next"
+      }
+
+    },
+    "step3": {
+      "labels": {
+        "totalProfit": "Total Profit Amount",
+        "profitInfo": "Distribution Previews",
+        "percentage": "Share",
+        "amount":  "Amount"
+      },
+      "placeholders": {
+        "totalProfit": "Enter total profit"
+      },
+      "actions": {
+        "calculate":"Calculate Shares",
+        "back": "Back",
+        "done": "Done"
+      }
+    }
+  }
+}

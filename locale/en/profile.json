@@ -7,7 +7,8 @@
       "truck": "Trucks",
       "service": "Services",
       "security": "Change Password",
-      "language": "Language"
+      "language": "Language",
+      "profit": "Profit Share"
     }
   }
 }

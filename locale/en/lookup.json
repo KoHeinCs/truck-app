@@ -3,8 +3,8 @@
     "roles": {
       "ADMIN": "Admin",
       "OWNER": "Owner",
-      "VIEWER": "Viewer",
-      "WORKER": "Worker"
+      "VIEWER": "Owner In-Check",
+      "WORKER": "Member"
     },
     "accountStatus": {
       "true": "Active",

@@ -29,6 +29,10 @@ const SETTINGS_ROWS = [
     icon: "build" as const,
   },
   {
+   key:"profit",
+   icon: "wallet"  as const
+  },
+  {
     key: "security",
     icon: "key" as const,
   },
@@ -71,6 +75,7 @@ export default function ProfileScreen() {
       if (row.key === "team") return router.push("/(tabs)/profile/user");
       if (row.key === "truck") return router.push("/(tabs)/profile/truck");
       if (row.key === "service") return router.push("/(tabs)/profile/service");
+      if (row.key === "profit") return router.push("/(tabs)/profile/profit");
       if (row.key === "security")
         return router.push("/(tabs)/profile/security");
       if (row.key === "language")
@@ -90,6 +95,7 @@ export default function ProfileScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
+        {/* header */}
         <View className="mb-3 flex-row items-center justify-between">
           <View className="max-w-[72%]">
             <Text
@@ -113,6 +119,7 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
+        {/* profile card */}
         <Card
           className="mb-4"
           style={{
@@ -154,6 +161,7 @@ export default function ProfileScreen() {
           </Card.Body>
         </Card>
 
+        {/* management setting card list */}
         <Text
           className={`mb-3 px-1 text-sm font-bold  ${mmLeadingClass}`}
           style={[textStyle, { color: APP_COLORS.textMuted }]}
@@ -232,6 +240,7 @@ export default function ProfileScreen() {
           </Card.Body>
         </Card>
 
+        {/* logout card */}
         <Card
           className="mt-4"
           style={{

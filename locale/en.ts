@@ -12,6 +12,7 @@ import changePassword from '@/locale/en/change-password.json'
 import language from '@/locale/en/language.json'
 import proposal from '@/locale/en/proposal.json'
 import ownership from '@/locale/en/ownership.json'
+import profit from '@/locale/en/profit.json'
 
 export const en = {
     ...login,
@@ -27,4 +28,5 @@ export const en = {
     ...language,
     ...proposal,
     ...ownership,
+    ...profit
 }

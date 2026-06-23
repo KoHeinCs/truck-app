@@ -29,5 +29,5 @@ export function myanmarUITextStyle(): TextStyle {
  * On Android and web, returns `""` so line boxes don’t collapse / hide glyphs.
  */
 export function getMyanmarLeadingClass(locale: AppLocale): string {
-  return locale === "mm" && Platform.OS === "ios" ? "leading-0" : "";
+  return  Platform.OS === "ios" ? "leading-0" : "";
 }
