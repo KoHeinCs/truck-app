@@ -5,6 +5,7 @@ import {useTimeBasedGreeting} from "@/hooks/use-time-based-greeting";
 import {useAuthStore} from "@/stores/auth-store";
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {useProposalsInfinite} from "@/stores/server/proposal/query";
+import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
 import type {
     ProposalAdvancedFilters,
     ProposalTabStatus,
@@ -81,6 +82,13 @@ export default function ProposalScreen() {
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
 
+    const {resolveServiceTypeLabel} = useServiceTypeLookup();
+
+    const getServiceTypeDisplayLabel = useCallback(
+        (code: string) => resolveServiceTypeLabel(code, locale),
+        [resolveServiceTypeLabel, locale],
+    );
+
     const filters = useMemo(
         () => ({
             quickQuery: debouncedQuickQuery,
@@ -122,16 +130,6 @@ export default function ProposalScreen() {
         })
     }, 600);
 
-    const handleCardEditBtn = useThrottledCallback((item: ProposalItem) => {
-        router.push({
-            pathname: "/(tabs)/proposal/edit",
-            params: {
-                proposalNo: item.proposalNo,
-                ownershipId: item.ownershipId,
-            },
-        })
-    }, 600);
-
     const handleAddPress = useThrottledCallback(()=>{
         router.push("/(tabs)/proposal/create")
     },600)
@@ -151,8 +149,8 @@ export default function ProposalScreen() {
                     <ProposalCard
                         item={item}
                         onPressDetail={(selected) =>handleCardDetailBtn(selected)}
-                        onPressEdit={(selected) =>handleCardEditBtn(selected)}
                         mmLeading={mmLeading}
+                        resolveServiceTypeLabel={getServiceTypeDisplayLabel}
                     />
                 )}
                 onEndReachedThreshold={0.2}

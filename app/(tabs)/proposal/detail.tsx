@@ -2,6 +2,7 @@ import {CompactTextInput} from "@/components/compact-text-input";
 import {APP_COLORS, getStatusBadgeStyle} from "@/constants/colors";
 import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useTranslation} from "@/hooks/use-translation";
+import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {useApproveProposal} from "@/stores/server/proposal/approve-mutation";
@@ -10,6 +11,7 @@ import {
     useProposalHistory,
 } from "@/stores/server/proposal/query";
 import {useTerminateProposal} from "@/stores/server/proposal/terminate-mutation";
+import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
 import type {
     ProposalDetail,
     ProposalHistoryItem,
@@ -93,10 +95,27 @@ export default function ProposalDetailScreen() {
     const showActions = (detail?.status || "").toUpperCase() === "INFORM";
     const isSubmitting = isApproving || isTerminating;
 
+    const {resolveServiceTypeLabel} = useServiceTypeLookup();
+    const serviceTypeLabel = useMemo(
+        () => resolveServiceTypeLabel(detail?.serviceType ?? "", locale),
+        [detail?.serviceType, locale, resolveServiceTypeLabel],
+    );
+
     const onBack = useCallback(() => {
         qc.invalidateQueries({queryKey: ["proposal"]});
         router.back();
     }, [qc, router]);
+
+    const onEdit = useThrottledCallback(() => {
+        if (!proposalNo) return;
+        router.push({
+            pathname: "/(tabs)/proposal/edit",
+            params: {
+                proposalNo,
+                ownershipId: getOwnershipId(detail, ownershipId),
+            },
+        });
+    }, 600);
 
     const closeApproveModal = useCallback(() => {
         setApproveModalOpen(false);
@@ -217,7 +236,26 @@ export default function ProposalDetailScreen() {
                     style={[style, {color: APP_COLORS.textPrimary}]}>
                     {t.title}
                 </Text>
-                <View className="h-11 w-11"/>
+                {showActions ? (
+                    <Pressable
+                        accessibilityRole="button"
+                        onPress={onEdit}
+                        disabled={!proposalNo}
+                        className="h-11 w-11 items-center justify-center rounded-full"
+                        style={({pressed}) => ({
+                            backgroundColor: pressed
+                                ? APP_COLORS.primarySoft
+                                : APP_COLORS.card,
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1,
+                            opacity: proposalNo ? 1 : 0.5,
+                        })}
+                    >
+                        <Ionicons name="create-outline" size={20} color="#475569"/>
+                    </Pressable>
+                ) : (
+                    <View className="h-11 w-11"/>
+                )}
             </View>
 
             {/* details form */}
@@ -335,7 +373,7 @@ export default function ProposalDetailScreen() {
                                                 {color: APP_COLORS.textPrimary}
                                             ]}
                                         >
-                                            {detail?.serviceType || "-"}
+                                            {serviceTypeLabel}
                                         </Text>
                                     </View>
 
@@ -511,25 +549,26 @@ export default function ProposalDetailScreen() {
                             {
                                 showActions ?
                                     (
-                                        <View className="mb-2 mt-5 flex-row items-center w-full gap-3">
+                                        <View className="mb-2 mt-5 flex-row w-full gap-3">
                                             <Button
                                                 isDisabled={isSubmitting}
                                                 onPress={() => setTerminateModalOpen(true)}
                                                 variant="outline"
-                                                className=" w-1/2 rounded-md "
+                                                className="flex-1 items-center justify-center rounded-md py-3"
                                                 animation={{
                                                     highlight: {
                                                         backgroundColor: {
-                                                            value: APP_COLORS.errorSoft, // Safely injects #456385 on click!
+                                                            value: APP_COLORS.errorSoft,
                                                         }
                                                     },
                                                 }}
                                                 style={{
                                                     backgroundColor: 'transparent',
+                                                    borderColor: APP_COLORS.error,
                                                 }}
                                             >
                                                 <Text
-                                                    className={`text-sm font-semibold  ${mmLeading}`}
+                                                    className={`text-sm font-semibold ${mmLeading}`}
                                                     style={[style, {color: APP_COLORS.error}]}
                                                 >
                                                     {t.actions.terminate}
@@ -539,11 +578,11 @@ export default function ProposalDetailScreen() {
                                             <Button
                                                 isDisabled={isSubmitting}
                                                 onPress={() => setApproveModalOpen(true)}
-                                                className="  w-1/2 rounded-md "
+                                                className="flex-1 items-center justify-center rounded-md py-3"
                                                 animation={{
                                                     highlight: {
                                                         backgroundColor: {
-                                                            value: APP_COLORS.primaryPressed, // Safely injects #456385 on click!
+                                                            value: APP_COLORS.primaryPressed,
                                                         }
                                                     },
                                                 }}
@@ -552,7 +591,7 @@ export default function ProposalDetailScreen() {
                                                 }}
                                             >
                                                 <Text
-                                                    className={`text-sm font-semibold  ${mmLeading}`}
+                                                    className={`text-sm font-semibold ${mmLeading}`}
                                                     style={[style, {color: APP_COLORS.card}]}
                                                 >
                                                     {t.actions.approve}

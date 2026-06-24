@@ -7,9 +7,11 @@ import {useLocaleStore, type AppLocale} from "@/stores/client/locale-store";
 import {useProposalDetail} from "@/stores/server/proposal/query";
 import type {ProposalDetail} from "@/stores/server/proposal/typed";
 import {useUpdateProposal} from "@/stores/server/proposal/update-mutation";
-import {useServiceTypesInfinite} from "@/stores/server/service-type/query";
-import {buildServiceTypeSearchColumns} from "@/stores/server/service-type/search-columns";
-import type {ServiceTypeItem} from "@/stores/server/service-type/typed";
+import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
+import {
+    getSelectedServiceType,
+    getServiceTypeLabel,
+} from "@/utils/service-type-label";
 import {
     parseServiceDateApiToDisplay,
     parseServiceDateDisplayToApi,
@@ -134,21 +136,7 @@ export default function EditProposalScreen() {
         });
     }, [detail, reset]);
 
-    const serviceColumns = useMemo(
-        () =>
-            buildServiceTypeSearchColumns({
-                quickQuery: "",
-                active: true,
-                langEng: "",
-                langMy: "",
-            }),
-        [],
-    );
-    const {data: serviceTypeData} = useServiceTypesInfinite(serviceColumns);
-    const serviceTypes = useMemo(
-        () => serviceTypeData?.pages.flatMap((page) => page.data.data) ?? [],
-        [serviceTypeData],
-    );
+    const {serviceTypes} = useServiceTypeLookup();
 
     const onBack = useCallback(() => {
         qc.invalidateQueries({queryKey: ["proposal"]});
@@ -593,21 +581,4 @@ function FormInput({
             )}
         />
     );
-}
-
-function getServiceTypeLabel(item: ServiceTypeItem, locale: "en" | "mm") {
-    return locale === "mm" ? item.langMy || item.langEng : item.langEng;
-}
-
-function getSelectedServiceType(
-    value: string,
-    options: ServiceTypeItem[],
-    locale: "en" | "mm",
-) {
-    const option = options.find((item) => item.serviceType === value);
-    if (!option) return undefined;
-    return {
-        value: option.serviceType,
-        label: getServiceTypeLabel(option, locale),
-    };
 }

@@ -4,9 +4,7 @@ import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-fo
 import {useDebouncedValue} from "@/hooks/use-debounced-value";
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {useCreateProposal} from "@/stores/server/proposal/create-mutation";
-import {buildServiceTypeSearchColumns} from "@/stores/server/service-type/search-columns";
-import {useServiceTypesInfinite} from "@/stores/server/service-type/query";
-import type {ServiceTypeItem} from "@/stores/server/service-type/typed";
+import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
 import {useTruckSearchOptions} from "@/stores/server/truck/query";
 import type {TruckItem} from "@/stores/server/truck/typed";
 import {parseServiceDateDisplayToApi} from "@/utils/service-date";
@@ -34,6 +32,10 @@ import {useTranslation} from "@/hooks/use-translation";
 import {formatAmount} from "@/utils/amountUtil"
 import {formatLocalDateTime} from "@/utils/dateUtil";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
+import {
+    getSelectedServiceType,
+    getServiceTypeLabel,
+} from "@/utils/service-type-label";
 
 
 type FormValues = {
@@ -139,21 +141,7 @@ export default function CreateProposalScreen() {
         [truckData, debouncedTruckQuery],
     );
 
-    const serviceColumns = useMemo(
-        () =>
-            buildServiceTypeSearchColumns({
-                quickQuery: "",
-                active: true,
-                langEng: "",
-                langMy: "",
-            }),
-        [],
-    );
-    const {data: serviceTypeData} = useServiceTypesInfinite(serviceColumns);
-    const serviceTypes = useMemo(
-        () => serviceTypeData?.pages.flatMap((page) => page.data.data) ?? [],
-        [serviceTypeData],
-    );
+    const {serviceTypes} = useServiceTypeLookup();
 
     const onBack = useCallback(() => {
         qc.invalidateQueries({queryKey: ["proposal"]});
@@ -804,21 +792,4 @@ function FormInput({
             )}
         />
     );
-}
-
-function getServiceTypeLabel(item: ServiceTypeItem, locale: "en" | "mm") {
-    return locale === "mm" ? item.langMy || item.langEng : item.langEng;
-}
-
-function getSelectedServiceType(
-    value: string,
-    options: ServiceTypeItem[],
-    locale: "en" | "mm",
-) {
-    const option = options.find((item) => item.serviceType === value);
-    if (!option) return undefined;
-    return {
-        value: option.serviceType,
-        label: getServiceTypeLabel(option, locale),
-    };
 }

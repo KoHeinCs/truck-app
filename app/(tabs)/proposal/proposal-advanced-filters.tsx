@@ -1,19 +1,16 @@
-import {CompactTextInput} from "@/components/compact-text-input";
-import {AdvanceSearchDatePicker} from "@/components/advance-search-date-picker"
-import {APP_COLORS} from "@/constants/colors";
-import {COMPACT_ADVANCED_INPUT_CLASSNAME} from "@/constants/compact-input";
-import {getMyanmarLeadingClass} from "@/constants/myanmar-font";
-import {useTranslation} from "@/hooks/use-translation";
-import type {AppLocale} from "@/stores/client/locale-store";
-import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-query";
-import type {ProposalAdvancedFilters as ProposalAdvancedFilterValues} from "@/stores/server/proposal/search-columns";
-import {useServiceTypesInfinite} from "@/stores/server/service-type/query";
-import {buildServiceTypeSearchColumns} from "@/stores/server/service-type/search-columns";
-import type {ServiceTypeItem} from "@/stores/server/service-type/typed";
-import {Card} from "heroui-native";
-import React, {useMemo} from "react";
-import {Pressable, Text, View} from "react-native";
-import {CompactSelect} from "../profile/user/components/compact-select";
+import { AdvanceSearchDatePicker } from "@/components/advance-search-date-picker";
+import { CompactTextInput } from "@/components/compact-text-input";
+import { APP_COLORS } from "@/constants/colors";
+import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
+import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
+import { useTranslation } from "@/hooks/use-translation";
+import type { AppLocale } from "@/stores/client/locale-store";
+import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
+import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
+import { Card } from "heroui-native";
+import { useMemo } from "react";
+import { Pressable, Text, View } from "react-native";
+import { CompactSelect } from "../profile/user/components/compact-select";
 
 type ProposalAdvancedFiltersProps = {
     filters: ProposalAdvancedFilterValues;
@@ -41,33 +38,7 @@ export function ProposalAdvancedFilters({
     const tCommon = useTranslation("common");
     const mmLeading = getMyanmarLeadingClass(locale);
 
-    const serviceColumns = useMemo(
-        () =>
-            buildServiceTypeSearchColumns({
-                quickQuery: "",
-                active: true,
-                langEng: "",
-                langMy: "",
-            }),
-        [],
-    );
-    const {data: serviceTypeData} = useServiceTypesInfinite(serviceColumns);
-    const serviceTypes = useMemo(
-        () => serviceTypeData?.pages.flatMap((page) => page.data.data) ?? [],
-        [serviceTypeData],
-    );
     const {data: ownerOptions = []} = useOwnerLookupOptions("");
-
-    const serviceTypeOptions = useMemo(
-        () => [
-            {value: "", label: tCommon.anyLabel},
-            ...serviceTypes.map((serviceType) => ({
-                value: serviceType.serviceType,
-                label: getServiceTypeLabel(serviceType, locale),
-            })),
-        ],
-        [serviceTypes, locale, tCommon.anyLabel],
-    );
 
     const ownerSelectOptions = useMemo(
         () => [{value: "", label: tCommon.anyLabel}, ...ownerOptions],
@@ -164,29 +135,16 @@ export function ProposalAdvancedFilters({
                     />
                 </View>
 
-                {/* service type , owner */}
-                <View className="flex-row gap-2">
+                {showOwnerId ? (
                     <CompactSelect
-                        label={t.labels.serviceType}
-                        value={filters.serviceTypeCsv}
-                        onChange={(serviceTypeCsv) => onChange({serviceTypeCsv})}
+                        label={t.labels.ownerId}
+                        value={filters.ownerId}
+                        onChange={(ownerId) => onChange({ownerId})}
                         locale={locale}
-                        placeholder={t.placeholders.serviceType}
-                        options={serviceTypeOptions}
+                        placeholder={t.placeholders.ownerId}
+                        options={ownerSelectOptions}
                     />
-                    {showOwnerId ? (
-                        <CompactSelect
-                            label={t.labels.ownerId}
-                            value={filters.ownerId}
-                            onChange={(ownerId) => onChange({ownerId})}
-                            locale={locale}
-                            placeholder={t.placeholders.ownerId}
-                            options={ownerSelectOptions}
-                        />
-                    ) : (
-                        <View className="flex-1"/>
-                    )}
-                </View>
+                ) : null}
 
                 {/* created user */}
                 {showCreatedBy ? (
@@ -330,6 +288,3 @@ function FilterDateField({
     );
 }
 
-function getServiceTypeLabel(item: ServiceTypeItem, locale: "en" | "mm") {
-    return locale === "mm" ? item.langMy || item.langEng : item.langEng;
-}

@@ -12,23 +12,21 @@ import {formatAmount} from "@/utils/amountUtil";
 type ProposalCardProps = {
     item: ProposalItem;
     onPressDetail: (item: ProposalItem) => void;
-    onPressEdit: (item: ProposalItem) => void;
     mmLeading: any;
+    resolveServiceTypeLabel: (code: string) => string;
 };
 
 export function ProposalCard(
     {
         item,
         onPressDetail,
-        onPressEdit,
         mmLeading,
+        resolveServiceTypeLabel,
     }: ProposalCardProps
 ) {
 
     const [expanded, setExpanded] = useState(false);
     const {card: t} = useTranslation('proposal')
-
-    const canEdit = (item.status || "").toUpperCase() === "INFORM";
 
     return (
         <Pressable
@@ -138,7 +136,7 @@ export function ProposalCard(
                                                 numberOfLines={2}
                                                 ellipsizeMode={"clip"}
                                             >
-                                                {item.serviceType || "-"}
+                                                {resolveServiceTypeLabel(item.serviceType)}
                                             </Text>
                                         </View>
 
@@ -198,11 +196,11 @@ export function ProposalCard(
 
                                     </View>
 
-                                    {/* details button , edit button */}
-                                    <View className="mt-5 flex-row items-center gap-2">
+                                    {/* details button */}
+                                    <View className="mt-5">
                                         <Button
                                             onPress={() => onPressDetail(item)}
-                                            className=" flex-1 bg-primary rounded-md "
+                                            className="bg-primary rounded-md"
                                             size="sm"
                                             variant="outline"
                                         >
@@ -212,21 +210,6 @@ export function ProposalCard(
                                                 {t.viewDetail}
                                             </Text>
                                         </Button>
-
-                                        {canEdit ? (
-                                            <Button
-                                                onPress={() => onPressEdit(item)}
-                                                size="sm"
-                                                variant="outline"
-                                                className=" w-10 p-0 items-center justify-center rounded-xl border border-slate-200 bg-white"
-                                            >
-                                                <Ionicons
-                                                    name="create-outline"
-                                                    size={22}
-                                                    color={APP_COLORS.primary}
-                                                />
-                                            </Button>
-                                        ) : null}
                                     </View>
 
                                 </View>
