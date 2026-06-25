@@ -22,6 +22,8 @@ import {ProposalTabs} from "./proposal-tabs";
 import {useTranslation} from "@/hooks/use-translation";
 import { useThrottledCallback } from '@/hooks/use-throttled-callback';
 import {ProposalItem} from "@/stores/server/proposal/typed";
+import { useUserLookupOptions} from "@/stores/server/user/user-lookup-query";
+
 
 const TAB_ORDER: ProposalTabStatus[] = ["INFORM", "APPROVED", "TERMINATED"];
 
@@ -78,11 +80,14 @@ export default function ProposalScreen() {
     const mmLeading = getMyanmarLeadingClass(locale);
     const upperRole = (role || "").toUpperCase();
     const showOwnerId = upperRole === "ADMIN";
-    const showCreatedBy = upperRole === "ADMIN" || upperRole === "OWNER";
+    const showCreatedBy = upperRole === "ADMIN";
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
 
     const {resolveServiceTypeLabel} = useServiceTypeLookup();
+
+    const { data: userOptions = [] } = useUserLookupOptions("", upperRole === "ADMIN");
+
 
     const getServiceTypeDisplayLabel = useCallback(
         (code: string) => resolveServiceTypeLabel(code, locale),
@@ -230,6 +235,7 @@ export default function ProposalScreen() {
                                     patchUi({advancedOpen: false});
                                 }}
                                 style={style}
+                                userOptions={userOptions}
                             />
                         ) : null}
                     </View>

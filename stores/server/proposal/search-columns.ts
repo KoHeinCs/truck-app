@@ -197,17 +197,11 @@ export function buildProposalSearchColumns(
     );
   }
 
-  if (allowCreatedBy) {
-    const createdBy = parseCsvValues(f.createdByCsv);
-    if (createdBy.length > 0) {
-      columns.push(
-        column("createdBy", {
-          value: createdBy,
-          type: "in",
-          matchCase: true,
-        }),
-      );
-    }
+  const createdBy = f.createdByCsv.trim();
+  if (allowCreatedBy && createdBy) {
+    columns.push(
+        column("createdBy", { value: createdBy, type: "eq", matchCase: true }),
+    );
   }
 
   return columns;

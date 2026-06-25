@@ -5,7 +5,6 @@ import { COMPACT_ADVANCED_INPUT_CLASSNAME } from "@/constants/compact-input";
 import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
 import { useTranslation } from "@/hooks/use-translation";
 import type { AppLocale } from "@/stores/client/locale-store";
-import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
 import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
 import { Card } from "heroui-native";
 import { useMemo } from "react";
@@ -20,7 +19,8 @@ type ProposalAdvancedFiltersProps = {
     onChange: (next: Partial<ProposalAdvancedFilterValues>) => void;
     onReset: () => void;
     onApply: () => void;
-    style: any
+    style: any;
+    userOptions:any
 };
 
 export function ProposalAdvancedFilters({
@@ -31,14 +31,33 @@ export function ProposalAdvancedFilters({
                                             onChange,
                                             onReset,
                                             onApply,
-                                            style
+                                            style,
+                                            userOptions
                                         }: ProposalAdvancedFiltersProps) {
 
     const {search: t} = useTranslation('proposal')
     const tCommon = useTranslation("common");
     const mmLeading = getMyanmarLeadingClass(locale);
 
-    const {data: ownerOptions = []} = useOwnerLookupOptions("");
+    const ownerOptions = userOptions
+        .filter((user: { role: string }) => user.role === "OWNER")
+        .map((user: { value: string; label: string }) => ({
+            value: user.value,
+            label: user.label
+        }));
+
+    const informUserOptions = userOptions
+        .filter((user: { role: string }) => user.role !== "VIEWER")
+        .map((user: { value: string; label: string }) => ({
+            value: user.value,
+            label: user.label
+        }));
+
+    const informUserSelectOptions = useMemo(
+        () => [{value:"",label:tCommon.anyLabel}, ...informUserOptions],
+        [informUserOptions,tCommon.anyLabel]
+    );
+
 
     const ownerSelectOptions = useMemo(
         () => [{value: "", label: tCommon.anyLabel}, ...ownerOptions],
@@ -148,22 +167,14 @@ export function ProposalAdvancedFilters({
 
                 {/* created user */}
                 {showCreatedBy ? (
-                    <View className="gap-1">
-                        <Text
-                            className={`text-sm font-medium ${mmLeading}`}
-                            style={[style,{color:APP_COLORS.textMuted}]}
-                        >
-                            {t.labels.createdBy}
-                        </Text>
-                        <CompactTextInput
-                            locale={locale}
-                            compactVariant="advanced"
-                            value={filters.createdByCsv}
-                            onChangeText={(createdByCsv) => onChange({createdByCsv})}
-                            placeholder={t.placeholders.createdBy}
-                            className={` ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
-                        />
-                    </View>
+                    <CompactSelect
+                        label={t.labels.createdBy}
+                        value={filters.createdByCsv}
+                        onChange={(createdByCsv) => onChange({createdByCsv})}
+                        locale={locale}
+                        placeholder={t.placeholders.createdBy}
+                        options={informUserSelectOptions}
+                    />
                 ) : null}
 
                 {/* reset , search buttons */}
