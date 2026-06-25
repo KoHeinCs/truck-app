@@ -16,7 +16,8 @@ type ProposalSearchToolbarProps = {
   onToggleAdvanced: () => void;
   onPressAdd: () => void;
   mmLeading:any;
-  style:any
+  style:any;
+  role:string;
 };
 
 export function ProposalSearchToolbar({
@@ -29,7 +30,7 @@ export function ProposalSearchToolbar({
   onToggleAdvanced,
   onPressAdd,
   mmLeading,
-  style
+  style, role
 }: ProposalSearchToolbarProps) {
   return (
     <View className="mb-4 flex-row items-center gap-2">
@@ -72,15 +73,18 @@ export function ProposalSearchToolbar({
         </Pressable>
       )}
 
-      <Pressable
-        onPress={onPressAdd}
-        className="items-center justify-center rounded-full p-2.5"
-        style={({pressed}) => ({
-            backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
-        })}
-      >
-        <Ionicons name="add" size={22} color="#fff" />
-      </Pressable>
+        {role !== 'VIEWER' && (
+            <Pressable
+                onPress={onPressAdd}
+                className="items-center justify-center rounded-full p-2.5"
+                style={({pressed}) => ({
+                    backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary
+                })}
+            >
+                <Ionicons name="add" size={22} color="#fff" />
+            </Pressable>
+        )}
+
     </View>
   );
 }

@@ -37,6 +37,7 @@ import {
 } from "react-native-safe-area-context";
 import {formatDateTime,formatDate} from "@/utils/dateUtil"
 import {formatAmount} from "@/utils/amountUtil"
+import {useAuthStore} from "@/stores/auth-store";
 
 
 function getOwnershipId(
@@ -70,6 +71,7 @@ export default function ProposalDetailScreen() {
     const qc = useQueryClient();
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
+    const role = useAuthStore((state) => state.role);
     const mmLeading = getMyanmarLeadingClass(locale);
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
@@ -92,7 +94,14 @@ export default function ProposalDetailScreen() {
     const [terminateModalOpen, setTerminateModalOpen] = useState(false);
     const [approveRemark, setApproveRemark] = useState("");
     const [terminateRemark, setTerminateRemark] = useState("");
-    const showActions = (detail?.status || "").toUpperCase() === "INFORM";
+
+    const currentRole = (role || "").toUpperCase();
+    const proposalStatus = (detail?.status || "").toUpperCase();
+
+    const showTerminateAction = (proposalStatus === 'INFORM' && ['ADMIN', 'OWNER'].includes(currentRole)) || (proposalStatus === 'APPROVED' && role === 'ADMIN');
+    const showApproveAction = (proposalStatus === 'INFORM' && ['ADMIN', 'OWNER'].includes(currentRole));
+    const showEditAction = (proposalStatus === 'INFORM' && ['ADMIN', 'OWNER'].includes(currentRole)) ||  (proposalStatus === 'APPROVED' && role === 'ADMIN');
+
     const isSubmitting = isApproving || isTerminating;
 
     const {resolveServiceTypeLabel} = useServiceTypeLookup();
@@ -236,7 +245,7 @@ export default function ProposalDetailScreen() {
                     style={[style, {color: APP_COLORS.textPrimary}]}>
                     {t.title}
                 </Text>
-                {showActions ? (
+                {showEditAction ? (
                     <Pressable
                         accessibilityRole="button"
                         onPress={onEdit}
@@ -546,60 +555,62 @@ export default function ProposalDetailScreen() {
                             }
 
                             {/* terminate && approve buttons */}
-                            {
-                                showActions ?
-                                    (
-                                        <View className="mb-2 mt-5 flex-row w-full gap-3">
-                                            <Button
-                                                isDisabled={isSubmitting}
-                                                onPress={() => setTerminateModalOpen(true)}
-                                                variant="outline"
-                                                className="flex-1 items-center justify-center rounded-md py-3"
-                                                animation={{
-                                                    highlight: {
-                                                        backgroundColor: {
-                                                            value: APP_COLORS.errorSoft,
-                                                        }
-                                                    },
-                                                }}
-                                                style={{
-                                                    backgroundColor: 'transparent',
-                                                    borderColor: APP_COLORS.error,
-                                                }}
-                                            >
-                                                <Text
-                                                    className={`text-sm font-semibold ${mmLeading}`}
-                                                    style={[style, {color: APP_COLORS.error}]}
-                                                >
-                                                    {t.actions.terminate}
-                                                </Text>
-                                            </Button>
+                            <View className="mb-2 mt-5 flex-row w-full gap-3">
+                                {showTerminateAction && (
+                                    <Button
+                                        isDisabled={isSubmitting}
+                                        onPress={() => setTerminateModalOpen(true)}
+                                        variant="outline"
+                                        className="flex-1 items-center justify-center rounded-md py-3"
+                                        animation={{
+                                            highlight: {
+                                                backgroundColor: {
+                                                    value: APP_COLORS.errorSoft,
+                                                }
+                                            },
+                                        }}
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                            borderColor: APP_COLORS.error,
+                                        }}
+                                    >
+                                        <Text
+                                            className={`text-sm font-semibold ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.error}]}
+                                        >
+                                            {t.actions.terminate}
+                                        </Text>
+                                    </Button>
+                                )}
 
-                                            <Button
-                                                isDisabled={isSubmitting}
-                                                onPress={() => setApproveModalOpen(true)}
-                                                className="flex-1 items-center justify-center rounded-md py-3"
-                                                animation={{
-                                                    highlight: {
-                                                        backgroundColor: {
-                                                            value: APP_COLORS.primaryPressed,
-                                                        }
-                                                    },
-                                                }}
-                                                style={{
-                                                    backgroundColor: APP_COLORS.primary
-                                                }}
-                                            >
-                                                <Text
-                                                    className={`text-sm font-semibold ${mmLeading}`}
-                                                    style={[style, {color: APP_COLORS.card}]}
-                                                >
-                                                    {t.actions.approve}
-                                                </Text>
-                                            </Button>
-                                        </View>
-                                    ) : null
-                            }
+
+                                {showApproveAction && (
+                                    <Button
+                                        isDisabled={isSubmitting}
+                                        onPress={() => setApproveModalOpen(true)}
+                                        className="flex-1 items-center justify-center rounded-md py-3"
+                                        animation={{
+                                            highlight: {
+                                                backgroundColor: {
+                                                    value: APP_COLORS.primaryPressed,
+                                                }
+                                            },
+                                        }}
+                                        style={{
+                                            backgroundColor: APP_COLORS.primary
+                                        }}
+                                    >
+                                        <Text
+                                            className={`text-sm font-semibold ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.card}]}
+                                        >
+                                            {t.actions.approve}
+                                        </Text>
+                                    </Button>
+                                )}
+
+                            </View>
+
                         </ScrollView>
                     )
             }

@@ -197,6 +197,7 @@ export default function ProposalScreen() {
                             onPressAdd={() => handleAddPress()}
                             mmLeading={mmLeading}
                             style={style}
+                            role={upperRole}
                         />
                         {ui.advancedOpen ? (
                             <ProposalAdvancedFiltersCard
