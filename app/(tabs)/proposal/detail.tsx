@@ -634,7 +634,7 @@ export default function ProposalDetailScreen() {
                             {detail?.proposalNo || "-"}
                         </Text>
 
-                        <Text className={`mb-2 mt-4 text-xs text-slate-500 ${mmLeading}`}>
+                        <Text className={`mb-2 mt-4 text-xs font-medium text-warning ${mmLeading}`}>
                             {t.labels.remark}{locale === 'mm' ? ' (မထည့်လည်းရ)' : ' (Optional)'}
                         </Text>
                         <CompactTextInput
@@ -652,10 +652,18 @@ export default function ProposalDetailScreen() {
                             <Button
                                 isDisabled={isSubmitting}
                                 onPress={closeApproveModal}
-                                className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
+                                className="flex-1 items-center justify-center rounded-xl bg-slate-100"
+                                animation={{
+                                    highlight: {
+                                        backgroundColor: {
+                                            value: APP_COLORS.errorSoft,
+                                        }
+                                    },
+                                }}
                             >
                                 <Text
                                     className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                    style={style}
                                 >
                                     {t.actions.cancel}
                                 </Text>
@@ -664,14 +672,15 @@ export default function ProposalDetailScreen() {
                             <Pressable
                                 disabled={isSubmitting}
                                 onPress={handleApprove}
-                                className="flex-1 items-center justify-center rounded-xl py-3"
-                                style={{backgroundColor: APP_COLORS.primary}}
+                                className={`flex-1 items-center justify-center rounded-xl`}
+                                style={({ pressed }) => ({ backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary })}
                             >
                                 {isApproving ? (
                                     <ActivityIndicator color="#fff"/>
                                 ) : (
                                     <Text
                                         className={`text-sm font-semibold text-white ${mmLeading}`}
+                                        style={style}
                                     >
                                         {t.actions.approve}
                                     </Text>
@@ -710,7 +719,7 @@ export default function ProposalDetailScreen() {
                         </View>
 
                         <View className="p-5">
-                            <Text className={`mb-2 text-xs text-slate-500 ${mmLeading}`}>
+                            <Text className={`mb-2 text-xs font-medium text-slate-500 ${mmLeading}`}>
                                 {t.labels.remark}
                             </Text>
                             <CompactTextInput
@@ -730,9 +739,15 @@ export default function ProposalDetailScreen() {
                                     disabled={isSubmitting}
                                     onPress={closeTerminateModal}
                                     className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
+                                    style={({pressed}) => ({
+                                        borderColor: APP_COLORS.border,
+                                        borderWidth:1,
+                                        backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent'
+                                    })}
                                 >
                                     <Text
                                         className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                        style={style}
                                     >
                                         {t.actions.cancel}
                                     </Text>
@@ -742,13 +757,14 @@ export default function ProposalDetailScreen() {
                                     disabled={isSubmitting}
                                     onPress={handleTerminate}
                                     className="flex-1 items-center justify-center rounded-xl py-3"
-                                    style={{backgroundColor: APP_COLORS.error}}
+                                    style={({ pressed }) => ({ borderColor: APP_COLORS.border, backgroundColor: pressed ? '#cf0707' : APP_COLORS.error })}
                                 >
                                     {isTerminating ? (
                                         <ActivityIndicator color="#fff"/>
                                     ) : (
                                         <Text
                                             className={`text-sm font-semibold text-white ${mmLeading}`}
+                                            style={style}
                                         >
                                             {t.actions.terminate}
                                         </Text>
