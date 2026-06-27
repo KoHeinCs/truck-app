@@ -73,12 +73,7 @@ export default function ProfileScreen() {
         [mmTextStyle],
     );
 
-    const visibleSettings = SETTINGS_ROWS.filter(row => {
-        if (row.adminOnly && upperRole !== 'ADMIN') {
-            return false;
-        }
-        return true;
-    });
+    const visibleSettings = SETTINGS_ROWS.filter(row => !(row.adminOnly && upperRole !== 'ADMIN'));
 
     const [logoutModalVisible, setLogoutModalVisible] = useState(false);
     const {mutate,isPending} = useLogout();
@@ -221,7 +216,7 @@ export default function ProfileScreen() {
                                     backgroundColor: pressed
                                         ? APP_COLORS.primarySoft
                                         : APP_COLORS.card,
-                                    borderBottomWidth: index < SETTINGS_ROWS.length - 1 ? 1 : 0,
+                                    borderBottomWidth: index < visibleSettings.length - 1 ? 1 : 0,
                                     borderBottomColor: APP_COLORS.border,
                                 })}
                             >
