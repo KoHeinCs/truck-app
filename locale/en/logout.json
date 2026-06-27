@@ -1,8 +1,11 @@
 {
   "logout": {
     "title": "Logout",
-    "text": "Are you sure to logout?",
+    "header": "Are you sure to logout?",
+    "body": "You will need to re-enter your credentials to access the system again.",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "errorTitle": "Logout Failed",
+    "errorBody": "Connection error or system failure. Please try again."
   }
 }

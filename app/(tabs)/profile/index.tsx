@@ -11,9 +11,13 @@ import {useLocaleStore} from "@/stores/client/locale-store";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useRouter} from "expo-router";
 import {Avatar, Button, Card} from "heroui-native";
-import React, {useMemo} from "react";
-import {Pressable, ScrollView, Text, View} from "react-native";
+import React, {useMemo,useState} from "react";
+import {ActivityIndicator, Alert, Pressable, ScrollView, Text, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {LogoutModal} from './logout-modal'
+import {useLogout} from "@/stores/server/logout/mutation";
+import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
+
 
 const SETTINGS_ROWS = [
     {
@@ -57,6 +61,7 @@ export default function ProfileScreen() {
     const tProfile = useTranslation("profile");
     const tLookup = useTranslation("lookup");
     const tLogout = useTranslation("logout");
+    const errorCatalog = useTranslation("error");
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const textStyle = locale === "mm" ? mmTextStyle : undefined;
     const mmLeadingClass = useMemo(
@@ -75,9 +80,29 @@ export default function ProfileScreen() {
         return true;
     });
 
+    const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+    const {mutate,isPending} = useLogout();
+
+
     const handleSignOut = useThrottledCallback(() => {
-        signOut();
-        router.replace("/(auth)/login");
+        setLogoutModalVisible(false);
+        mutate(
+            undefined,
+            {
+                onSuccess:()=>{
+                    signOut();
+                    router.replace("/(auth)/login");
+                },
+                onError:(err:unknown) => {
+                    const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
+                        title: tLogout.errorTitle,
+                        message: tLogout.errorBody,
+                    });
+                    Alert.alert(title, message);
+                }
+            }
+        )
+
     }, 600);
 
     const handleManagementSettingPress = useThrottledCallback(
@@ -212,7 +237,7 @@ export default function ProfileScreen() {
                                             color={APP_COLORS.primary}
                                         />
                                     </View>
-                                    {/* Mid Content Section */}
+                                    {/* Content Section */}
                                     <View className="flex-1">
                                         <Text
                                             className={`text-sm font-medium  ${mmLeadingClass}`}
@@ -261,26 +286,51 @@ export default function ProfileScreen() {
                 >
                     <Card.Body className="py-1">
                         <Button
-                            variant="danger-soft"
                             className="w-full"
-                            onPress={() => handleSignOut()}
-                            style={({pressed}) => ({
-                                backgroundColor: pressed ? APP_COLORS.errorSoft : "transparent",
-                            })}
+                            isDisabled={isPending}
+                            onPress={() =>  setLogoutModalVisible(true)}
+                            animation={{
+                                highlight: {
+                                    backgroundColor: {
+                                        value: APP_COLORS.errorSoft,
+                                    }
+                                },
+                            }}
+                            style={{
+                                backgroundColor: 'transparent',
+                                borderColor: APP_COLORS.error,
+                                borderWidth:1
+                            }}
                         >
-                            <Text
-                                className={`${mmLeadingClass} text-sm font-medium`}
-                                style={[
-                                    locale === "mm" ? mmBodyStyle : undefined,
-                                    {color: APP_COLORS.error},
-                                ]}
-                            >
-                                {tLogout.title}
-                            </Text>
+                            { isPending ? (
+                                <View className="items-center py-10">
+                                    <ActivityIndicator color={APP_COLORS.primary} />
+                                </View>
+                            ) : (
+                                <Text
+                                    className={`${mmLeadingClass} text-sm font-medium`}
+                                    style={[mmTextStyle, {color: APP_COLORS.error},]}
+                                >
+                                    {tLogout.title}
+                                </Text>
+                            )}
+
                         </Button>
                     </Card.Body>
                 </Card>
             </ScrollView>
+
+
+            {/* logout modal */}
+            <LogoutModal
+                isVisible={logoutModalVisible}
+                onClose={() => setLogoutModalVisible(false)}
+                onConfirmLogout={handleSignOut}
+                style={textStyle}
+                mmLeading={mmLeadingClass}
+            />
+
+
         </SafeAreaView>
     );
 }
