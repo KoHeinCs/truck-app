@@ -41,11 +41,12 @@ const normalizeOwnerOptions = (
 
 };
 
-export function useOwnerLookupOptions(query: string) {
+export function useOwnerLookupOptions(query: string,enabled = true) {
   return useQuery({
     queryKey: ["owner-lookup", query.trim()],
     queryFn: () => lookupOwners(query),
     select: normalizeOwnerOptions,
     staleTime: 0,
+    enabled:enabled
   });
 }
