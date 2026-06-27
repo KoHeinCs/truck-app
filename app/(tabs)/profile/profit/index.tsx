@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import {View, Text, Pressable, ScrollView} from 'react-native';
+import {View, Text, Pressable, ScrollView,Alert} from 'react-native';
 import {APP_COLORS} from '@/constants/colors';
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -32,8 +32,13 @@ export default function Profit() {
     const [totalCost, setTotalCost] = useState<number>(0);
     const [peopleList, setPeopleList] = useState<PersonRecord[]>([]);
 
-    const handleFinalSubmit = (finalPayload: any) => {
-        router.back()
+    const handleFinalSubmit = () => {
+        Alert.alert(
+            t.step3.successTitle,
+            t.step3.successBody,
+            [{ text: locale === "mm" ? "ပြီးပါပြီ" : "Done", onPress: () => router.back() }]
+        );
+
     };
 
 

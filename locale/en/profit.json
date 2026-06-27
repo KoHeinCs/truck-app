@@ -45,7 +45,9 @@
         "calculate":"Calculate Shares",
         "back": "Back",
         "done": "Done"
-      }
+      },
+      "successTitle": "Success",
+      "successBody": "May your business grow rapidly and bring massive profits!"
     }
   }
 }
