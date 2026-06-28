@@ -1,5 +1,4 @@
 import {
-    getMyanmarLeadingClass,
     myanmarUITextStyle,
 } from "@/constants/myanmar-font";
 import type {AppLocale} from "@/stores/client/locale-store";
@@ -25,6 +24,7 @@ type OwnershipCardProps = {
     labels: OwnershipCardLabels;
     onPress?: () => void;
     mmLeading: any;
+    status:string;
 };
 
 function valueText(value: unknown): string {
@@ -46,7 +46,7 @@ function formatDays(value: number | undefined, daySuffix: string): string {
     return `${value} ${daySuffix}`;
 }
 
-export function OwnershipCard({item, locale, labels, onPress, mmLeading}: OwnershipCardProps) {
+export function OwnershipCard({item, locale, labels, onPress, mmLeading,status}: OwnershipCardProps) {
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
 
@@ -65,14 +65,19 @@ export function OwnershipCard({item, locale, labels, onPress, mmLeading}: Owners
                   }}
             >
                 <Card.Body className="px-4 py-4">
+                    {/* title , plate no , total owned days */}
                     <View className="flex-row justify-between gap-3">
                         <View className="flex-1">
                             <Text
-                                className={`text-sm font-bold text-slate-900 ${mmLeading}`}
+                                className={`text-sm font-bold ${mmLeading}`}
+                                style={[style,{color: APP_COLORS.textPrimary}]}
                             >
                                 {title}
                             </Text>
-                            <Text className="mt-1 text-xs font-semibold text-blue-500">
+                            <Text
+                                className={`mt-1 text-xs font-semibold ${mmLeading}`}
+                                style={{color:APP_COLORS.primary}}
+                            >
                                 {plateNo}
                             </Text>
                         </View>
@@ -91,12 +96,12 @@ export function OwnershipCard({item, locale, labels, onPress, mmLeading}: Owners
                             </Text>
                         </View>
                     </View>
-
+                    {/* license city , license end date , license validity days */}
                     <View className="mt-4 border-t border-slate-100 pt-3">
                         <View className="flex-row">
                             <InfoCell
-                                label={labels.buyDate}
-                                value={formatDate(item.buyDate)}
+                                label={labels.licenseCity}
+                                value={valueText(item.licenseCity)}
                                 style={style}
                                 mmLeading={mmLeading}
                             />
@@ -118,15 +123,24 @@ export function OwnershipCard({item, locale, labels, onPress, mmLeading}: Owners
                             />
                         </View>
                     </View>
-
+                    {/* buy date , sell date , estimated sell amount */}
                     <View className="mt-3 border-t border-slate-100 pt-3">
                         <View className="flex-row">
                             <InfoCell
-                                label={labels.licenseCity}
-                                value={valueText(item.licenseCity)}
+                                label={labels.buyDate}
+                                value={formatDate(item.buyDate)}
                                 style={style}
                                 mmLeading={mmLeading}
                             />
+                            { status === 'SOLD_OUT' && (
+                                <InfoCell
+                                    label={labels.buyDate}
+                                    value={formatDate(item.sellDate)}
+                                    style={style}
+                                    mmLeading={mmLeading}
+                                />
+                            )
+                            }
                             <InfoCell
                                 label={labels.estimatedSellAmt}
                                 value={estimatedSellAmt}

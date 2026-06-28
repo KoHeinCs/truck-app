@@ -196,6 +196,7 @@ export default function OwnerShip() {
                         labels={t.card}
                         onPress={() => openDetail(item)}
                         mmLeading={mmLeading}
+                        status={status}
                     />
                 )}
                 onEndReachedThreshold={0.2}
