@@ -24,7 +24,7 @@ type OwnershipCardProps = {
     labels: OwnershipCardLabels;
     onPress?: () => void;
     mmLeading: any;
-    status:string;
+    status: string;
 };
 
 function valueText(value: unknown): string {
@@ -46,7 +46,7 @@ function formatDays(value: number | undefined, daySuffix: string): string {
     return `${value} ${daySuffix}`;
 }
 
-export function OwnershipCard({item, locale, labels, onPress, mmLeading,status}: OwnershipCardProps) {
+export function OwnershipCard({item, locale, labels, onPress, mmLeading, status}: OwnershipCardProps) {
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
 
@@ -57,82 +57,97 @@ export function OwnershipCard({item, locale, labels, onPress, mmLeading,status}:
 
     return (
         <Pressable onPress={onPress} disabled={!onPress}>
-            <Card className="mb-3"
+            <Card className="mb-2 flex-1 w-full"
                   style={{
                       backgroundColor: APP_COLORS.card,
                       borderColor: APP_COLORS.border,
                       borderWidth: 1,
+                      flex: 1
                   }}
             >
-                <Card.Body className="px-4 py-4">
+                <Card.Body className="px-2 py-2.5 justify-between flex-1">
                     {/* title , plate no , total owned days */}
-                    <View className="flex-row justify-between gap-3">
-                        <View className="flex-1">
+                    <View className="flex-row justify-between gap-x-3 items-center">
+                        <View className="flex-1 min-w-0">
                             <Text
                                 className={`text-sm font-bold ${mmLeading}`}
-                                style={[style,{color: APP_COLORS.textPrimary}]}
+                                style={[style, {color: APP_COLORS.textPrimary}]}
+                                numberOfLines={1}
                             >
                                 {title}
                             </Text>
                             <Text
-                                className={`mt-1 text-xs font-semibold ${mmLeading}`}
-                                style={{color:APP_COLORS.primary}}
+                                className={`mt-0.5 text-xs font-semibold ${mmLeading}`}
+                                style={{color: APP_COLORS.primary}}
+                                numberOfLines={1}
                             >
                                 {plateNo}
                             </Text>
                         </View>
 
-                        <View className="items-end">
+                        <View className="items-end min-w-[80px]">
                             <Text
-                                className={`text-xs!  text-slate-500 ${mmLeading}`}
+                                className={`text-xs font-bold  ${mmLeading}`}
+                                style={[style, {color: APP_COLORS.textMuted}]}
                             >
                                 {labels.ownership}
                             </Text>
                             <Text
-                                className="mt-0.5 text-sm font-bold text-slate-900"
-                                style={style}
-                            >
+                                className={`mt-0.5 text-sm font-bold ${mmLeading}`}
+                                style={[style, {color: APP_COLORS.primary}]}>
                                 {ownershipDays}
                             </Text>
                         </View>
                     </View>
                     {/* license city , license end date , license validity days */}
-                    <View className="mt-4 border-t border-slate-100 pt-3">
-                        <View className="flex-row">
-                            <InfoCell
-                                label={labels.licenseCity}
-                                value={valueText(item.licenseCity)}
-                                style={style}
-                                mmLeading={mmLeading}
-                            />
-                            <InfoCell
-                                label={labels.licenseEndDate}
-                                value={formatDate(item.licenseEndDate)}
-                                style={style}
-                                mmLeading={mmLeading}
-                            />
-                            <InfoCell
-                                label={labels.totalLicenseValidityDays}
-                                value={formatDays(
-                                    item.totalLicenseValidityDays,
-                                    labels.daySuffix,
-                                )}
-                                valueClassName="text-emerald-500"
-                                style={style}
-                                mmLeading={mmLeading}
-                            />
+                    <View className="mt-2 pt-2"
+                          style={{borderTopWidth: 0.5, borderTopColor: APP_COLORS.border}}
+                    >
+                        <View className="flex-row w-full justify-between">
+                            <View className="flex-1">
+                                <InfoCell
+                                    label={labels.licenseCity}
+                                    value={valueText(item.licenseCity)}
+                                    style={style}
+                                    mmLeading={mmLeading}
+                                />
+                            </View>
+                            <View className="flex-1 px-1">
+                                <InfoCell
+                                    label={labels.licenseEndDate}
+                                    value={formatDate(item.licenseEndDate)}
+                                    style={style}
+                                    mmLeading={mmLeading}
+                                />
+                            </View>
+
+                            <View className="flex-1 items-end">
+                                <InfoCell
+                                    label={labels.totalLicenseValidityDays}
+                                    value={formatDays(
+                                        item.totalLicenseValidityDays,
+                                        labels.daySuffix,
+                                    )}
+                                    style={style}
+                                    mmLeading={mmLeading}
+                                />
+                            </View>
+
                         </View>
                     </View>
                     {/* buy date , sell date , estimated sell amount */}
-                    <View className="mt-3 border-t border-slate-100 pt-3">
-                        <View className="flex-row">
+                    <View
+                        className="mt-3 pt-3"
+                        style={{borderTopWidth: 1, borderTopColor: APP_COLORS.border}}
+                    >
+                        <View className="flex-row w-full justify-between">
                             <InfoCell
                                 label={labels.buyDate}
                                 value={formatDate(item.buyDate)}
                                 style={style}
                                 mmLeading={mmLeading}
                             />
-                            { status === 'SOLD_OUT' && (
+                            {status === 'SOLD_OUT' && (
                                 <InfoCell
                                     label={labels.buyDate}
                                     value={formatDate(item.sellDate)}
@@ -175,12 +190,15 @@ function InfoCell({
                   }: InfoCellProps) {
     return (
         <View className={className}>
-            <Text className="text-[10px] text-slate-500" style={style}>
+            <Text
+                className={`text-xs font-bold ${mmLeading}`}
+                style={[style, {color: APP_COLORS.textMuted}]}
+            >
                 {label}
             </Text>
             <Text
                 className={`mt-0.5 text-xs font-semibold ${mmLeading} ${valueClassName}`}
-                style={style}
+                style={[style]}
             >
                 {value}
             </Text>
