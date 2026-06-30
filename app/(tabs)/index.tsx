@@ -1,14 +1,28 @@
-import React from "react";
-import { Text, View } from "react-native";
+import ChartComponent from "@/components/home/chart";
+import TopProfitTrucks from "@/components/home/top-profit-trucks";
+import { APP_COLORS } from "@/constants/colors";
+import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Home = () => {
   return (
-    <View className="flex-1 items-center justify-center bg-slate-100 px-5">
-      <Text className="text-2xl font-bold text-slate-800">Home Screen</Text>
-      <Text className="mt-2 text-sm text-slate-600">
-        Login success ပြီးရင် ဒီ screen ကိုဝင်လာပါမယ်။
-      </Text>
-    </View>
+    <SafeAreaView
+      className="flex-1"
+      style={{ backgroundColor: APP_COLORS.background , flex : 1 }}
+    >
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="px-4 py-4 gap-4"
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          <ChartComponent />
+        </View>
+        <View>
+          <TopProfitTrucks />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
