@@ -11,21 +11,9 @@ import {CompactSelect} from "@/app/(tabs)/profile/user/components/compact-select
 import {useTranslation} from "@/hooks/use-translation";
 import {AdvanceSearchDatePicker} from "@/components/advance-search-date-picker";
 
-type OwnershipAdvancedLabels = {
-    title: string;
-    plateNo: string;
-    licenseCity: string;
-    licenseEndDate: string;
-    profit: string;
-    ownerIdCsv: string;
-    datePlaceholder: string;
-    reset: string;
-    apply: string;
-};
 
 type OwnershipAdvancedFiltersProps = {
     filters: OwnershipAdvancedFilterValues;
-    labels: OwnershipAdvancedLabels;
     locale: AppLocale;
     style?: StyleProp<TextStyle>;
     showOwnerId: boolean;
@@ -39,7 +27,6 @@ type OwnershipAdvancedFiltersProps = {
 
 export function OwnershipAdvancedFilters({
                                              filters,
-                                             labels,
                                              locale,
                                              style,
                                              showOwnerId,
@@ -51,12 +38,13 @@ export function OwnershipAdvancedFilters({
                                              status
                                          }: OwnershipAdvancedFiltersProps) {
 
+
     const tCommon = useTranslation("common");
+    const {search: t} = useTranslation('ownership')
     const ownerSelectOptions = useMemo(
         () => [{value: "", label: tCommon.anyLabel}, ...ownerOptions],
-        [ownerOptions, tCommon.anyLabel],
+        [ownerOptions, tCommon.anyLabel]
     );
-
 
     return (
         <Card className="mb-4 p-5"
@@ -72,24 +60,24 @@ export function OwnershipAdvancedFilters({
                     className={`text-sm font-medium  ${mmLeading}`}
                     style={[{color: APP_COLORS.textPrimary}, style]}
                 >
-                    {labels.title}
+                    {t.advancedTitle}
                 </Text>
 
                 {/* plate number , licence city */}
                 <View className="flex-row gap-2">
                     <FilterInput
-                        label={labels.plateNo}
+                        label={t.labels.plateNo}
                         value={filters.plateNo}
-                        placeholder="2L-2222"
+                        placeholder={t.placeholders.plateNo}
                         locale={locale}
                         style={style}
                         onChangeText={(plateNo) => onChange({plateNo})}
                         mmLeading={mmLeading}
                     />
                     <FilterInput
-                        label={labels.licenseCity}
+                        label={t.labels.licenseCity}
                         value={filters.licenseCity}
-                        placeholder="Yangon"
+                        placeholder={t.placeholders.licenseCity}
                         locale={locale}
                         style={style}
                         onChangeText={(licenseCity) => onChange({licenseCity})}
@@ -99,9 +87,9 @@ export function OwnershipAdvancedFilters({
 
                 <View className="flex-row gap-2">
                     <FilterDateField
-                        label={labels.licenseEndDate}
+                        label={t.labels.licenseEndDate}
                         value={filters.licenseEndDate}
-                        placeholder={labels.datePlaceholder}
+                        placeholder={t.placeholders.licenseEndDate}
                         locale={locale}
                         mmLeading={mmLeading}
                         doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
@@ -111,9 +99,9 @@ export function OwnershipAdvancedFilters({
                     />
                     {status === 'SOLD_OUT' && (
                         <FilterInput
-                            label={labels.profit}
+                            label={t.labels.profit}
                             value={filters.profit}
-                            placeholder="5000000"
+                            placeholder={t.placeholders.profit}
                             keyboardType="number-pad"
                             locale={locale}
                             style={style}
@@ -126,11 +114,11 @@ export function OwnershipAdvancedFilters({
 
                 {showOwnerId ? (
                     <CompactSelect
-                        label={labels.ownerIdCsv}
+                        label={t.labels.ownerIdCsv}
                         value={filters.ownerIdCsv}
                         onChange={(ownerIdCsv) => onChange({ownerIdCsv})}
                         locale={locale}
-                        placeholder="owner-id, null"
+                        placeholder={t.placeholders.ownerIdCsv}
                         options={ownerSelectOptions}
                     />
                 ) : null}
@@ -150,7 +138,7 @@ export function OwnershipAdvancedFilters({
                             className={`text-xs font-semibold  ${mmLeading}`}
                             style={{color: APP_COLORS.error}}
                         >
-                            {labels.reset}
+                            {t.actions.reset}
                         </Text>
                     </Pressable>
 
@@ -162,7 +150,7 @@ export function OwnershipAdvancedFilters({
                         onPress={onApply}
                     >
                         <Text className={`text-xs font-semibold text-white ${mmLeading}`}>
-                            {labels.apply}
+                            {t.actions.search}
                         </Text>
                     </Pressable>
                 </View>
@@ -242,7 +230,7 @@ function FilterDateField({
         <View className="flex-1 gap-1">
             <Text
                 className={`text-sm font-medium ${mmLeading}`}
-                style={[{color: APP_COLORS.textMuted},style]}
+                style={[{color: APP_COLORS.textMuted}, style]}
             >
                 {label}
             </Text>

@@ -21,6 +21,7 @@ import {OwnershipHeader} from "./components/ownership-header";
 import {OwnershipSearchToolbar} from "./components/ownership-search-toolbar";
 import {OwnershipTabs} from "./components/ownership-tabs";
 import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-query";
+import {useTranslation} from "@/hooks/use-translation";
 
 type OwnershipListUiState = OwnershipAdvancedFilterValues & {
     quickQuery: string;
@@ -45,72 +46,8 @@ const emptyOwnershipAdvancedApplied: OwnershipAdvancedFilterValues = {
     ownerIdCsv: "",
 };
 
-const ownershipCopy = {
-    en: {
-        title: "Ownerships",
-        welcome: "Welcome",
-        searchPlaceholder: "Search plate number...",
-        empty: "No ownerships found",
-        addComingSoonTitle: "Coming Soon",
-        addComingSoonBody: "Create ownership is not available yet.",
-        tabs: {
-            ACTIVE: "Active",
-            SOLD_OUT: "Sold Out",
-        },
-        advanced: {
-            title: "Advanced Search",
-            plateNo: "Plate No",
-            licenseCity: "License City",
-            licenseEndDate: "License End Date",
-            profit: "Profit",
-            ownerIdCsv: "Owner ID",
-            datePlaceholder: "DD/MM/YYYY",
-            reset: "Reset",
-            apply: "Apply",
-        },
-        card: {
-            ownership: "Ownership",
-            buyDate: "Buy Date",
-            licenseEndDate: "Expiry Date",
-            totalLicenseValidityDays: "Remaining Days",
-            licenseCity: "License City",
-            estimatedSellAmt: "Estimated Price",
-            daySuffix: "days",
-        },
-    },
-    mm: {
-        title: "ပိုင်ဆိုင်မှု",
-        welcome: "မင်္ဂလာပါ",
-        searchPlaceholder: "ကားနံပါတ်ရှာရန်...",
-        empty: "ပိုင်ဆိုင်မှု မတွေ့ရှိပါ",
-        addComingSoonTitle: "မကြာမီ",
-        addComingSoonBody: "ပိုင်ဆိုင်မှု အသစ်ထည့်ရန် မရသေးပါ။",
-        tabs: {
-            ACTIVE: "လက်ရှိ",
-            SOLD_OUT: "ရောင်းပြီး",
-        },
-        advanced: {
-            title: "အသေးစိတ်ရှာဖွေမှု",
-            plateNo: "ကားနံပါတ်",
-            licenseCity: "လိုင်စင်မြို့",
-            licenseEndDate: "လိုင်စင်ကုန်ဆုံးရက်",
-            profit: "အမြတ်",
-            ownerIdCsv: "Owner ID",
-            datePlaceholder: "DD/MM/YYYY",
-            reset: "ရှင်းလင်းမည်",
-            apply: "ရှာမည်",
-        },
-        card: {
-            ownership: "ပိုင်ဆိုင်မှု",
-            buyDate: "ဝယ်ယူရက်",
-            licenseEndDate: "ကုန်ဆုံးရက်",
-            totalLicenseValidityDays: "သက်တမ်းကျန်",
-            licenseCity: "လိုင်စင်မြို့",
-            estimatedSellAmt: "ခန့်မှန်းရောင်းဈေး",
-            daySuffix: "ရက်",
-        },
-    },
-} as const;
+const TABS: OwnershipTruckStatus[] = ["ACTIVE", "SOLD_OUT"];
+
 
 export default function OwnerShip() {
     const router = useRouter();
@@ -119,8 +56,10 @@ export default function OwnerShip() {
     const role = useAuthStore((state) => state.role);
     const upperRole = (role || "").toUpperCase();
     const greeting = useTimeBasedGreeting();
-    const t = ownershipCopy[locale];
+    const t  = useTranslation('ownership')
     const showOwnerId = upperRole === "ADMIN";
+    const {data: ownerOptions = []} = useOwnerLookupOptions("",upperRole === "ADMIN");
+
 
     const [status, setStatus] = useState<OwnershipTruckStatus>("ACTIVE");
     const [ui, setUi] = useState<OwnershipListUiState>(initialOwnershipListUi);
@@ -136,8 +75,6 @@ export default function OwnerShip() {
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
     const mmLeading = getMyanmarLeadingClass(locale);
-    const {data: ownerOptions = []} = useOwnerLookupOptions("",upperRole === "ADMIN");
-
 
     const filters = useMemo(
         () => ({
@@ -207,7 +144,7 @@ export default function OwnerShip() {
                 ListHeaderComponent={
                     <View className="pb-3 pt-1">
                         <OwnershipHeader
-                            title={t.title}
+                            title={t.master.title}
                             welcomeLabel={greeting}
                             fullName={fullName || "-"}
                             style={style}
@@ -216,13 +153,13 @@ export default function OwnerShip() {
                         <OwnershipTabs
                             value={status}
                             onChange={setStatus}
-                            labels={t.tabs}
                             style={style}
                             mmLeading={mmLeading}
+                            tabs={TABS}
                         />
                         <OwnershipSearchToolbar
                             quickQuery={ui.quickQuery}
-                            placeholder={t.searchPlaceholder}
+                            placeholder={t.master.searchPlaceholder}
                             advancedOpen={ui.advancedOpen}
                             onChangeQuickQuery={(quickQuery) => patchUi({quickQuery})}
                             onClearQuickQuery={() => patchUi({quickQuery: ""})}
@@ -240,7 +177,6 @@ export default function OwnerShip() {
                         {ui.advancedOpen ? (
                             <OwnershipAdvancedFilters
                                 filters={advancedFilters}
-                                labels={t.advanced}
                                 locale={locale}
                                 style={style}
                                 showOwnerId={showOwnerId}
@@ -283,7 +219,7 @@ export default function OwnerShip() {
                             className="px-6 py-8 text-center text-slate-500"
                             style={style}
                         >
-                            {t.empty}
+                            {status === 'ACTIVE' ? t.master.empty_ACTIVE : t.master.empty_SOLD_OUT}
                         </Text>
                     )
                 }

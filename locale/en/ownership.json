@@ -1,5 +1,46 @@
 {
   "ownership": {
+    "tabs": {
+      "ACTIVE": "Active",
+      "SOLD_OUT": "Sold Out"
+    },
+    "master": {
+      "title": "Ownerships",
+      "searchPlaceholder": "Search by plate no...",
+      "empty_ACTIVE": "No active truck found",
+      "empty_SOLD_OUT": "No sold truck found"
+    },
+    "card": {
+      "ownership": "Ownership",
+      "buyDate": "Buy Date",
+      "sellDate": "Sell Date",
+      "licenseEndDate": "License Expiry",
+      "totalLicenseValidityDays": "Validity",
+      "licenseCity": "License City",
+      "estimatedSellAmt": "Estimated Price",
+      "daySuffix": "Days"
+    },
+    "search": {
+      "advancedTitle": "အဆင့်မြင့်ရှာဖွေမှု",
+      "labels": {
+        "plateNo": "Plate No",
+        "licenseCity": "License City",
+        "licenseEndDate": "License Expiry",
+        "profit": "Profit",
+        "ownerIdCsv": "Owner"
+      },
+      "placeholders": {
+        "plateNo": "1T-9999",
+        "licenseCity": "Yangon",
+        "licenseEndDate": "DD/MM/YYYY",
+        "profit": "500000",
+        "ownerIdCsv": "Select owner"
+      },
+      "actions": {
+        "reset": "Reset",
+        "search": "Search"
+      }
+    },
     "searchOwnership": {
       "title": "Search Truck",
       "infoText": "Searching by plate number will auto-fill details. You can also enter information manually.",

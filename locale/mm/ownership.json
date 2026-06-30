@@ -1,5 +1,46 @@
 {
   "ownership": {
+    "tabs": {
+      "ACTIVE": "လက်ရှိ",
+      "SOLD_OUT": "ရောင်းပြီး"
+    },
+    "master": {
+      "title": "ပိုင်ဆိုင်မှု",
+      "searchPlaceholder": "ကားနံပါတ်ရှာရန်...",
+      "empty_ACTIVE": "လက်ရှိ ယာဉ်များ မတွေ့ရှိပါ။",
+      "empty_SOLD_OUT": "ရောင်းပြီးသော ယာဉ်များ မတွေ့ရှိပါ။"
+    },
+    "card": {
+      "ownership": "ပိုင်ဆိုင်မှု",
+      "buyDate": "ဝယ်ယူသည့်ရက်",
+      "sellDate": "ရောင်းချသည့်ရက်",
+      "licenseEndDate": "လိုင်စင်ကုန်ဆုံးရက်",
+      "totalLicenseValidityDays": "သက်တမ်းကျန်",
+      "licenseCity": "လိုင်စင်မြို့",
+      "estimatedSellAmt": "ခန့်မှန်းရောင်းဈေး",
+      "daySuffix": "ရက်"
+    },
+    "search": {
+      "advancedTitle": "အဆင့်မြင့်ရှာဖွေမှု",
+      "labels": {
+        "plateNo": "ကားနံပါတ်",
+        "licenseCity": "လိုင်စင်မြို့",
+        "licenseEndDate": "လိုင်စင်ကုန်ဆုံးရက်",
+        "profit": "အမြတ်",
+        "ownerIdCsv": "ယာဉ်ပိုင်ရှင်"
+      },
+      "placeholders": {
+        "plateNo": "1T-9999",
+        "licenseCity": "Yangon",
+        "licenseEndDate": "DD/MM/YYYY",
+        "profit": "500000",
+        "ownerIdCsv": "ယာဉ်ပိုင်ရှင် ရွေးပါ"
+      },
+      "actions": {
+        "reset": "ရှင်းလင်းမည်",
+        "search": "ရှာပါ"
+      }
+    },
     "searchOwnership": {
       "title": "ထရပ်ကားရှာဖွေရန်",
       "infoText": "ကားနံပါတ်ဖြင့်ရှာပါက အချက်အလက်များ အလိုအလျောက် ဖြည့်ပေးပါမည်။ ကိုယ်တိုင်ထည့်သွင်းခြင်းလည်း လုပ်ဆောင်နိုင်ပါသည်။",

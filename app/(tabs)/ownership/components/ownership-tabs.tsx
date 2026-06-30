@@ -3,24 +3,27 @@ import type {OwnershipTruckStatus} from "@/stores/server/ownership/search-column
 import React from "react";
 import type {StyleProp, TextStyle} from "react-native";
 import {Pressable, Text, View} from "react-native";
+import {useTranslation} from "@/hooks/use-translation";
 
 type OwnershipTabsProps = {
     value: OwnershipTruckStatus;
     onChange: (next: OwnershipTruckStatus) => void;
-    labels: Record<OwnershipTruckStatus, string>;
     style?: StyleProp<TextStyle>;
     mmLeading: any;
+    tabs: OwnershipTruckStatus[];
 };
 
-const TABS: OwnershipTruckStatus[] = ["ACTIVE", "SOLD_OUT"];
 
 export function OwnershipTabs({
                                   value,
                                   onChange,
-                                  labels,
                                   style,
-                                  mmLeading
+                                  mmLeading,
+                                  tabs
                               }: OwnershipTabsProps) {
+
+    const {tabs: t} = useTranslation('ownership')
+
     return (
         <View
             className="mb-3 flex-row rounded-2xl  p-2"
@@ -30,7 +33,7 @@ export function OwnershipTabs({
                 borderWidth: 1
             }}
         >
-            {TABS.map((tab) => {
+            {tabs.map((tab) => {
                 const active = tab === value;
                 return (
                     <Pressable
@@ -45,7 +48,7 @@ export function OwnershipTabs({
                             ellipsizeMode={"clip"}
                             style={style}
                         >
-                            {labels[tab]}
+                            {t[tab]}
                         </Text>
                     </Pressable>
                 );
