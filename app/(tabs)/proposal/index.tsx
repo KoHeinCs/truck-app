@@ -4,6 +4,7 @@ import {useDebouncedValue} from "@/hooks/use-debounced-value";
 import {useTimeBasedGreeting} from "@/hooks/use-time-based-greeting";
 import {useAuthStore} from "@/stores/auth-store";
 import {useLocaleStore} from "@/stores/client/locale-store";
+import {useProposalListRefreshStore} from "@/stores/client/proposal-list-refresh-store";
 import {useProposalsInfinite} from "@/stores/server/proposal/query";
 import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
 import type {
@@ -11,6 +12,8 @@ import type {
     ProposalTabStatus,
 } from "@/stores/server/proposal/search-columns";
 import {useRouter} from "expo-router";
+import {useFocusEffect} from "expo-router/react-navigation";
+import {useQueryClient} from "@tanstack/react-query";
 import React, {useCallback, useMemo, useState} from "react";
 import {ActivityIndicator, FlatList, Text, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
@@ -61,6 +64,8 @@ const emptyProposalAdvancedApplied: ProposalAdvancedFilters = {
 export default function ProposalScreen() {
 
     const router = useRouter();
+    const qc = useQueryClient();
+    const takePendingRefresh = useProposalListRefreshStore((state) => state.takePending);
     const locale = useLocaleStore((state) => state.locale);
     const role = useAuthStore((state) => state.role);
     const fullName = useAuthStore((state) => state.fullName);
@@ -85,6 +90,13 @@ export default function ProposalScreen() {
     const style = locale === "mm" ? mmTextStyle : undefined;
 
     const {resolveServiceTypeLabel} = useServiceTypeLookup();
+
+    useFocusEffect(
+        useCallback(() => {
+            if (!takePendingRefresh()) return;
+            void qc.invalidateQueries({queryKey: ["proposal", "infinite"]});
+        }, [qc, takePendingRefresh]),
+    );
 
     const { data: userOptions = [] } = useUserLookupOptions("", upperRole === "ADMIN");
 
