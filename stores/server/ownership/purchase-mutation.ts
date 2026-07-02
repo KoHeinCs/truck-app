@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axios } from "../api";
 
 export interface PurchaseOwnershipPayload {
-  ownerId: string;
+  ownerId: string|undefined;
   plateNo: string;
   model: string;
   modelYear: number;
