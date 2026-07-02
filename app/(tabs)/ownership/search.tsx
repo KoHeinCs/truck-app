@@ -76,6 +76,7 @@ export default function OwnershipSearchScreen() {
       className="flex-1"
       style={{ backgroundColor: APP_COLORS.background }}
     >
+      {/* back , title */}
       <View className="flex-row items-center px-4 pb-3 pt-1">
         <Pressable
           onPress={onBack}
@@ -102,6 +103,7 @@ export default function OwnershipSearchScreen() {
           flexGrow: 1,
         }}
       >
+        {/* info */}
         <View
           className="mb-4 flex-row gap-3 rounded-xl border p-4"
           style={{
@@ -123,6 +125,7 @@ export default function OwnershipSearchScreen() {
           </Text>
         </View>
 
+        {/* search form */}
         <View
           className="rounded-2xl p-4"
           style={{
@@ -150,7 +153,7 @@ export default function OwnershipSearchScreen() {
                 style={[
                   {
                     backgroundColor: APP_COLORS.inputBackground,
-                    borderColor: APP_COLORS.primary,
+                    borderColor: APP_COLORS.border,
                     borderWidth: 1,
                     color: APP_COLORS.textPrimary,
                     paddingLeft: 40,
@@ -168,7 +171,16 @@ export default function OwnershipSearchScreen() {
               onPress={onSearch}
               isDisabled={isSearching}
               className={`items-center justify-center rounded-xl ${mmLeading}`}
-              style={{ backgroundColor: APP_COLORS.primary }}
+              animation={{
+                highlight: {
+                  backgroundColor: {
+                    value: APP_COLORS.primaryPressed, // Safely injects #456385 on click!
+                  }
+                },
+              }}
+              style={{
+                backgroundColor: APP_COLORS.primary
+              }}
             >
               {isSearching ? (
                 <View className="flex-row items-center gap-2">

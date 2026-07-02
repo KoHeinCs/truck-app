@@ -42,7 +42,7 @@
       }
     },
     "searchOwnership": {
-      "title": "Search Truck",
+      "title": "Purchase Truck",
       "infoText": "Searching by plate number will auto-fill details. You can also enter information manually.",
       "plateLabel": "Enter plate number",
       "platePlaceholder": "e.g. 3R-9999",
