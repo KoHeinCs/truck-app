@@ -116,8 +116,7 @@ export default function OwnerShip() {
 
     return (
         <SafeAreaView
-            style={{flex: 1}}
-            className="flex-1 bg-[#f3f7fb]"
+            style={{flex: 1,backgroundColor:APP_COLORS.background}}
             edges={["top", "left", "right"]}
         >
             <FlatList
@@ -129,9 +128,10 @@ export default function OwnerShip() {
                     // ownership card
                     <OwnershipCard
                         item={item}
-                        locale={locale}
                         labels={t.card}
                         onPress={() => openDetail(item)}
+                        style={style}
+                        mmLeading={mmLeading}
                     />
                 )}
                 onEndReachedThreshold={0.2}
