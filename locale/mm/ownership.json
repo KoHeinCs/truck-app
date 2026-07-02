@@ -11,9 +11,9 @@
       "empty_SOLD_OUT": "ရောင်းပြီးသော ယာဉ်များ မတွေ့ရှိပါ။"
     },
     "card": {
-      "ownership": "ပိုင်ဆိုင်မှု",
-      "buyDate": "ဝယ်ယူသည့်ရက်",
-      "sellDate": "ရောင်းချသည့်ရက်",
+      "ownership": "ပိုင်ဆိုင်မှု ကြာချိန်",
+      "buyDate": "ဝယ်ယူရက်",
+      "sellDate": "ရောင်းချရက်",
       "licenseEndDate": "လိုင်စင်ကုန်ဆုံးရက်",
       "totalLicenseValidityDays": "သက်တမ်းကျန်",
       "licenseCity": "လိုင်စင်မြို့",

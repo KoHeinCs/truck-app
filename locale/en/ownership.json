@@ -11,7 +11,7 @@
       "empty_SOLD_OUT": "No sold truck found"
     },
     "card": {
-      "ownership": "Ownership",
+      "ownership": "Ownership Duration",
       "buyDate": "Buy Date",
       "sellDate": "Sell Date",
       "licenseEndDate": "License Expiry",

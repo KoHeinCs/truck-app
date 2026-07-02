@@ -7,10 +7,12 @@ import React from "react";
 import {Pressable, Text, View} from "react-native";
 import {formatDate} from '@/utils/dateUtil'
 import {APP_COLORS} from "@/constants/colors";
+import {useTranslation} from "@/hooks/use-translation";
 
 type OwnershipCardLabels = {
     ownership: string;
     buyDate: string;
+    sellDate: string;
     licenseEndDate: string;
     totalLicenseValidityDays: string;
     licenseCity: string;
@@ -43,6 +45,7 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
     const plateNo = valueText(item.truckPlateNo);
     const ownershipDays = formatDays(item.totalOwnershipDays, labels.daySuffix);
     const estimatedSellAmt = valueText(item.estimatedSellAmt);
+    const {card:t} = useTranslation('ownership')
 
     return (
         <Pressable onPress={onPress} disabled={!onPress}>
@@ -90,18 +93,21 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
 
                     <View className="mt-4 border-t border-slate-100 pt-3">
                         <View className="flex-row">
+                            {/* license city */}
                             <InfoCell
-                                label={labels.buyDate}
-                                value={formatDate(item.buyDate)}
+                                label={labels.licenseCity}
+                                value={valueText(item.licenseCity)}
                                 style={style}
                                 mmLeading={mmLeading}
                             />
+                            {/* license end date */}
                             <InfoCell
                                 label={labels.licenseEndDate}
                                 value={formatDate(item.licenseEndDate)}
                                 style={style}
                                 mmLeading={mmLeading}
                             />
+                            {/* license validity days */}
                             <InfoCell
                                 label={labels.totalLicenseValidityDays}
                                 value={formatDays(
@@ -116,12 +122,23 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
 
                     <View className="mt-3 border-t border-slate-100 pt-3">
                         <View className="flex-row">
+                            {/* buy date */}
                             <InfoCell
-                                label={labels.licenseCity}
-                                value={valueText(item.licenseCity)}
+                                label={labels.buyDate}
+                                value={formatDate(item.buyDate)}
                                 style={style}
                                 mmLeading={mmLeading}
                             />
+
+                            {/* sell date */}
+                            <InfoCell
+                                label={labels.sellDate}
+                                value={formatDate(item.sellDate)}
+                                style={style}
+                                mmLeading={mmLeading}
+                            />
+
+                            {/* estimated sell amount */}
                             <InfoCell
                                 label={labels.estimatedSellAmt}
                                 value={estimatedSellAmt}
@@ -158,7 +175,7 @@ function InfoCell({
                 {label}
             </Text>
             <Text
-                className={`text-xs font-semibold ${mmLeading}`}
+                className={`mt-0.5 text-xs font-semibold ${mmLeading}`}
                 style={[style,{color:APP_COLORS.textPrimary}]}
             >
                 {value}
