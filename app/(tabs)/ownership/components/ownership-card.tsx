@@ -7,7 +7,6 @@ import React from "react";
 import {Pressable, Text, View} from "react-native";
 import {formatDate} from '@/utils/dateUtil'
 import {APP_COLORS} from "@/constants/colors";
-import {useTranslation} from "@/hooks/use-translation";
 
 type OwnershipCardLabels = {
     ownership: string;
@@ -45,7 +44,6 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
     const plateNo = valueText(item.truckPlateNo);
     const ownershipDays = formatDays(item.totalOwnershipDays, labels.daySuffix);
     const estimatedSellAmt = valueText(item.estimatedSellAmt);
-    const {card:t} = useTranslation('ownership')
 
     return (
         <Pressable onPress={onPress} disabled={!onPress}>
