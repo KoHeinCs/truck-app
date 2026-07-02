@@ -5,6 +5,7 @@ import {useTranslation} from "@/hooks/use-translation";
 import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useLocaleStore} from "@/stores/client/locale-store";
+import {useProposalListRefreshStore} from "@/stores/client/proposal-list-refresh-store";
 import {useApproveProposal} from "@/stores/server/proposal/approve-mutation";
 import {
     useProposalDetail,
@@ -18,7 +19,6 @@ import type {
 } from "@/stores/server/proposal/typed";
 import {normalizeServiceDateForApi} from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {useQueryClient} from "@tanstack/react-query";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {Button} from "heroui-native";
 import React, {useCallback, useMemo, useState} from "react";
@@ -68,7 +68,9 @@ function handleNotes(notes:any){
 export default function ProposalDetailScreen() {
 
     const router = useRouter();
-    const qc = useQueryClient();
+    const markListRefreshPending = useProposalListRefreshStore(
+        (state) => state.markPending,
+    );
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const role = useAuthStore((state) => state.role);
@@ -111,9 +113,9 @@ export default function ProposalDetailScreen() {
     );
 
     const onBack = useCallback(() => {
-        qc.invalidateQueries({queryKey: ["proposal"]});
+        markListRefreshPending();
         router.back();
-    }, [qc, router]);
+    }, [markListRefreshPending, router]);
 
     const onEdit = useThrottledCallback(() => {
         if (!proposalNo) return;

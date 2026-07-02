@@ -5,6 +5,7 @@ import {
 } from "@/constants/myanmar-font";
 import { useTranslation } from "@/hooks/use-translation";
 import { useLocaleStore } from "@/stores/client/locale-store";
+import { useOwnershipRunningBalanceRefreshStore } from "@/stores/client/ownership-running-balance-refresh-store";
 import {
   useOwnershipDetail,
   useOwnershipRunningBalance,
@@ -12,6 +13,7 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect } from "expo-router/react-navigation";
 import { useThrottledCallback } from "@/hooks/use-throttled-callback";
 import { useCallback, useMemo } from "react";
 import {
@@ -45,6 +47,19 @@ export default function OwnershipDetailScreen() {
 
   const ownershipId = String(params.ownershipId ?? "").trim();
   const hasRequiredParams = !!ownershipId;
+  const takePendingRunningBalanceRefresh =
+    useOwnershipRunningBalanceRefreshStore((state) => state.takePending);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!ownershipId || !takePendingRunningBalanceRefresh(ownershipId)) {
+        return;
+      }
+      void qc.invalidateQueries({
+        queryKey: ["ownership", "runningBalance", ownershipId],
+      });
+    }, [qc, ownershipId, takePendingRunningBalanceRefresh]),
+  );
 
   const { data: detailResponse, isPending: isDetailPending } =
     useOwnershipDetail(ownershipId, hasRequiredParams);

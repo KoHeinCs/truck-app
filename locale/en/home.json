@@ -1,0 +1,24 @@
+{
+  "home": {
+    "monthlyProfitTitle": "Monthly Profit",
+    "selectYear": "Select year",
+    "empty": "No data available",
+    "error": "Failed to load chart data",
+    "topProfitTrucksTitle": "Top Profit Trucks",
+    "profitLabel": "Profit (Ks)",
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    }
+  }
+}
