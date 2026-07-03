@@ -327,9 +327,6 @@ export default function OwnershipCreateScreen() {
                     style={[{color: APP_COLORS.textSecondary}, style]}
                 >
                     {t.labels[key]}
-                    {options?.required ? (
-                        <Text style={{color: APP_COLORS.error}}> *</Text>
-                    ) : null}
                 </Text>
                 {options?.required ? null : (
                     <Text
@@ -349,6 +346,7 @@ export default function OwnershipCreateScreen() {
                         onChangeText={onChange}
                         keyboardType={options?.keyboardType}
                         multiline={options?.multiline}
+                        scrollEnabled={!!options?.multiline}
                         numberOfLines={options?.multiline ? 4 : 1}
                         textAlignVertical={options?.multiline ? "top" : "center"}
                         placeholder={t.placeholders[key]}
@@ -364,7 +362,7 @@ export default function OwnershipCreateScreen() {
                             },
                             style,
                         ]}
-                        className={`py-0 text-sm font-medium ${mmLeading} ${options?.multiline ? "pt-3" : "h-12"}`}
+                        className={`py-0 text-base font-medium ${mmLeading} ${options?.multiline ? "pt-3" : "h-12"}`}
                     />
                 )}
             />
@@ -387,7 +385,6 @@ export default function OwnershipCreateScreen() {
                     style={[{color: APP_COLORS.textSecondary}, style]}
                 >
                     {t.labels[key]}
-                    <Text style={{color: APP_COLORS.error}}> *</Text>
                 </Text>
             </View>
             <Controller
@@ -449,7 +446,10 @@ export default function OwnershipCreateScreen() {
                     flexGrow: 1,
                 }}
             >
+                {/* owner , basic info, tire info , ownership info */}
                 <View className="mt-1 gap-4">
+
+                    {/* owner */}
                     {showOwnerId ? (
                         <View
                             className="rounded-2xl p-4"
@@ -465,7 +465,6 @@ export default function OwnershipCreateScreen() {
                                     style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.ownerId}
-                                    <Text style={{color: APP_COLORS.error}}> *</Text>
                                 </Text>
                                 <Controller
                                     control={control}
@@ -501,7 +500,7 @@ export default function OwnershipCreateScreen() {
                                                 >
                                                     <Select.Value
                                                         placeholder={t.placeholders.ownerId}
-                                                        className={`py-0 text-sm font-medium ${mmLeading}`}
+                                                        className={`py-0 text-base font-medium ${mmLeading}`}
                                                         style={{color: APP_COLORS.textPrimary}}
                                                     />
                                                     <Select.TriggerIndicator/>
@@ -534,7 +533,7 @@ export default function OwnershipCreateScreen() {
                                                                     }}
                                                                 >
                                                                     <Select.ItemLabel
-                                                                        className={`text-xs ${mmLeading}`}
+                                                                        className={`text-sm font-medium ${mmLeading}`}
                                                                         style={[
                                                                             style,
                                                                             {
@@ -567,6 +566,7 @@ export default function OwnershipCreateScreen() {
                         </View>
                     ) : null}
 
+                    {/* basic info */}
                     <View
                         className="rounded-2xl p-4"
                         style={{
@@ -576,6 +576,7 @@ export default function OwnershipCreateScreen() {
                         }}
                     >
                         <View className="gap-3">
+                            {/* info title */}
                             <Text
                                 className={`text-sm font-bold ${mmLeading}`}
                                 style={[style, {color: APP_COLORS.textPrimary}]}
@@ -583,8 +584,10 @@ export default function OwnershipCreateScreen() {
                                 {t.basicInfoTitle}
                             </Text>
 
+                            {/* plate no. */}
                             {renderTextInput("plateNo", {required: true})}
 
+                            {/* feet , model year */}
                             <View className="flex-row gap-2">
                                 <View className="flex-1">
                                     {renderTextInput("feet", {
@@ -600,15 +603,16 @@ export default function OwnershipCreateScreen() {
                                 </View>
                             </View>
 
+                            {/* model  */}
                             {renderTextInput("model", {required: true})}
 
+                            {/* fuel type */}
                             <View className="gap-1.5">
                                 <Text
                                     className={`text-sm font-medium ${mmLeading}`}
                                     style={[{color: APP_COLORS.textSecondary}, style]}
                                 >
                                     {t.labels.fuelType}
-                                    <Text style={{color: APP_COLORS.error}}> *</Text>
                                 </Text>
                                 <Controller
                                     control={control}
@@ -635,16 +639,14 @@ export default function OwnershipCreateScreen() {
                                                     className={`h-14 rounded-xl px-2.5 py-0 ${mmLeading}`}
                                                     style={{
                                                         backgroundColor: APP_COLORS.inputBackground,
-                                                        borderColor: errors.fuelType
-                                                            ? APP_COLORS.error
-                                                            : APP_COLORS.border,
+                                                        borderColor: errors.fuelType ? APP_COLORS.error : APP_COLORS.border,
                                                         borderWidth: 1,
                                                     }}
                                                 >
                                                     <Select.Value
                                                         placeholder={t.placeholders.fuelType}
-                                                        className={`py-0 text-sm font-medium ${mmLeading}`}
-                                                        style={{color: APP_COLORS.textPrimary}}
+                                                        className={`py-0 text-base font-medium ${mmLeading}`}
+                                                        style={[style,{color: APP_COLORS.textPrimary}]}
                                                     />
                                                     <Select.TriggerIndicator/>
                                                 </Select.Trigger>
@@ -668,21 +670,17 @@ export default function OwnershipCreateScreen() {
                                                                     value={fuelType.value}
                                                                     label={fuelType.label}
                                                                     style={{
-                                                                        backgroundColor: isSelected
-                                                                            ? APP_COLORS.primarySoft
-                                                                            : "transparent",
+                                                                        backgroundColor: isSelected ? APP_COLORS.primarySoft : "transparent",
                                                                         paddingVertical: 12,
                                                                         paddingHorizontal: 16,
                                                                     }}
                                                                 >
                                                                     <Select.ItemLabel
-                                                                        className={`text-xs ${mmLeading}`}
+                                                                        className={`text-sm font-medium ${mmLeading}`}
                                                                         style={[
                                                                             style,
                                                                             {
-                                                                                color: isSelected
-                                                                                    ? APP_COLORS.primary
-                                                                                    : APP_COLORS.textPrimary,
+                                                                                color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
                                                                                 fontWeight: isSelected ? "600" : "400",
                                                                             },
                                                                         ]}
@@ -709,6 +707,7 @@ export default function OwnershipCreateScreen() {
                         </View>
                     </View>
 
+                    {/* tire and other info */}
                     <View
                         className="rounded-2xl p-4"
                         style={{
@@ -718,6 +717,7 @@ export default function OwnershipCreateScreen() {
                         }}
                     >
                         <View className="gap-3">
+                            {/* info title */}
                             <Text
                                 className={`text-sm font-bold ${mmLeading}`}
                                 style={[style, {color: APP_COLORS.textPrimary}]}
@@ -725,6 +725,7 @@ export default function OwnershipCreateScreen() {
                                 {t.tireAndExtraTitle}
                             </Text>
 
+                            {/* f tire , b tire */}
                             <View className="flex-row gap-2">
                                 <View className="flex-1">
                                     {renderTextInput("frontTire", {required: true})}
@@ -734,11 +735,14 @@ export default function OwnershipCreateScreen() {
                                 </View>
                             </View>
 
+                            {/* chassi no. */}
                             {renderTextInput("chassisNo")}
+                            {/*engine no. */}
                             {renderTextInput("engineNo")}
                         </View>
                     </View>
 
+                    {/* ownership info */}
                     <View
                         className="rounded-2xl p-4"
                         style={{
@@ -748,6 +752,7 @@ export default function OwnershipCreateScreen() {
                         }}
                     >
                         <View className="gap-3">
+                            {/* ownership info title */}
                             <Text
                                 className={`text-sm font-bold ${mmLeading}`}
                                 style={[style, {color: APP_COLORS.textPrimary}]}
@@ -755,15 +760,22 @@ export default function OwnershipCreateScreen() {
                                 {t.ownershipDetailsTitle}
                             </Text>
 
+                            {/* equipment name */}
                             {renderTextInput("equipmentName", {required: true})}
 
+                            {/* license city */}
+                            {renderTextInput("licenseCity", {required: true})}
+
+                            {/* purchase place */}
+                            {renderTextInput("purchasePlace", {required: true})}
+
+                            {/* license end date , buy date */}
                             <View className="flex-row gap-2">
-                                <View className="flex-1">{renderDateInput("buyDate")}</View>
                                 <View className="flex-1">{renderDateInput("licenseEndDate")}</View>
+                                <View className="flex-1">{renderDateInput("buyDate")}</View>
                             </View>
 
-                            {renderTextInput("licenseCity", {required: true})}
-                            {renderTextInput("purchasePlace", {required: true})}
+
                             {renderTextInput("estimatedSellAmt")}
                             {renderTextInput("notes", {multiline: true})}
                         </View>
@@ -774,7 +786,14 @@ export default function OwnershipCreateScreen() {
                     onPress={handleSubmit(onSubmit)}
                     isDisabled={isPending}
                     className={`mb-2 mt-5 items-center justify-center rounded-xl ${mmLeading}`}
-                    style={{backgroundColor: APP_COLORS.primary}}
+                    style={[style,{backgroundColor: APP_COLORS.primary}]}
+                    animation={{
+                        highlight: {
+                            backgroundColor: {
+                                value: APP_COLORS.primaryPressed, // Safely injects #456385 on click!
+                            }
+                        },
+                    }}
                 >
                     <View className="flex-row items-center gap-2">
                         <Ionicons name="checkmark" size={18} color="#FFFFFF"/>

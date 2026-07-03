@@ -163,7 +163,7 @@ export default function OwnershipSearchScreen() {
                 className={`h-12 py-0 text-sm font-medium ${mmLeading}`}
               />
               <View className="absolute left-3 top-0 h-12 justify-center">
-                <Ionicons name="search" size={18} color={APP_COLORS.textMuted} />
+                <Ionicons name="search" size={22} color={APP_COLORS.textMuted} />
               </View>
             </View>
 
@@ -210,14 +210,8 @@ export default function OwnershipSearchScreen() {
             style={{ height: 1, backgroundColor: APP_COLORS.border }}
           />
           <Text
-            className="mx-3 text-sm"
-            style={[
-              style,
-              {
-                color: APP_COLORS.textMuted,
-                backgroundColor: APP_COLORS.background,
-              },
-            ]}
+            className={`mx-3 text-sm font-medium ${mmLeading}`}
+            style={[style, {color: APP_COLORS.textMuted, backgroundColor: APP_COLORS.background,}]}
           >
             {t.or}
           </Text>
