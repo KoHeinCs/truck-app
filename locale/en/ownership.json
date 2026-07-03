@@ -7,8 +7,8 @@
     "master": {
       "title": "Ownerships",
       "searchPlaceholder": "Search by plate no...",
-      "empty_ACTIVE": "No active truck found",
-      "empty_SOLD_OUT": "No sold truck found"
+      "empty_ACTIVE": "No active vehicles found.",
+      "empty_SOLD_OUT": "No sold vehicles found."
     },
     "card": {
       "ownership": "Ownership Duration",
@@ -58,8 +58,8 @@
     "createOwnership": {
       "title": "Add New Truck",
       "basicInfoTitle": "Basic Information",
-      "tireAndExtraTitle": "Tire & Technical Information",
-      "ownershipDetailsTitle": "Ownership Details",
+      "tireAndExtraTitle": "Tire & Other Information",
+      "ownershipDetailsTitle": "Ownership Detail",
       "actions": {
         "submit": "Save",
         "submitting": "Saving..."
@@ -87,7 +87,7 @@
         "licenseEndDate": "License End Date",
         "estimatedSellAmt": "Estimated Sell Amount",
         "purchasePlace": "Purchase Place",
-        "notes": "Notes"
+        "notes": "Details"
       },
       "placeholders": {
         "ownerId": "Select owner",

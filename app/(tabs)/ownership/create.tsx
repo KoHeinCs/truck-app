@@ -172,7 +172,7 @@ export default function OwnershipCreateScreen() {
     const {fuelTypes} = useTranslation("lookup");
     const errorCatalog = useTranslation("error");
     const {mutate, isPending} = usePurchaseOwnership();
-    const {data: ownerOptions = []} = useOwnerLookupOptions("");
+    const {data: ownerOptions = []} = useOwnerLookupOptions("",showOwnerId);
     const {data: truck} = useTruckByPlateNo(plateNoParam, isSearchMode);
 
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
@@ -318,6 +318,7 @@ export default function OwnershipCreateScreen() {
             required?: boolean;
             keyboardType?: "number-pad";
             multiline?: boolean;
+            autoCapitalize?: "none" | "characters";
         },
     ) => (
         <View className="gap-1.5">
@@ -351,7 +352,7 @@ export default function OwnershipCreateScreen() {
                         textAlignVertical={options?.multiline ? "top" : "center"}
                         placeholder={t.placeholders[key]}
                         placeholderTextColor={APP_COLORS.textMuted}
-                        autoCapitalize="none"
+                        autoCapitalize={options?.autoCapitalize}
                         style={[
                             {
                                 backgroundColor: APP_COLORS.inputBackground,
@@ -585,7 +586,7 @@ export default function OwnershipCreateScreen() {
                             </Text>
 
                             {/* plate no. */}
-                            {renderTextInput("plateNo", {required: true})}
+                            {renderTextInput("plateNo", {required: true,autoCapitalize: "characters"})}
 
                             {/* feet , model year */}
                             <View className="flex-row gap-2">

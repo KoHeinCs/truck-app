@@ -1,14 +1,14 @@
 {
   "ownership": {
     "tabs": {
-      "ACTIVE": "လက်ရှိ",
-      "SOLD_OUT": "ရောင်းပြီး"
+      "ACTIVE": "လက်ရှိယာဉ်များ",
+      "SOLD_OUT": "ရောင်းပြီးယာဉ်များ"
     },
     "master": {
       "title": "ပိုင်ဆိုင်မှု",
       "searchPlaceholder": "ကားနံပါတ်ရှာရန်...",
-      "empty_ACTIVE": "လက်ရှိ ယာဉ်များ မတွေ့ရှိပါ။",
-      "empty_SOLD_OUT": "ရောင်းပြီးသော ယာဉ်များ မတွေ့ရှိပါ။"
+      "empty_ACTIVE": "လက်ရှိ ရောင်းရန်ရှိသော ယာဉ်များ မတွေ့ရှိပါ။",
+      "empty_SOLD_OUT": "ရောင်းပြီးသွားသော ယာဉ်များ မတွေ့ရှိပါ။"
     },
     "card": {
       "ownership": "ပိုင်ဆိုင်မှု ကြာချိန်",
@@ -32,7 +32,7 @@
       "placeholders": {
         "plateNo": "1T-9999",
         "licenseCity": "Yangon",
-        "licenseEndDate": "DD/MM/YYYY",
+        "licenseEndDate": "ရက်/လ/ခုနှစ်",
         "profit": "500000",
         "ownerIdCsv": "ယာဉ်ပိုင်ရှင် ရွေးပါ"
       },
@@ -87,7 +87,7 @@
         "licenseEndDate": "လိုင်စင်ကုန်ဆုံးရက်",
         "estimatedSellAmt": "ခန့်မှန်းရောင်းဈေး",
         "purchasePlace": "ဝယ်ယူသည့်နေရာ",
-        "notes": "မှတ်ချက်"
+        "notes": "အသေးစိတ် အချက်အလက်"
       },
       "placeholders": {
         "ownerId": "ယာဉ်ပိုင်ရှင် ရွေးပါ",
@@ -106,7 +106,7 @@
         "licenseEndDate": "ရက်/လ/နှစ်",
         "estimatedSellAmt": "ဥပမာ - 1000 - 1500 သိန်း",
         "purchasePlace": "ဥပမာ - Yangon",
-        "notes": "ဥပမာ - ခေါင်းကျယ် / ရှေ့လေးအမှန် / SO5D / ပန့်ထောင် / နောက်လေးဘေးကပ် / 6 ပေါက်တန်း"
+        "notes": "ဥပမာ - ခေါင်းကျယ် / ရှေ့လေးအမှန် / SO5D /\nပန့်ထောင် / နောက်လေးဘေးကပ် / 6 ပေါက်တန်း"
       }
     },
     "updateOwnership": {

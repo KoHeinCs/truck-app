@@ -6,7 +6,6 @@ import {
 } from "@tanstack/react-query";
 import { axios } from "../api";
 import type { Column } from "../user/query";
-import { buildTruckSearchColumns } from "./search-columns";
 import type {
   TruckDetailResponse,
   TruckItem,
@@ -89,23 +88,9 @@ export function useTruckDetail(id: string) {
   });
 }
 
-const fetchTruckByPlateNo = async (
-  plateNo: string,
-): Promise<TruckItem | null> => {
-  const columns = buildTruckSearchColumns({
-    quickQuery: "",
-    plateNo,
-    model: "",
-    modelYear: "",
-    engineNo: "",
-    chassisNo: "",
-  });
-  const response = await searchTrucks({
-    page: 1,
-    pageSize: 1,
-    columns,
-  });
-  return response.data?.data?.[0] ?? null;
+const fetchTruckByPlateNo = async (plateNo: string,): Promise<TruckItem | null> => {
+  const { data } = await axios.get("/truck/plate/"+plateNo);
+  return data?.data;
 };
 
 export function useTruckByPlateNo(plateNo: string, enabled = false) {

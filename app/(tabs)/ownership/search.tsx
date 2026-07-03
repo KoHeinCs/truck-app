@@ -15,6 +15,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 
 const PLATE_RE = /^[0-9A-Z]{2}-[0-9]{4}$/;
 
@@ -56,9 +57,9 @@ export default function OwnershipSearchScreen() {
     router.back();
   }, [router]);
 
-  const onManualEntry = useCallback(() => {
+  const onManualEntry= useThrottledCallback(()=>{
     router.push("/(tabs)/ownership/create?source=manual" as Href);
-  }, [router]);
+  },600)
 
   const onSearch = useCallback(() => {
     const normalized = plateInput.trim().toUpperCase();
@@ -204,6 +205,7 @@ export default function OwnershipSearchScreen() {
           </View>
         </View>
 
+        {/* or */}
         <View className="my-5 flex-row items-center">
           <View
             className="flex-1"
@@ -211,7 +213,7 @@ export default function OwnershipSearchScreen() {
           />
           <Text
             className={`mx-3 text-sm font-medium ${mmLeading}`}
-            style={[style, {color: APP_COLORS.textMuted, backgroundColor: APP_COLORS.background,}]}
+            style={[style, {color: APP_COLORS.textMuted, backgroundColor: APP_COLORS.background}]}
           >
             {t.or}
           </Text>
@@ -221,6 +223,7 @@ export default function OwnershipSearchScreen() {
           />
         </View>
 
+        {/* manual button */}
         <Button
           onPress={onManualEntry}
           isDisabled={isSearching}
