@@ -29,7 +29,7 @@ import {
 } from "react-native-safe-area-context";
 import {OwnershipRunningBalanceCard} from "./components/ownership-running-balance-card";
 import {OwnershipSummaryCard} from "./components/ownership-summary-card";
-import {mm} from "@/locale/mm";
+import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
 
 export default function OwnershipDetailScreen() {
     const router = useRouter();
@@ -50,6 +50,7 @@ export default function OwnershipDetailScreen() {
     const hasRequiredParams = !!ownershipId;
     const takePendingRunningBalanceRefresh =
         useOwnershipRunningBalanceRefreshStore((state) => state.takePending);
+    const {resolveServiceTypeLabel} = useServiceTypeLookup();
 
     useFocusEffect(
         useCallback(() => {
@@ -228,6 +229,8 @@ export default function OwnershipDetailScreen() {
                                         labels={t.running.labels}
                                         style={style}
                                         mmLeading={mmLeading}
+                                        resolveServiceTypeLabel={resolveServiceTypeLabel}
+                                        local={locale}
                                     />
                                 ))}
                             </View>

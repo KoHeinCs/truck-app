@@ -162,7 +162,7 @@
       "running": {
         "labels": {
           "financialRecords": "ငွေစာရင်းမှတ်တမ်း",
-          "debit": "ကုန်ကျ",
+          "debit": "ကုန်ကျငွေ",
           "credit": "ဝင်ငွေ",
           "balance": "စုစုပေါင်းငွေ",
           "itemCount": "{count} ခု",

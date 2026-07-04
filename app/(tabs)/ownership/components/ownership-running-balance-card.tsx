@@ -1,10 +1,11 @@
 import type {OwnershipRunningBalanceItem} from "@/stores/server/ownership/typed";
 import {formatAmount} from "@/utils/amountUtil";
-import React from "react";
+import React, {useMemo} from "react";
 import type {StyleProp, TextStyle} from "react-native";
 import {Text, View} from "react-native";
 import {APP_COLORS} from "@/constants/colors";
 import {formatDateTime} from '@/utils/dateUtil'
+import {AppLocale} from "@/stores/client/locale-store";
 
 type RunningBalanceLabels = {
     debit: string;
@@ -18,6 +19,8 @@ type OwnershipRunningBalanceCardProps = {
     labels: RunningBalanceLabels;
     style?: StyleProp<TextStyle>;
     mmLeading: any;
+    resolveServiceTypeLabel: any;
+    local: AppLocale
 };
 
 function formatLocalizedAmount(
@@ -31,14 +34,20 @@ export function OwnershipRunningBalanceCard({
                                                 item,
                                                 labels,
                                                 style,
-                                                mmLeading
+                                                mmLeading,
+                                                resolveServiceTypeLabel,
+                                                local
                                             }: OwnershipRunningBalanceCardProps) {
 
     const balance = item.balance ?? 0;
-    const balanceClassName = balance < 0 ? "text-red-600" : "text-green-600";
+    const balanceClassName = balance < 0 ? "text-red-700" : "text-green-700";
+    const serviceTypeLabel = useMemo(
+        () => resolveServiceTypeLabel(item?.serviceType ?? "", local),
+        [item?.serviceType, local, resolveServiceTypeLabel],
+    );
 
     return (
-        <View className="rounded-2xl border border-slate-100 bg-[#fbfcfe] p-3"
+        <View className="rounded-2xl p-3"
               style={{
                   backgroundColor: APP_COLORS.card,
                   borderColor: APP_COLORS.border,
@@ -53,7 +62,8 @@ export function OwnershipRunningBalanceCard({
                     >
                         {item.proposalNo || "-"}
                     </Text>
-                    <Text className={` text-xs text-slate-500 ${mmLeading}`} style={style}>
+                    <Text className={`text-xs font-medium  ${mmLeading}`}
+                          style={[style, {color: APP_COLORS.textPrimary}]}>
                         {formatDateTime(item.proposeDate)}
                     </Text>
                 </View>
@@ -69,7 +79,7 @@ export function OwnershipRunningBalanceCard({
                         className={`text-xs font-semibold   ${mmLeading}`}
                         style={[style, {color: APP_COLORS.primary}]}
                     >
-                        {item.serviceType || "-"}
+                        {serviceTypeLabel || "-"}
                     </Text>
                 </View>
             </View>
@@ -115,16 +125,16 @@ function BalanceMetric({
                            mmLeading
                        }: BalanceMetricProps) {
     return (
-        <View className="flex-1 rounded-xl p-1"
+        <View className="flex-1 rounded-xl p-1.5"
               style={{
-                  backgroundColor:APP_COLORS.card,
-                  borderColor:APP_COLORS.border,
-                  borderWidth:1
+                  backgroundColor: APP_COLORS.card,
+                  borderColor: APP_COLORS.border,
+                  borderWidth: 1
               }}
         >
             <Text
                 className={`text-xs font-medium  ${mmLeading}`}
-                style={[style,{color:APP_COLORS.textMuted}]}
+                style={[style, {color: APP_COLORS.textMuted}]}
             >
                 {label}
             </Text>
