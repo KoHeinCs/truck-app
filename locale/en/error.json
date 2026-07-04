@@ -20,6 +20,8 @@
     "MSG3012": { "title": "ERROR", "content": "Cannot approve another owner's proposal" },
     "MSG3013": { "title": "ERROR", "content": "Cannot update another owner's proposal" },
     "MSG3014": { "title": "ERROR", "content": "Resolve all pending proposals first" },
+    "MSG3015": { "title": "ERROR", "content": "Only admin can terminate approved proposals" },
+    "MSG3016": { "title": "ERROR", "content": "Cannot terminate another owner's proposal" },
     "MSG4000": { "title": "ERROR", "content": "Journal has already been reversed" },
     "MSG4001": { "title": "ERROR", "content": "Only 'POSTED' journals can be reversed" },
     "MSG4002": { "title": "ERROR", "content": "Imbalanced: Debit and Credit must match" },
