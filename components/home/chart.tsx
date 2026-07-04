@@ -26,7 +26,11 @@ import {
 } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
-const ChartComponent = () => {
+type ChartComponentProps = {
+  selectedOwnerId?: string | null;
+};
+
+const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const role = useAuthStore((state) => state.role);
   const upperRole = (role || "").toUpperCase();
   const locale = useLocaleStore((state) => state.locale);
@@ -37,7 +41,12 @@ const ChartComponent = () => {
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
 
   const showChart = upperRole === "ADMIN" || upperRole === "OWNER";
-  const { data, isPending, isError } = useSalesPerformance(selectedYear);
+  const needsOwnerSelection =
+    upperRole === "ADMIN" && !selectedOwnerId?.trim();
+  const { data, isPending, isError } = useSalesPerformance(
+    selectedYear,
+    selectedOwnerId,
+  );
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
@@ -114,7 +123,14 @@ const ChartComponent = () => {
       </View>
 
       <View className="mt-4 items-center justify-center" style={{ minHeight: 200 }}>
-        {isPending ? (
+        {needsOwnerSelection ? (
+          <Text
+            className={`text-sm text-slate-500 ${mmLeading}`}
+            style={textStyle}
+          >
+            {t.selectOwnerFirst}
+          </Text>
+        ) : isPending ? (
           <ActivityIndicator color={APP_COLORS.primary} size="large" />
         ) : isError ? (
           <Text

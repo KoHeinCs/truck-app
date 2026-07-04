@@ -29,3 +29,13 @@ export interface TruckStatsResponse {
   httpStatus: number;
   message: string;
 }
+
+export interface ProposalStatsData {
+  totalInformTasks: number;
+}
+
+export interface ProposalStatsResponse {
+  data: ProposalStatsData;
+  httpStatus: number;
+  message: string;
+}
