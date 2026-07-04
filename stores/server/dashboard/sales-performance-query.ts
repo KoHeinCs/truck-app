@@ -16,15 +16,7 @@ const fetchSalesPerformance = async ({
 }: FetchSalesPerformanceParams): Promise<SalesPerformanceResponse> => {
   const upperRole = (role || "").toUpperCase();
 
-  if (upperRole === "ADMIN") {
-    const { data } = await axios.get<SalesPerformanceResponse>(
-      "/dashboard/sales-performance",
-      { params: { year } },
-    );
-    return data;
-  }
-
-  if (upperRole === "OWNER" && userId) {
+  if ((upperRole === "ADMIN" || upperRole === "OWNER") && userId) {
     const { data } = await axios.get<SalesPerformanceResponse>(
       `/dashboard/sales-performance/${userId}`,
       { params: { year } },
@@ -35,16 +27,33 @@ const fetchSalesPerformance = async ({
   return { data: [], httpStatus: 200, message: "" };
 };
 
-export function useSalesPerformance(year: number) {
+export function useSalesPerformance(
+  year: number,
+  selectedOwnerId?: string | null,
+) {
   const role = useAuthStore((state) => state.role);
   const userId = useAuthStore((state) => state.userId);
   const upperRole = (role || "").toUpperCase();
+  const effectiveOwnerId =
+    upperRole === "ADMIN" ? selectedOwnerId?.trim() || null : userId;
   const enabled =
-    upperRole === "ADMIN" || (upperRole === "OWNER" && !!userId);
+    (upperRole === "ADMIN" && !!effectiveOwnerId) ||
+    (upperRole === "OWNER" && !!userId);
 
   return useQuery({
-    queryKey: ["dashboard", "sales-performance", year, upperRole, userId],
-    queryFn: () => fetchSalesPerformance({ year, role: upperRole, userId }),
+    queryKey: [
+      "dashboard",
+      "sales-performance",
+      year,
+      upperRole,
+      effectiveOwnerId,
+    ],
+    queryFn: () =>
+      fetchSalesPerformance({
+        year,
+        role: upperRole,
+        userId: effectiveOwnerId,
+      }),
     enabled,
     staleTime: 0,
     refetchOnWindowFocus: false,

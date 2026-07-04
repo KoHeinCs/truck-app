@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
+import { resolveUserIdFromToken } from "@/lib/jwt";
 import { useAuthStore } from "@/stores/auth-store";
 import { axios } from "../api";
 
@@ -44,7 +45,8 @@ export const useLogin = () => {
         typeof body?.data?.role === "string"
       ) {
         const userId =
-          typeof body.data.id === "string" ? body.data.id : null;
+          resolveUserIdFromToken(token, body.data.role) ??
+          (typeof body.data.id === "string" ? body.data.id : null);
 
         useAuthStore.getState().signIn({
           token,

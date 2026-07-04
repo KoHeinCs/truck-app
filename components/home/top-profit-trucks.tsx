@@ -89,12 +89,16 @@ function TopProfitTruckRow({
   );
 }
 
-const TopProfitTrucks = () => {
+type TopProfitTrucksProps = {
+  selectedOwnerId?: string | null;
+};
+
+const TopProfitTrucks = ({ selectedOwnerId }: TopProfitTrucksProps) => {
   const role = useAuthStore((state) => state.role);
   const upperRole = (role || "").toUpperCase();
   const locale = useLocaleStore((state) => state.locale);
   const t = useTranslation("home");
-  const { data, isPending, isError } = useTruckStats();
+  const { data, isPending, isError } = useTruckStats(selectedOwnerId);
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
