@@ -141,7 +141,7 @@
       }
     },
     "detailOwnership": {
-      "title": "Truck Details",
+      "title": "Ownership Details",
       "labels": {
         "profitLoss": "Profit / Loss",
         "totalCost": "Total Expense",

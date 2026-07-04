@@ -181,6 +181,7 @@ export default function OwnershipDetailScreen() {
                             locale={locale}
                             labels={t.labels}
                             style={style}
+                            mmLeading={mmLeading}
                         />
 
                         {!summaryItem ? (
