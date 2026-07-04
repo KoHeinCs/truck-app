@@ -29,6 +29,7 @@ import {
 } from "react-native-safe-area-context";
 import {OwnershipRunningBalanceCard} from "./components/ownership-running-balance-card";
 import {OwnershipSummaryCard} from "./components/ownership-summary-card";
+import {mm} from "@/locale/mm";
 
 export default function OwnershipDetailScreen() {
     const router = useRouter();
@@ -70,7 +71,7 @@ export default function OwnershipDetailScreen() {
     const summaryItem = detailResponse?.data;
     const records = runningBalanceData?.data ?? [];
     const isPending = isDetailPending || isRunningBalancePending;
-    const itemCountLabel = t.labels.itemCount.replace(
+    const itemCountLabel = t.running.labels.itemCount.replace(
         "{count}",
         String(records.length),
     );
@@ -198,7 +199,7 @@ export default function OwnershipDetailScreen() {
                                 className={`text-base font-bold  ${mmLeading}`}
                                 style={[style,{color:APP_COLORS.textPrimary}]}
                             >
-                                {t.labels.financialRecords}
+                                {t.running.labels.financialRecords}
                             </Text>
                             <View
                                 className={`rounded-full px-3 py-1`}
@@ -224,9 +225,9 @@ export default function OwnershipDetailScreen() {
                                     <OwnershipRunningBalanceCard
                                         key={`${record.proposalNo ?? "record"}-${record.proposeDate ?? index}`}
                                         item={record}
-                                        locale={locale}
-                                        labels={t.labels}
+                                        labels={t.running.labels}
                                         style={style}
+                                        mmLeading={mmLeading}
                                     />
                                 ))}
                             </View>

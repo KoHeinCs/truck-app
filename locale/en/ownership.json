@@ -159,17 +159,15 @@
           "notes": "Notes"
         }
       },
-      "labels": {
-        "profitLoss": "Profit / Loss",
-        "totalCost": "Total Expense",
-        "totalIncome": "Total Income",
-        "notes": "Notes",
-        "financialRecords": "Financial Records",
-        "debit": "Expense",
-        "credit": "Income",
-        "balance": "Balance",
-        "itemCount": "{count} items",
-        "currencySuffix": "Ks"
+      "running": {
+        "labels": {
+          "financialRecords": "Financial Records",
+          "debit": "Expense",
+          "credit": "Income",
+          "balance": "Balance",
+          "itemCount": "{count} items",
+          "currencySuffix": "Ks"
+        }
       },
       "empty": {
         "summary": "Ownership details not found",
