@@ -178,8 +178,7 @@ export default function OwnershipDetailScreen() {
                         {/* ownership details */}
                         <OwnershipSummaryCard
                             item={summaryItem}
-                            locale={locale}
-                            labels={t.labels}
+                            labels={t.details.labels}
                             style={style}
                             mmLeading={mmLeading}
                         />

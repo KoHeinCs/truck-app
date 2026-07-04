@@ -142,6 +142,23 @@
     },
     "detailOwnership": {
       "title": "ပိုင်ဆိုင်မှုအသေးစိတ်",
+      "details": {
+        "labels": {
+          "profitLoss": "အမြတ်/အရှုံး",
+          "totalCost": "စုစုပေါင်းကျသင့်ငွေ",
+          "totalIncome": "စုစုပေါင်းဝင်ငွေ",
+          "licenseCity": "လိုင်စင်မြို့",
+          "licenseEndDate": "လိုင်စင်ကုန်ဆုံးရက်",
+          "totalLicenseValidityDays": "သက်တမ်းကျန်",
+          "purchaseDate": "ဝယ်ယူသည့်ရက်",
+          "purchasePlace": "ဝယ်ယူသည့်နေရာ",
+          "sellDate": "ရောင်းချသည့်ရက်",
+          "soldPlace": "ရောင်းချသည့်နေရာ",
+          "currencySuffix": "ကျပ်",
+          "daySuffix": "ရက်",
+          "notes": "အသေးစိတ် အချက်အလက်"
+        }
+      },
       "labels": {
         "profitLoss": "အမြတ်/အရှုံး",
         "totalCost": "စုစုပေါင်းကျသင့်ငွေ",

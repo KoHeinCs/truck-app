@@ -142,6 +142,23 @@
     },
     "detailOwnership": {
       "title": "Ownership Details",
+      "details": {
+        "labels": {
+          "profitLoss": "Profit / Loss",
+          "totalCost": "Total Expense",
+          "totalIncome": "Total Income",
+          "licenseCity": "License City",
+          "licenseEndDate": "License End Date",
+          "totalLicenseValidityDays": "Validity",
+          "purchaseDate": "Purchase Date",
+          "purchasePlace": "Purchase Location",
+          "sellDate": "Sell Date",
+          "soldPlace": "Sell Place",
+          "currencySuffix": "Ks",
+          "daySuffix": "Days",
+          "notes": "Notes"
+        }
+      },
       "labels": {
         "profitLoss": "Profit / Loss",
         "totalCost": "Total Expense",
