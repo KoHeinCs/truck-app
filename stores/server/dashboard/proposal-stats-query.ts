@@ -19,23 +19,20 @@ const emptyProposalStats: ProposalStatsResponse = {
 
 const fetchProposalStats = async ({
   role,
-  userId,
   ownerId,
 }: FetchProposalStatsParams): Promise<ProposalStatsResponse> => {
-  const upperRole = (role || "").toUpperCase();
 
-  if (upperRole === "ADMIN") {
-    const trimmedOwnerId = ownerId?.trim();
-    const url = trimmedOwnerId
-      ? `/dashboard/proposal-stats/${trimmedOwnerId}`
-      : "/dashboard/proposal-stats";
+  const trimmedOwnerId = ownerId?.trim();
+
+  if (role === "ADMIN") {
+    const url = trimmedOwnerId? `/dashboard/proposal-stats/${trimmedOwnerId}`: "/dashboard/proposal-stats";
     const { data } = await axios.get<ProposalStatsResponse>(url);
     return data;
   }
 
-  if (upperRole === "OWNER" && userId) {
+  if (role === "OWNER" || role === 'VIEWER') {
     const { data } = await axios.get<ProposalStatsResponse>(
-      "/dashboard/proposal-stats",
+      `/dashboard/proposal-stats/${trimmedOwnerId}`,
     );
     return data;
   }
@@ -44,20 +41,29 @@ const fetchProposalStats = async ({
 };
 
 export function useProposalStats(selectedOwnerId?: string | null) {
+
   const role = useAuthStore((state) => state.role);
   const userId = useAuthStore((state) => state.userId);
+  const parentOwnerId = useAuthStore((state) => state.parentOwnerId);
+
   const upperRole = (role || "").toUpperCase();
-  const effectiveOwnerId =
-    upperRole === "ADMIN" ? selectedOwnerId?.trim() || null : userId;
-  const enabled =
-    upperRole === "ADMIN" || (upperRole === "OWNER" && !!userId);
+  let effectiveOwnerId = null  ;
+
+  if (upperRole === "ADMIN"){
+    effectiveOwnerId =  selectedOwnerId?.trim() || null ;
+  }else if (upperRole === "OWNER"){
+    effectiveOwnerId = userId;
+  }else if (upperRole === "VIEWER"){
+    effectiveOwnerId = parentOwnerId;
+  }
+
+  const enabled = (upperRole === "ADMIN") || (upperRole === "OWNER" && !!effectiveOwnerId) || (upperRole === "VIEWER" && !!effectiveOwnerId)
 
   return useQuery({
     queryKey: ["dashboard", "proposal-stats", upperRole, effectiveOwnerId],
     queryFn: () =>
       fetchProposalStats({
         role: upperRole,
-        userId,
         ownerId: effectiveOwnerId,
       }),
     enabled,

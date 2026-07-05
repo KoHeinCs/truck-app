@@ -106,7 +106,7 @@ const SummaryCard = ({ selectedOwnerId }: SummaryCardProps) => {
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
   const mmLeading = getMyanmarLeadingClass(locale);
 
-  const showSection = upperRole === "ADMIN" || upperRole === "OWNER";
+  const showSection = upperRole === "ADMIN" || upperRole === "OWNER" || upperRole === "VIEWER";
   const isPending = isTruckPending || isProposalPending;
   const isError = isTruckError || isProposalError;
 

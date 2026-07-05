@@ -5,7 +5,6 @@ import type { TruckStatsResponse } from "./typed";
 
 type FetchTruckStatsParams = {
   role: string;
-  userId?: string | null;
   ownerId?: string | null;
 };
 
@@ -22,23 +21,20 @@ const emptyTruckStats: TruckStatsResponse = {
 
 const fetchTruckStats = async ({
   role,
-  userId,
   ownerId,
 }: FetchTruckStatsParams): Promise<TruckStatsResponse> => {
-  const upperRole = (role || "").toUpperCase();
 
-  if (upperRole === "ADMIN") {
-    const trimmedOwnerId = ownerId?.trim();
-    const url = trimmedOwnerId
-      ? `/dashboard/truck-stats/${trimmedOwnerId}`
-      : "/dashboard/truck-stats";
+  const trimmedOwnerId = ownerId?.trim();
+
+  if (role === "ADMIN") {
+    const url = trimmedOwnerId ? `/dashboard/truck-stats/${trimmedOwnerId}`: "/dashboard/truck-stats";
     const { data } = await axios.get<TruckStatsResponse>(url);
     return data;
   }
 
-  if (upperRole === "OWNER" && userId) {
+  if (role === "OWNER" || role === 'VIEWER') {
     const { data } = await axios.get<TruckStatsResponse>(
-      "/dashboard/truck-stats",
+      `/dashboard/truck-stats/${trimmedOwnerId}`,
     );
     return data;
   }
@@ -49,22 +45,31 @@ const fetchTruckStats = async ({
 export function useTruckStats(selectedOwnerId?: string | null) {
   const role = useAuthStore((state) => state.role);
   const userId = useAuthStore((state) => state.userId);
+  const parentOwnerId = useAuthStore((state) => state.parentOwnerId);
+
   const upperRole = (role || "").toUpperCase();
-  const effectiveOwnerId =
-    upperRole === "ADMIN" ? selectedOwnerId?.trim() || null : userId;
-  const enabled =
-    upperRole === "ADMIN" || (upperRole === "OWNER" && !!userId);
+  let effectiveOwnerId = null  ;
+
+  if (upperRole === "ADMIN"){
+    effectiveOwnerId =  selectedOwnerId?.trim() || null ;
+  }else if (upperRole === "OWNER"){
+    effectiveOwnerId = userId;
+  }else if (upperRole === "VIEWER"){
+    effectiveOwnerId = parentOwnerId;
+  }
+
+  const enabled = (upperRole === "ADMIN") || (upperRole === "OWNER" && !!effectiveOwnerId) || (upperRole === "VIEWER" && !!effectiveOwnerId)
 
   return useQuery({
     queryKey: ["dashboard", "truck-stats", upperRole, effectiveOwnerId],
     queryFn: () =>
       fetchTruckStats({
         role: upperRole,
-        userId,
         ownerId: effectiveOwnerId,
       }),
     enabled,
     staleTime: 0,
     refetchOnWindowFocus: false,
   });
+
 }

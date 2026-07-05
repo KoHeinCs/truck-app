@@ -40,13 +40,9 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
 
-  const showChart = upperRole === "ADMIN" || upperRole === "OWNER";
-  const needsOwnerSelection =
-    upperRole === "ADMIN" && !selectedOwnerId?.trim();
-  const { data, isPending, isError } = useSalesPerformance(
-    selectedYear,
-    selectedOwnerId,
-  );
+  const showChart = upperRole === "ADMIN" || upperRole === "OWNER" || upperRole === "VIEWER";
+  const needsOwnerSelection = upperRole === "ADMIN" && !selectedOwnerId?.trim();
+  const { data, isPending, isError } = useSalesPerformance(selectedYear, selectedOwnerId);
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
@@ -83,8 +79,7 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const yAxisMax = useMemo(() => computeYAxisMax(maxProfit), [maxProfit]);
   const chartWidth = screenWidth - 64;
   const yearOptions = useMemo(() => buildYearOptions(currentYear), [currentYear]);
-  const displayYear =
-    locale === "mm" ? toMyanmarDigits(selectedYear) : String(selectedYear);
+  const displayYear = locale === "mm" ? toMyanmarDigits(selectedYear) : String(selectedYear);
 
   if (!showChart) {
     return null;
@@ -206,8 +201,7 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
             <ScrollView className="mt-3 max-h-56">
               {yearOptions.map((year) => {
                 const isSelected = year === selectedYear;
-                const label =
-                  locale === "mm" ? toMyanmarDigits(year) : String(year);
+                const label =locale === "mm" ? toMyanmarDigits(year) : String(year);
 
                 return (
                   <Pressable

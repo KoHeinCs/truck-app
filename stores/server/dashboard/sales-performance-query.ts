@@ -1,61 +1,74 @@
-import { useAuthStore } from "@/stores/auth-store";
-import { useQuery } from "@tanstack/react-query";
-import { axios } from "../api";
-import type { SalesPerformanceResponse } from "./typed";
+import {useAuthStore} from "@/stores/auth-store";
+import {useQuery} from "@tanstack/react-query";
+import {axios} from "../api";
+import type {SalesPerformanceResponse} from "./typed";
 
 type FetchSalesPerformanceParams = {
-  year: number;
-  role: string;
-  userId?: string | null;
+    year: number;
+    role: string;
+    ownerId?: string | null;
 };
 
 const fetchSalesPerformance = async ({
-  year,
-  role,
-  userId,
-}: FetchSalesPerformanceParams): Promise<SalesPerformanceResponse> => {
-  const upperRole = (role || "").toUpperCase();
+                                         year,
+                                         role,
+                                         ownerId,
+                                     }: FetchSalesPerformanceParams): Promise<SalesPerformanceResponse> => {
 
-  if ((upperRole === "ADMIN" || upperRole === "OWNER") && userId) {
-    const { data } = await axios.get<SalesPerformanceResponse>(
-      `/dashboard/sales-performance/${userId}`,
-      { params: { year } },
-    );
-    return data;
-  }
+    const trimmedOwnerId = ownerId?.trim();
 
-  return { data: [], httpStatus: 200, message: "" };
+    if (role === "ADMIN"){
+        const url = trimmedOwnerId ? `/dashboard/sales-performance/${trimmedOwnerId}` : `/dashboard/sales-performance`;
+        const {data} = await axios.get<SalesPerformanceResponse>(url, {params: {year}},);
+        return data;
+    }
+
+    if (role === "OWNER" || role === 'VIEWER') {
+        const url =  `/dashboard/sales-performance/${trimmedOwnerId}`;
+        const {data} = await axios.get<SalesPerformanceResponse>(url,{params: {year}},);
+        return data;
+    }
+    return {data: [], httpStatus: 200, message: ""};
 };
 
 export function useSalesPerformance(
-  year: number,
-  selectedOwnerId?: string | null,
+    year: number,
+    selectedOwnerId?: string | null,
 ) {
-  const role = useAuthStore((state) => state.role);
-  const userId = useAuthStore((state) => state.userId);
-  const upperRole = (role || "").toUpperCase();
-  const effectiveOwnerId =
-    upperRole === "ADMIN" ? selectedOwnerId?.trim() || null : userId;
-  const enabled =
-    (upperRole === "ADMIN" && !!effectiveOwnerId) ||
-    (upperRole === "OWNER" && !!userId);
 
-  return useQuery({
-    queryKey: [
-      "dashboard",
-      "sales-performance",
-      year,
-      upperRole,
-      effectiveOwnerId,
-    ],
-    queryFn: () =>
-      fetchSalesPerformance({
-        year,
-        role: upperRole,
-        userId: effectiveOwnerId,
-      }),
-    enabled,
-    staleTime: 0,
-    refetchOnWindowFocus: false,
-  });
+    const role = useAuthStore((state) => state.role);
+    const userId = useAuthStore((state) => state.userId);
+    const parentOwnerId = useAuthStore((state) => state.parentOwnerId);
+
+    const upperRole = (role || "").toUpperCase();
+    let effectiveOwnerId = null;
+
+    if (upperRole === "ADMIN") {
+        effectiveOwnerId = selectedOwnerId?.trim() || null;
+    } else if (upperRole === "OWNER") {
+        effectiveOwnerId = userId;
+    } else if (upperRole === "VIEWER") {
+        effectiveOwnerId = parentOwnerId;
+    }
+
+    const enabled = (upperRole === "ADMIN") || (upperRole === "OWNER" && !!effectiveOwnerId) || (upperRole === "VIEWER" && !!effectiveOwnerId)
+
+    return useQuery({
+        queryKey: [
+            "dashboard",
+            "sales-performance",
+            year,
+            upperRole,
+            effectiveOwnerId,
+        ],
+        queryFn: () =>
+            fetchSalesPerformance({
+                year,
+                role: upperRole,
+                ownerId: effectiveOwnerId,
+            }),
+        enabled,
+        staleTime: 0,
+        refetchOnWindowFocus: false,
+    });
 }

@@ -5,6 +5,7 @@ export function useAuth() {
   const fullName = useAuthStore((state) => state.fullName);
   const role = useAuthStore((state) => state.role);
   const userId = useAuthStore((state) => state.userId);
+  const parentOwnerId = useAuthStore((state) => state.parentOwnerId);
   const signIn = useAuthStore((state) => state.signIn);
   const signOut = useAuthStore((state) => state.signOut);
 
@@ -13,6 +14,7 @@ export function useAuth() {
     fullName,
     role,
     userId,
+    parentOwnerId,
     signIn,
     signOut,
   };

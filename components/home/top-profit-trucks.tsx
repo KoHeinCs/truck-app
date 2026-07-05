@@ -104,7 +104,7 @@ const TopProfitTrucks = ({ selectedOwnerId }: TopProfitTrucksProps) => {
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
   const mmLeading = getMyanmarLeadingClass(locale);
 
-  const showSection = upperRole === "ADMIN" || upperRole === "OWNER";
+  const showSection = upperRole === "ADMIN" || upperRole === "OWNER" || upperRole === "VIEWER";
   const trucks = data?.data?.topProfitTrucks ?? [];
 
   if (!showSection) {

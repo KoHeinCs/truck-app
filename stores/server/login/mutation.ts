@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { resolveUserIdFromToken } from "@/lib/jwt";
+import {parseTokenDetails} from "@/lib/jwt";
 import { useAuthStore } from "@/stores/auth-store";
 import { axios } from "../api";
 
@@ -44,15 +44,16 @@ export const useLogin = () => {
         typeof body?.data?.fullName === "string" &&
         typeof body?.data?.role === "string"
       ) {
-        const userId =
-          resolveUserIdFromToken(token, body.data.role) ??
-          (typeof body.data.id === "string" ? body.data.id : null);
+
+
+        const {userId,parentOwnerId} = parseTokenDetails(token) || {};
 
         useAuthStore.getState().signIn({
           token,
           fullName: body.data.fullName,
           role: body.data.role,
           userId,
+          parentOwnerId
         });
         router.replace("/(tabs)");
       }
