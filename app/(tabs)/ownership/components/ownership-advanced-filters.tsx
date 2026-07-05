@@ -73,6 +73,7 @@ export function OwnershipAdvancedFilters({
                         style={style}
                         onChangeText={(plateNo) => onChange({plateNo})}
                         mmLeading={mmLeading}
+                        autoCapitalize={'characters'}
                     />
                     <FilterInput
                         label={t.labels.licenseCity}
@@ -168,6 +169,7 @@ type FilterInputProps = {
     style?: StyleProp<TextStyle>;
     onChangeText: (next: string) => void;
     mmLeading: any;
+    autoCapitalize?: "characters" | "none"
 };
 
 function FilterInput({
@@ -178,7 +180,8 @@ function FilterInput({
                          locale,
                          style,
                          onChangeText,
-                         mmLeading
+                         mmLeading,
+                         autoCapitalize = "none"
                      }: FilterInputProps) {
     return (
         <View className="flex-1 gap-1">
@@ -197,6 +200,7 @@ function FilterInput({
                 keyboardType={keyboardType}
                 className={`${mmLeading} ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                 style={style}
+                autoCapitalize={autoCapitalize}
             />
         </View>
     );
