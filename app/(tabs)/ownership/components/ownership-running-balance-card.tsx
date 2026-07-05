@@ -69,7 +69,7 @@ export function OwnershipRunningBalanceCard({
                 </View>
 
                 {/* service type */}
-                <View className="rounded-lg px-3 py-1"
+                <View className="rounded-lg px-3 py-2"
                       style={{
                           backgroundColor: APP_COLORS.primarySoft,
                           borderColor: APP_COLORS.primary + 25
@@ -84,7 +84,7 @@ export function OwnershipRunningBalanceCard({
                 </View>
             </View>
 
-            <View className="mt-1 flex-row gap-2">
+            <View className="mt-2 flex-row gap-2">
                 <BalanceMetric
                     label={labels.debit}
                     value={formatLocalizedAmount(item.debit, labels.currencySuffix)}
