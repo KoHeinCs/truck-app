@@ -10,7 +10,7 @@ import {useAuthStore} from "@/stores/auth-store";
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {useOwnershipDetail} from "@/stores/server/ownership/query";
 import {useUpdateOwnership} from "@/stores/server/ownership/update-mutation";
-import {formatDate, toIsoDate, todayIsoLocal} from "@/utils/dateUtil";
+import {formatDate, toIsoDate} from "@/utils/dateUtil";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useLocalSearchParams, useRouter} from "expo-router";
@@ -48,87 +48,32 @@ function buildSchema(locale: "en" | "mm") {
     return z.object({
         equipmentName: z
             .string()
-            .min(
-                1,
-                locale === "mm" ? "ကားအမည် လိုအပ်သည်" : "Equipment name is required",
-            )
-            .max(
-                200,
-                locale === "mm"
-                    ? "ကားအမည်သည် စာလုံး 200 ထက်မကျော်ရပါ"
-                    : "Equipment name cannot exceed 200 characters",
-            ),
+            .min(1, locale === "mm" ? "ကားအမည် လိုအပ်သည်" : "Equipment name is required",)
+            .max(200, locale === "mm" ? "ကားအမည်သည် စာလုံး 200 ထက်မကျော်ရပါ": "Equipment name cannot exceed 200 characters",),
         buyDate: z
             .string()
             .min(1, locale === "mm" ? "ဝယ်ယူရက် လိုအပ်သည်" : "Buy date is required")
-            .refine((value) => !!toIsoDate(value), {
-                message: DATE_MSG[locale],
-            })
-            .refine((value) => {
-                const iso = toIsoDate(value);
-                if (!iso) return false;
-                return iso <= todayIsoLocal();
-            }, {
-                message:
-                    locale === "mm"
-                        ? "ဝယ်ယူရက်သည် အနာဂတ်မဖြစ်ရပါ"
-                        : "Buy date cannot be in the future",
-            }),
+            .refine((value) => !!toIsoDate(value), {message: DATE_MSG[locale]}),
         licenseCity: z
             .string()
-            .min(
-                1,
-                locale === "mm" ? "လိုင်စင်မြို့ လိုအပ်သည်" : "License city is required",
-            )
-            .max(
-                100,
-                locale === "mm"
-                    ? "လိုင်စင်မြို့သည် စာလုံး 100 ထက်မကျော်ရပါ"
-                    : "License city cannot exceed 100 characters",
-            ),
+            .min(1, locale === "mm" ? "လိုင်စင်မြို့ လိုအပ်သည်" : "License city is required",)
+            .max(100, locale === "mm" ? "လိုင်စင်မြို့သည် စာလုံး 100 ထက်မကျော်ရပါ" : "License city cannot exceed 100 characters"),
         licenseEndDate: z
             .string()
-            .min(
-                1,
-                locale === "mm"
-                    ? "လိုင်စင်ကုန်ဆုံးရက် လိုအပ်သည်"
-                    : "License end date is required",
-            )
-            .refine((value) => !!toIsoDate(value), {
-                message: DATE_MSG[locale],
-            }),
+            .min(1,locale === "mm"? "လိုင်စင်ကုန်ဆုံးရက် လိုအပ်သည်": "License end date is required")
+            .refine((value) => !!toIsoDate(value), {message: DATE_MSG[locale]}),
         estimatedSellAmt: z
             .string()
-            .max(
-                200,
-                locale === "mm"
-                    ? "ခန့်မှန်းရောင်းဈေးသည် စာလုံး 200 ထက်မကျော်ရပါ"
-                    : "Estimated sell amount cannot exceed 200 characters",
-            )
+            .max(200,locale === "mm"? "ခန့်မှန်းရောင်းဈေးသည် စာလုံး 200 ထက်မကျော်ရပါ": "Estimated sell amount cannot exceed 200 characters")
             .optional()
             .or(z.literal("").or(z.null())),
         purchasePlace: z
             .string()
-            .min(
-                1,
-                locale === "mm"
-                    ? "ဝယ်ယူသည့်နေရာ လိုအပ်သည်"
-                    : "Purchase place is required",
-            )
-            .max(
-                200,
-                locale === "mm"
-                    ? "ဝယ်ယူသည့်နေရာသည် စာလုံး 200 ထက်မကျော်ရပါ"
-                    : "Purchase place cannot exceed 200 characters",
-            ),
+            .min(1,locale === "mm"? "ဝယ်ယူသည့်နေရာ လိုအပ်သည်": "Purchase place is required",)
+            .max( 200,locale === "mm"? "ဝယ်ယူသည့်နေရာသည် စာလုံး 200 ထက်မကျော်ရပါ": "Purchase place cannot exceed 200 characters"),
         notes: z
             .string()
-            .max(
-                500,
-                locale === "mm"
-                    ? "မှတ်ချက်သည် စာလုံး 500 ထက်မကျော်ရပါ"
-                    : "Notes cannot exceed 500 characters",
-            )
+            .max(500,locale === "mm"? "အသေးစိတ် အချက်အလက်သည် စာလုံး 500 ထက်မကျော်ရပါ": "Notes cannot exceed 500 characters",)
             .optional()
             .or(z.literal("").or(z.null())),
     });
@@ -206,19 +151,19 @@ export default function OwnershipEditScreen() {
 
     const onSubmit = (values: FormValues) => {
         if (!canSubmit) {
-            Alert.alert(t.unauthorizedTitle, t.unauthorizedBody);
+            Alert.alert(t.dialog.unauthorizedTitle, t.dialog.unauthorizedBody);
             return;
         }
 
         if (!ownershipId || version === undefined || version === null) {
-            Alert.alert(t.errorTitle, t.errorBody);
+            Alert.alert(t.dialog.errorTitle, t.dialog.errorBody);
             return;
         }
 
         const buyDateIso = toIsoDate(values.buyDate);
         const licenseEndDateIso = toIsoDate(values.licenseEndDate);
         if (!buyDateIso || !licenseEndDateIso) {
-            Alert.alert(t.errorTitle, t.errorBody);
+            Alert.alert(t.dialog.errorTitle, t.dialog.errorBody);
             return;
         }
 
@@ -236,13 +181,13 @@ export default function OwnershipEditScreen() {
             },
             {
                 onSuccess: () => {
-                    Alert.alert(t.successTitle, t.successBody);
+                    Alert.alert(t.dialog.successTitle, t.dialog.successBody);
                     router.back();
                 },
                 onError: (err: unknown) => {
                     const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
-                        title: t.errorTitle,
-                        message: t.errorBody,
+                        title: t.dialog.errorTitle,
+                        message: t.dialog.errorBody,
                     });
                     Alert.alert(title, message);
                 },
@@ -328,7 +273,7 @@ export default function OwnershipEditScreen() {
                         value={String(value ?? "")}
                         onChange={onChange}
                         placeholder={t.placeholders[key]}
-                        doneLabel={t.dateDone}
+                        doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         mode="date"
                         maximumDate={maximumDate}
                         style={style}
@@ -357,7 +302,7 @@ export default function OwnershipEditScreen() {
                     className={`text-center text-sm text-slate-500 ${mmLeading}`}
                     style={style}
                 >
-                    {t.errorBody}
+                    {t.dialog.errorBody}
                 </Text>
             </SafeAreaView>
         );
@@ -407,7 +352,7 @@ export default function OwnershipEditScreen() {
                             className={`text-sm ${mmLeading}`}
                             style={[{color: APP_COLORS.error}, style]}
                         >
-                            {t.errorBody}
+                            {t.dialog.errorBody}
                         </Text>
                         <Pressable
                             onPress={() => refetch()}
@@ -488,7 +433,7 @@ export default function OwnershipEditScreen() {
                             className={`text-sm font-bold text-white ${mmLeading}`}
                             style={style}
                         >
-                            {isPending ? t.submitting : t.submit}
+                            {isPending ? t.actions.submitting : t.actions.submit}
                         </Text>
                     </View>
                 </Pressable>

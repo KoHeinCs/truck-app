@@ -186,7 +186,7 @@ export function OwnershipSummaryCard({
                     {labels.notes}
                 </Text>
                 <Text
-                    className={` text-sm font-normal ${mmLeading}`}
+                    className={` text-sm font-bold ${mmLeading}`}
                     style={[style,{color:APP_COLORS.textPrimary}]}
                 >
                     {valueText(item?.notes)}

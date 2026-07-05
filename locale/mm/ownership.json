@@ -112,15 +112,6 @@
     "updateOwnership": {
       "title": "ပိုင်ဆိုင်မှု ပြင်ဆင်ရန်",
       "ownershipDetailsTitle": "ပိုင်ဆိုင်မှုအချက်အလက်",
-      "dateDone": "ရွေးချယ်မည်",
-      "submit": "သိမ်းမည်",
-      "submitting": "သိမ်းဆည်းနေသည်...",
-      "successTitle": "အောင်မြင်သည်",
-      "successBody": "ပိုင်ဆိုင်မှု ပြင်ဆင်ပြီးပါပြီ။",
-      "errorTitle": "အမှား",
-      "errorBody": "ပိုင်ဆိုင်မှု ပြင်ဆင်၍ မရပါ။",
-      "unauthorizedTitle": "ခွင့်ပြုချက်မရှိ",
-      "unauthorizedBody": "ဤလုပ်ဆောင်ချက်ကို လုပ်ဆောင်၍ မရပါ။",
       "labels": {
         "equipmentName": "ကားအမည်",
         "buyDate": "ဝယ်ယူရက်",
@@ -128,7 +119,7 @@
         "licenseEndDate": "လိုင်စင်ကုန်ဆုံးရက်",
         "estimatedSellAmt": "ခန့်မှန်းရောင်းဈေး",
         "purchasePlace": "ဝယ်ယူသည့်နေရာ",
-        "notes": "မှတ်ချက်"
+        "notes": "အသေးစိတ် အချက်အလက်"
       },
       "placeholders": {
         "equipmentName": "ဥပမာ - 2019 Isuzu 12 ပေ",
@@ -137,7 +128,19 @@
         "licenseEndDate": "နေ့/လ/နှစ်",
         "estimatedSellAmt": "ဥပမာ - 600 - 620 သိန်း",
         "purchasePlace": "ဥပမာ - Yangon",
-        "notes": "မှတ်ချက်ထည့်ပါ..."
+        "notes": "ဥပမာ - ခေါင်းကျယ် / ရှေ့လေးအမှန် / SO5D /\nပန့်ထောင် / နောက်လေးဘေးကပ် / 6 ပေါက်တန်း"
+      },
+      "actions": {
+        "submit": "ပြင်ဆင်မည်",
+        "submitting": "ပြင်ဆင်နေသည်..."
+      },
+      "dialog": {
+        "successTitle": "အောင်မြင်သည်",
+        "successBody": "ပိုင်ဆိုင်မှု ပြင်ဆင်ပြီးပါပြီ။",
+        "errorTitle": "အမှား",
+        "errorBody": "ပိုင်ဆိုင်မှု ပြင်ဆင်၍ မရပါ။",
+        "unauthorizedTitle": "ခွင့်ပြုချက်မရှိ",
+        "unauthorizedBody": "ဤလုပ်ဆောင်ချက်ကို လုပ်ဆောင်၍ မရပါ။"
       }
     },
     "detailOwnership": {

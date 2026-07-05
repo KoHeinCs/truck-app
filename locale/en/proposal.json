@@ -108,7 +108,7 @@
       },
       "actions": {
         "update": "Update",
-        "updating": "Updating...",
+        "updating": "c...",
         "done": "Done",
         "cancel": "Cancel"
       },

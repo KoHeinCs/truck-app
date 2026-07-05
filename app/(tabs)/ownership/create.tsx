@@ -125,12 +125,11 @@ function buildSchema(locale: "en" | "mm", showOwnerId: boolean) {
             .or(z.literal("").or(z.null())),
         purchasePlace: z
             .string()
-            .min(1,locale === "mm"? "ဝယ်ယူသည့်နေရာ လိုအပ်သည်": "Purchase place is required",
-            )
+            .min(1,locale === "mm"? "ဝယ်ယူသည့်နေရာ လိုအပ်သည်": "Purchase place is required",)
             .max( 200,locale === "mm"? "ဝယ်ယူသည့်နေရာသည် စာလုံး 200 ထက်မကျော်ရပါ": "Purchase place cannot exceed 200 characters"),
         notes: z
             .string()
-            .max(500,locale === "mm"? "မှတ်ချက်သည် စာလုံး 500 ထက်မကျော်ရပါ": "Notes cannot exceed 500 characters",)
+            .max(500,locale === "mm"? "အသေးစိတ် အချက်အလက်သည် စာလုံး 500 ထက်မကျော်ရပါ": "Notes cannot exceed 500 characters",)
             .optional()
             .or(z.literal("").or(z.null())),
     });

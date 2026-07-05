@@ -112,15 +112,6 @@
     "updateOwnership": {
       "title": "Update Ownership",
       "ownershipDetailsTitle": "Ownership Details",
-      "dateDone": "Done",
-      "submit": "Save",
-      "submitting": "Saving...",
-      "successTitle": "Success",
-      "successBody": "Ownership updated successfully.",
-      "errorTitle": "Error",
-      "errorBody": "Unable to update ownership.",
-      "unauthorizedTitle": "Unauthorized",
-      "unauthorizedBody": "You are not allowed to perform this action.",
       "labels": {
         "equipmentName": "Equipment Name",
         "buyDate": "Buy Date",
@@ -138,6 +129,18 @@
         "estimatedSellAmt": "e.g. 600 - 620 lakhs",
         "purchasePlace": "e.g. Yangon",
         "notes": "Additional notes..."
+      },
+      "actions": {
+        "submit": "Update",
+        "submitting": "Update..."
+      },
+      "dialog": {
+        "successTitle": "Success",
+        "successBody": "Ownership updated successfully.",
+        "errorTitle": "Error",
+        "errorBody": "Unable to update ownership.",
+        "unauthorizedTitle": "Unauthorized",
+        "unauthorizedBody": "You are not allowed to perform this action."
       }
     },
     "detailOwnership": {
