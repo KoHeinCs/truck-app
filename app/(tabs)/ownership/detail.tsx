@@ -30,8 +30,12 @@ import {
 import {OwnershipRunningBalanceCard} from "./components/ownership-running-balance-card";
 import {OwnershipSummaryCard} from "./components/ownership-summary-card";
 import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
+import {useAuthStore} from "@/stores/auth-store";
 
 export default function OwnershipDetailScreen() {
+    const role = useAuthStore((state) => state.role);
+    const currentRole = (role || "").toUpperCase();
+    const isAdmin = currentRole === "ADMIN";
     const router = useRouter();
     const qc = useQueryClient();
     const insets = useSafeAreaInsets();
@@ -42,9 +46,7 @@ export default function OwnershipDetailScreen() {
     const style = locale === "mm" ? mmTextStyle : undefined;
     const mmLeading = getMyanmarLeadingClass(locale);
 
-    const params = useLocalSearchParams<{
-        ownershipId?: string;
-    }>();
+    const params = useLocalSearchParams<{ ownershipId?: string; }>();
 
     const ownershipId = String(params.ownershipId ?? "").trim();
     const hasRequiredParams = !!ownershipId;
@@ -63,11 +65,8 @@ export default function OwnershipDetailScreen() {
         }, [qc, ownershipId, takePendingRunningBalanceRefresh]),
     );
 
-    const {data: detailResponse, isPending: isDetailPending} =
-        useOwnershipDetail(ownershipId, hasRequiredParams);
-
-    const {data: runningBalanceData, isPending: isRunningBalancePending} =
-        useOwnershipRunningBalance(ownershipId, hasRequiredParams);
+    const {data: detailResponse, isPending: isDetailPending} = useOwnershipDetail(ownershipId, hasRequiredParams);
+    const {data: runningBalanceData, isPending: isRunningBalancePending} = useOwnershipRunningBalance(ownershipId, hasRequiredParams);
 
     const summaryItem = detailResponse?.data;
     const records = runningBalanceData?.data ?? [];
@@ -115,17 +114,19 @@ export default function OwnershipDetailScreen() {
                 </Text>
 
                 <View className="flex-row items-center gap-2">
-                    <Pressable
-                        accessibilityRole="button"
-                        className="h-11 w-11 items-center justify-center rounded-full"
-                        style={({pressed}) => ({
-                            backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.card,
-                            borderColor: APP_COLORS.border,
-                            borderWidth: 1
-                        })}
-                    >
-                        <Ionicons name="pricetag-outline" size={22} color="#475569"/>
-                    </Pressable>
+                    {isAdmin && (
+                        <Pressable
+                            accessibilityRole="button"
+                            className="h-11 w-11 items-center justify-center rounded-full"
+                            style={({pressed}) => ({
+                                backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.card,
+                                borderColor: APP_COLORS.border,
+                                borderWidth: 1
+                            })}
+                        >
+                            <Ionicons name="pricetag-outline" size={22} color="#475569"/>
+                        </Pressable>
+                    )}
 
                     <Pressable
                         accessibilityRole="button"
