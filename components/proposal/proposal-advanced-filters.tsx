@@ -9,7 +9,7 @@ import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/
 import { Card } from "heroui-native";
 import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
-import { CompactSelect } from "../profile/user/components/compact-select";
+import { CompactSelect } from "@/app/(tabs)/profile/user/components/compact-select";
 
 type ProposalAdvancedFiltersProps = {
     filters: ProposalAdvancedFilterValues;

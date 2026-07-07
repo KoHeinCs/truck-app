@@ -11,9 +11,7 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useQueryClient} from "@tanstack/react-query";
-import DateTimePicker, {
-    type DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import {useRouter} from "expo-router";
 import {Input, Select} from "heroui-native";
 import React, {useCallback, useMemo, useState} from "react";
@@ -560,17 +558,16 @@ export default function TeamCreateUserScreen() {
                                                     }
                                                     maximumDate={new Date()}
                                                     minimumDate={new Date(1950, 0, 1)}
-                                                    onChange={(
-                                                        event: DateTimePickerEvent,
-                                                        selectedDate?: Date,
+                                                    onValueChange={(
+                                                        _event,
+                                                        selectedDate,
                                                     ) => {
                                                         if (Platform.OS !== "ios") {
                                                             setShowDateOfBirthPicker(false);
                                                         }
-                                                        if (event.type === "set" && selectedDate) {
-                                                            onChange(toDmyDate(selectedDate));
-                                                        }
+                                                        onChange(toDmyDate(selectedDate));
                                                     }}
+                                                    onDismiss={() => setShowDateOfBirthPicker(false)}
                                                 />
                                                 {Platform.OS === "ios" ? (
                                                     <Pressable
@@ -645,17 +642,16 @@ export default function TeamCreateUserScreen() {
                                                     }
                                                     maximumDate={new Date()}
                                                     minimumDate={new Date(1950, 0, 1)}
-                                                    onChange={(
-                                                        event: DateTimePickerEvent,
-                                                        selectedDate?: Date,
+                                                    onValueChange={(
+                                                        _event,
+                                                        selectedDate,
                                                     ) => {
                                                         if (Platform.OS !== "ios") {
                                                             setShowJoinDatePicker(false);
                                                         }
-                                                        if (event.type === "set" && selectedDate) {
-                                                            onChange(toDmyDate(selectedDate));
-                                                        }
+                                                        onChange(toDmyDate(selectedDate));
                                                     }}
+                                                    onDismiss={() => setShowJoinDatePicker(false)}
                                                 />
                                                 {Platform.OS === "ios" ? (
                                                     <Pressable

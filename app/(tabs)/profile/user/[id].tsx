@@ -14,9 +14,7 @@ import {
     useUpdateUserLockStatus,
 } from "@/stores/server/user/status-mutation";
 import {useUpdateUser} from "@/stores/server/user/update-mutation";
-import DateTimePicker, {
-    type DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useQueryClient} from "@tanstack/react-query";
@@ -479,14 +477,13 @@ export default function TeamEditUserScreen() {
                                                         mode="date"
                                                         display={Platform.OS === "ios" ? "spinner" : "default"}
                                                         maximumDate={new Date()}
-                                                        onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                                                        onValueChange={(_event, selectedDate) => {
                                                             if (Platform.OS !== "ios") {
                                                                 setActiveDateField(null);
                                                             }
-                                                            if (event.type === "set" && selectedDate) {
-                                                                onChange(toDmyDate(selectedDate));
-                                                            }
+                                                            onChange(toDmyDate(selectedDate));
                                                         }}
+                                                        onDismiss={() => setActiveDateField(null)}
                                                     />
                                                     {Platform.OS === "ios" ? (
                                                         <Pressable
@@ -554,14 +551,13 @@ export default function TeamEditUserScreen() {
                                                         mode="date"
                                                         display={Platform.OS === "ios" ? "spinner" : "default"}
                                                         maximumDate={new Date()}
-                                                        onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                                                        onValueChange={(_event, selectedDate) => {
                                                             if (Platform.OS !== "ios") {
                                                                 setActiveDateField(null);
                                                             }
-                                                            if (event.type === "set" && selectedDate) {
-                                                                onChange(toDmyDate(selectedDate));
-                                                            }
+                                                            onChange(toDmyDate(selectedDate));
                                                         }}
+                                                        onDismiss={() => setActiveDateField(null)}
                                                     />
                                                     {Platform.OS === "ios" ? (
                                                         <Pressable

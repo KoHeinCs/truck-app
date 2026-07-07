@@ -7,9 +7,8 @@ import {
     parseServiceDateDisplayToDate,
 } from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import DateTimePicker, {
-    type DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import {AndroidDateTimePicker} from "@/components/android-datetime-picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import React, {useCallback, useState} from "react";
 import {Modal, Platform, Pressable, Text, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
@@ -75,14 +74,9 @@ export function AdvanceSearchDatePicker({
         closePicker();
     };
 
-    const handleAndroidChange = (
-        event: DateTimePickerEvent,
-        nextDate?: Date,
-    ) => {
+    const handleAndroidConfirm = (nextDate: Date) => {
         closePicker();
-        if (event.type === "set" && nextDate) {
-            onChange(formatValue(nextDate));
-        }
+        onChange(formatValue(nextDate));
     };
 
     return (
@@ -108,13 +102,13 @@ export function AdvanceSearchDatePicker({
             </Pressable>
 
             {open && Platform.OS === "android" ? (
-                <DateTimePicker
+                <AndroidDateTimePicker
                     value={draftDate}
-                    mode={isDateOnly ? "date" : "datetime"}
-                    display="default"
+                    isDateOnly={isDateOnly}
                     maximumDate={maximumDate}
                     minimumDate={minimumDate}
-                    onChange={handleAndroidChange}
+                    onConfirm={handleAndroidConfirm}
+                    onDismiss={closePicker}
                 />
             ) : null}
 
@@ -170,10 +164,8 @@ export function AdvanceSearchDatePicker({
                                 maximumDate={maximumDate}
                                 minimumDate={minimumDate}
                                 themeVariant="light"
-                                onChange={(_event, nextDate) => {
-                                    if (nextDate) {
-                                        setDraftDate(nextDate);
-                                    }
+                                onValueChange={(_event, nextDate) => {
+                                    setDraftDate(nextDate);
                                 }}
                             />
                         </View>
