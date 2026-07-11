@@ -73,7 +73,8 @@ export default function ProposalDetailScreen() {
     );
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
-    const role = useAuthStore((state) => state.role);
+    const loginRole = useAuthStore((state) => state.role);
+    const loginUserId = useAuthStore((state) => state.userId);
     const mmLeading = getMyanmarLeadingClass(locale);
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
@@ -97,12 +98,21 @@ export default function ProposalDetailScreen() {
     const [approveRemark, setApproveRemark] = useState("");
     const [terminateRemark, setTerminateRemark] = useState("");
 
-    const currentRole = (role || "").toUpperCase();
+    const currentRole = (loginRole || "").toUpperCase();
     const proposalStatus = (detail?.status || "").toUpperCase();
+    const ownerId = (detail?.ownerId || "").trim();
 
-    const showTerminateAction = (proposalStatus === 'INFORM' && ['ADMIN', 'OWNER'].includes(currentRole)) || (proposalStatus === 'APPROVED' && role === 'ADMIN');
-    const showApproveAction = (proposalStatus === 'INFORM' && ['ADMIN', 'OWNER'].includes(currentRole));
-    const showEditAction = (proposalStatus === 'INFORM' && ['ADMIN', 'OWNER'].includes(currentRole)) ||  (proposalStatus === 'APPROVED' && role === 'ADMIN');
+    const isInformState = proposalStatus === 'INFORM';
+    const isApprovedState = proposalStatus === 'APPROVED';
+    const isAdminRole = currentRole === 'ADMIN';
+
+    const isProposalOwner = (currentRole === 'OWNER' && loginUserId === ownerId)
+    const hasManagementAuthority = isAdminRole || isProposalOwner;
+
+    const showApproveAction = isInformState && hasManagementAuthority;
+    const showTerminateAction = (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole);
+    const showEditAction = (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole);
+
 
     const isSubmitting = isApproving || isTerminating;
 
