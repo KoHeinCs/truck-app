@@ -20,6 +20,8 @@ import {Controller, useForm} from "react-hook-form";
 import {
     ActivityIndicator,
     Alert,
+    KeyboardAvoidingView,
+    Platform,
     Pressable,
     ScrollView,
     Text,
@@ -331,14 +333,20 @@ export default function OwnershipEditScreen() {
                 <View className="h-11 w-11"/>
             </View>
             {/* edit form */}
-            <ScrollView
-                className="flex-1 px-4"
-                contentContainerStyle={{
-                    paddingBottom: insets.bottom + 80,
-                    flexGrow: 1,
-                }}
-                keyboardShouldPersistTaps="handled"
+            <KeyboardAvoidingView
+                className="flex-1"
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
+                <ScrollView
+                    className="flex-1 px-4"
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + 80,
+                        flexGrow: 1,
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                    automaticallyAdjustKeyboardInsets
+                    keyboardDismissMode="on-drag"
+                >
                 {/* fetch details error */}
                 {isError ? (
                     <View
@@ -437,7 +445,8 @@ export default function OwnershipEditScreen() {
                         </Text>
                     </View>
                 </Pressable>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }

@@ -1,29 +1,37 @@
-import {APP_COLORS} from "@/constants/colors";
-import {ServiceDatePicker} from "@/components/service-date-picker";
+import { ServiceDatePicker } from "@/components/service-date-picker";
+import { APP_COLORS } from "@/constants/colors";
 import {
     getMyanmarLeadingClass,
     myanmarUITextStyle,
 } from "@/constants/myanmar-font";
-import {useTranslation} from "@/hooks/use-translation";
-import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
-import {useAuthStore} from "@/stores/auth-store";
-import {useLocaleStore} from "@/stores/client/locale-store";
-import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-query";
-import {usePurchaseOwnership} from "@/stores/server/ownership/purchase-mutation";
-import {useTruckByPlateNo} from "@/stores/server/truck/query";
-import {toIsoDate} from "@/utils/dateUtil";
+import { useTranslation } from "@/hooks/use-translation";
+import { getApiErrorAlertCopy } from "@/lib/api-error-alert";
+import { useAuthStore } from "@/stores/auth-store";
+import { useLocaleStore } from "@/stores/client/locale-store";
+import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
+import { usePurchaseOwnership } from "@/stores/server/ownership/purchase-mutation";
+import { useTruckByPlateNo } from "@/stores/server/truck/query";
+import { toIsoDate } from "@/utils/dateUtil";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {type Href, useLocalSearchParams, useRouter} from "expo-router";
-import {Button, Input, Select} from "heroui-native";
-import React, {useCallback, useEffect, useMemo} from "react";
-import {Controller, useForm} from "react-hook-form";
-import {Alert, Pressable, ScrollView, Text, View} from "react-native";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type Href, useLocalSearchParams, useRouter } from "expo-router";
+import { Button, Input, Select } from "heroui-native";
+import { useCallback, useEffect, useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    Text,
+    View,
+} from "react-native";
 import {
     SafeAreaView,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import {z} from "zod";
+import { z } from "zod";
 
 const YEAR_RE = /^\d{4}$/;
 const DATE_MSG = {
@@ -417,7 +425,7 @@ export default function OwnershipCreateScreen() {
     return (
         <SafeAreaView
             className="flex-1"
-            style={{backgroundColor: APP_COLORS.background}}
+            style={{backgroundColor: APP_COLORS.background , flex : 1}}
         >
             {/* back button , page title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
@@ -439,13 +447,21 @@ export default function OwnershipCreateScreen() {
                 <View className="h-11 w-11"/>
             </View>
 
-            <ScrollView
-                className="px-4"
-                contentContainerStyle={{
-                    paddingBottom: insets.bottom + 80,
-                    flexGrow: 1,
-                }}
+            <KeyboardAvoidingView
+                className="flex-1"
+                style={{flex : 1}}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
+                <ScrollView
+                    className="px-4"
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + 80,
+                        flexGrow: 1,
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                    automaticallyAdjustKeyboardInsets
+                    keyboardDismissMode="on-drag"
+                >
                 {/* owner , basic info, tire info , ownership info */}
                 <View className="mt-1 gap-4">
 
@@ -805,7 +821,8 @@ export default function OwnershipCreateScreen() {
                         </Text>
                     </View>
                 </Button>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
