@@ -57,16 +57,15 @@ export function useOwnershipsInfinite(
         pageSize: OWNERSHIP_PAGE_SIZE,
         columns,
       }),
-    getNextPageParam: (lastPage) => {
+    getNextPageParam: (lastPage, _pages, lastPageParam) => {
       const meta = lastPage.data;
       if (!meta) return undefined;
+      if (meta.last) return undefined;
       const { totalPages, page } = meta;
       if (typeof totalPages === "number" && totalPages > 0) {
         if (page >= totalPages - 1) return undefined;
-      } else if (meta.last) {
-        return undefined;
       }
-      return page + 1;
+      return lastPageParam + 1;
     },
     staleTime: 0,
     refetchOnWindowFocus: false,

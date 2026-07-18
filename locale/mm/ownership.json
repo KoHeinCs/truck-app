@@ -143,6 +143,31 @@
         "unauthorizedBody": "ဤလုပ်ဆောင်ချက်ကို လုပ်ဆောင်၍ မရပါ။"
       }
     },
+    "sellOwnership": {
+      "title": "ထပ်ကားရောင်းရန်",
+      "subtitle": "အရောင်းအချက်အလက်များဖြည့်သွင်းပါ",
+      "labels": {
+        "sellAmount": "အဆိုပြုငွေ (သိန်း)",
+        "sellDate": "ရောင်းရက်",
+        "soldPlace": "ရောင်းချသည့်နေရာ"
+      },
+      "placeholders": {
+        "sellAmount": "100000",
+        "sellDate": "ရက်/လ/နှစ်",
+        "soldPlace": "ဥပမာ - Yangon"
+      },
+      "actions": {
+        "cancel": "မလုပ်တော့ပါ",
+        "submit": "ရောင်းမည်",
+        "submitting": "ရောင်းချနေသည်..."
+      },
+      "dialog": {
+        "successTitle": "အောင်မြင်သည်",
+        "successBody": "ကားရောင်းချပြီးပါပြီ။",
+        "errorTitle": "အမှား",
+        "errorBody": "ကားရောင်းချ၍ မရပါ။"
+      }
+    },
     "detailOwnership": {
       "title": "ပိုင်ဆိုင်မှုအသေးစိတ်",
       "details": {
@@ -175,6 +200,27 @@
       "empty": {
         "summary": "ပိုင်ဆိုင်မှု အချက်အလက် မတွေ့ရှိပါ",
         "records": "ငွေစာရင်းမှတ်တမ်း မရှိပါ"
+      },
+      "delete": {
+        "button": "ပိုင်ဆိုင်မှု ဖျက်မည်",
+        "modalTitle": "ပိုင်ဆိုင်မှု ဖျက်ရန်",
+        "modalBody": "ဤပိုင်ဆိုင်မှုကို ဖျက်မှာသေချာပါသလား။ ဤလုပ်ဆောင်ချက်ကို ပြန်လှန်၍ မရပါ။",
+        "sellDateLabel": "ရောင်းရက်",
+        "sellDatePlaceholder": "ရက်/လ/နှစ်",
+        "sellDateRequired": "ရောင်းရက် လိုအပ်သည်",
+        "sellDateInvalid": "နေ့/လ/နှစ် ပုံစံ dd/mm/yyyy ထည့်ပါ",
+        "sellDateFuture": "ရောင်းရက်သည် အနာဂတ်မဖြစ်ရပါ",
+        "actions": {
+          "cancel": "မလုပ်တော့ပါ",
+          "confirm": "ဖျက်မည်",
+          "deleting": "ဖျက်နေသည်..."
+        },
+        "dialog": {
+          "successTitle": "အောင်မြင်သည်",
+          "successBody": "ပိုင်ဆိုင်မှု ဖျက်ပြီးပါပြီ။",
+          "errorTitle": "အမှား",
+          "errorBody": "ပိုင်ဆိုင်မှု ဖျက်၍ မရပါ။"
+        }
       }
     }
   }

@@ -143,6 +143,31 @@
         "unauthorizedBody": "You are not allowed to perform this action."
       }
     },
+    "sellOwnership": {
+      "title": "Sell Truck",
+      "subtitle": "Fill in sales information",
+      "labels": {
+        "sellAmount": "Proposed Amount (Lakhs)",
+        "sellDate": "Sale Date",
+        "soldPlace": "Sell Place"
+      },
+      "placeholders": {
+        "sellAmount": "100000",
+        "sellDate": "dd/mm/yyyy",
+        "soldPlace": "e.g. Yangon"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "submit": "Sell",
+        "submitting": "Selling..."
+      },
+      "dialog": {
+        "successTitle": "Success",
+        "successBody": "Truck sold successfully.",
+        "errorTitle": "Error",
+        "errorBody": "Unable to sell truck."
+      }
+    },
     "detailOwnership": {
       "title": "Ownership Details",
       "details": {
@@ -175,6 +200,27 @@
       "empty": {
         "summary": "Ownership details not found",
         "records": "No financial records found"
+      },
+      "delete": {
+        "button": "Delete Ownership",
+        "modalTitle": "Delete Ownership",
+        "modalBody": "Are you sure you want to delete this ownership? This action cannot be undone.",
+        "sellDateLabel": "Sale Date",
+        "sellDatePlaceholder": "dd/mm/yyyy",
+        "sellDateRequired": "Sale date is required",
+        "sellDateInvalid": "Use dd/mm/yyyy",
+        "sellDateFuture": "Sold date cannot be in the future",
+        "actions": {
+          "cancel": "Cancel",
+          "confirm": "Delete",
+          "deleting": "Deleting..."
+        },
+        "dialog": {
+          "successTitle": "Success",
+          "successBody": "Ownership deleted successfully.",
+          "errorTitle": "Error",
+          "errorBody": "Unable to delete ownership."
+        }
       }
     }
   }

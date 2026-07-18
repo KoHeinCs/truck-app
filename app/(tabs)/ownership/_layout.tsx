@@ -9,6 +9,7 @@ export default function OwnershipStackLayout() {
       <Stack.Screen name="create" />
       <Stack.Screen name="edit/[id]" />
       <Stack.Screen name="detail" />
+      <Stack.Screen name="sell" />
     </Stack>
   );
 }

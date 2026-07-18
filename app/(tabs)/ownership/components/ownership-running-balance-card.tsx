@@ -2,7 +2,7 @@ import type {OwnershipRunningBalanceItem} from "@/stores/server/ownership/typed"
 import {formatAmount} from "@/utils/amountUtil";
 import React, {useMemo} from "react";
 import type {StyleProp, TextStyle} from "react-native";
-import {Text, View} from "react-native";
+import {Pressable, Text, View} from "react-native";
 import {APP_COLORS} from "@/constants/colors";
 import {formatDateTime} from '@/utils/dateUtil'
 import {AppLocale} from "@/stores/client/locale-store";
@@ -20,7 +20,8 @@ type OwnershipRunningBalanceCardProps = {
     style?: StyleProp<TextStyle>;
     mmLeading: any;
     resolveServiceTypeLabel: any;
-    local: AppLocale
+    local: AppLocale;
+    onPressProposal?: (proposalNo: string) => void;
 };
 
 function formatLocalizedAmount(
@@ -36,9 +37,11 @@ export function OwnershipRunningBalanceCard({
                                                 style,
                                                 mmLeading,
                                                 resolveServiceTypeLabel,
-                                                local
+                                                local,
+                                                onPressProposal,
                                             }: OwnershipRunningBalanceCardProps) {
 
+    const proposalNo = String(item.proposalNo ?? "").trim();
     const balance = item.balance ?? 0;
     const balanceClassName = balance < 0 ? "text-red-700" : "text-green-700";
     const serviceTypeLabel = useMemo(
@@ -57,11 +60,25 @@ export function OwnershipRunningBalanceCard({
             <View className="flex-row items-start justify-between gap-2">
                 {/* proposal no. , proposal date */}
                 <View className="flex-1">
-                    <Text className={`text-sm font-bold ${mmLeading}`}
-                          style={[style, {color: APP_COLORS.primary}]}
-                    >
-                        {item.proposalNo || "-"}
-                    </Text>
+                    {proposalNo && onPressProposal ? (
+                        <Pressable
+                            accessibilityRole="link"
+                            onPress={() => onPressProposal(proposalNo)}
+                            style={({pressed}) => ({opacity: pressed ? 0.7 : 1})}
+                        >
+                            <Text className={`text-sm font-bold ${mmLeading}`}
+                                  style={[style, {color: APP_COLORS.primary}]}
+                            >
+                                {proposalNo}
+                            </Text>
+                        </Pressable>
+                    ) : (
+                        <Text className={`text-sm font-bold ${mmLeading}`}
+                              style={[style, {color: APP_COLORS.primary}]}
+                        >
+                            {proposalNo || "-"}
+                        </Text>
+                    )}
                     <Text className={`text-xs font-medium  ${mmLeading}`}
                           style={[style, {color: APP_COLORS.textPrimary}]}>
                         {formatDateTime(item.proposeDate)}
