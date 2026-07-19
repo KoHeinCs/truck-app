@@ -5,6 +5,29 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Redirect, Tabs, usePathname } from "expo-router";
 import React, { useCallback } from "react";
 
+type TabNav = {
+  navigate: (name: string, params?: { screen: string }) => void;
+};
+
+type TabRoute = {
+  name: string;
+  state?: { index: number };
+};
+
+/** Nested stack မှာ detail စသည် ကျန်ရင် root (index) သို့ပြန်ရှင်း */
+function resetTabStack(
+  e: { preventDefault: () => void },
+  navigation: TabNav,
+  route: TabRoute,
+) {
+  const nested = route.state;
+  // Default tab jump က detail ကိုပြန်ခေါ်မယ့်အရင် တားမယ်
+  if (nested && nested.index > 0) {
+    e.preventDefault();
+  }
+  navigation.navigate(route.name, { screen: "index" });
+}
+
 export default function TabLayout() {
   const token = useAuthStore((state) => state.token);
   const pathname = usePathname();
@@ -58,10 +81,9 @@ export default function TabLayout() {
             <Ionicons name="car-sport" size={size} color={color} />
           ),
         }}
-        listeners={({ navigation }) => ({
-          tabPress: () => {
-            // Ownership detail စသည်များပေါ်နေရင် list ကိုပြန်ပို့
-            navigation.navigate("ownership", { screen: "index" });
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            resetTabStack(e, navigation, route);
             refreshOwnership();
           },
         })}
@@ -75,10 +97,9 @@ export default function TabLayout() {
             <Ionicons name="create" size={size} color={color} />
           ),
         }}
-        listeners={({ navigation }) => ({
-          tabPress: () => {
-            // Cross-tab မှ detail ပေါ်ကျန်ခဲ့ရင် list (index) သို့ပြန်ပို့
-            navigation.navigate("proposal", { screen: "index" });
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            resetTabStack(e, navigation, route);
             refreshProposal();
           },
         })}
@@ -92,6 +113,11 @@ export default function TabLayout() {
             <Ionicons name="person" size={size} color={color} />
           ),
         }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            resetTabStack(e, navigation, route);
+          },
+        })}
       />
     </Tabs>
   );
