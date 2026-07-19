@@ -99,6 +99,28 @@ const normalizeDateTime = (value: string, endOfDay: boolean): string => {
   return dmyToIsoDateTime(raw, endOfDay) ?? raw;
 };
 
+const buildServiceDateRange = (
+  fromRaw: string,
+  toRaw: string,
+): { value: string; valueTo: string } | null => {
+  const from = normalizeDateTime(fromRaw, false);
+  const to = normalizeDateTime(toRaw, true);
+
+  if (!from && !to) return null;
+
+  if (from && to) {
+    return { value: from, valueTo: to };
+  }
+
+  if (from) {
+    const datePart = from.slice(0, 10);
+    return { value: from, valueTo: `${datePart} 23:59:59` };
+  }
+
+  const datePart = to.slice(0, 10);
+  return { value: `${datePart} 00:00:00`, valueTo: to };
+};
+
 export function proposalFiltersKey(
   status: ProposalTabStatus,
   f: ProposalListFilters,
@@ -190,13 +212,15 @@ export function buildProposalSearchColumns(
     );
   }
 
-  const serviceDateFrom = normalizeDateTime(f.serviceDateFrom, false);
-  const serviceDateTo = normalizeDateTime(f.serviceDateTo, true);
-  if (serviceDateFrom || serviceDateTo) {
+  const serviceDateRange = buildServiceDateRange(
+    f.serviceDateFrom,
+    f.serviceDateTo,
+  );
+  if (serviceDateRange) {
     columns.push(
       column("serviceDate", {
-        value: serviceDateFrom || serviceDateTo,
-        valueTo: serviceDateTo || serviceDateFrom,
+        value: serviceDateRange.value,
+        valueTo: serviceDateRange.valueTo,
         type: "between",
         matchCase: true,
       }),
