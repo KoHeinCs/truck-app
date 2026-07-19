@@ -1,3 +1,5 @@
+import { parseServiceDateDisplayToApi } from "@/utils/service-date";
+
 export type ProposalTabStatus = "INFORM" | "APPROVED" | "TERMINATED";
 type ProposalApiStatus = ProposalTabStatus;
 
@@ -90,6 +92,10 @@ const normalizeDateTime = (value: string, endOfDay: boolean): string => {
   const raw = value.trim();
   if (!raw) return "";
   if (raw.includes("-") && raw.includes(":")) return raw;
+
+  const fromDisplay = parseServiceDateDisplayToApi(raw);
+  if (fromDisplay) return fromDisplay;
+
   return dmyToIsoDateTime(raw, endOfDay) ?? raw;
 };
 
