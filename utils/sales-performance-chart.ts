@@ -5,6 +5,9 @@ const MYANMAR_DIGITS = ["၀", "၁", "၂", "၃", "၄", "၅", "၆", "၇", 
 export type ChartPoint = {
   value: number;
   label: string;
+  monthlyProfit: number;
+  salesMonth: string;
+  totalSold: number;
 };
 
 export function toMyanmarDigits(value: number | string): string {
@@ -37,7 +40,10 @@ export function buildMonthlyChartPoints(
   monthLabels: string[],
   year: number,
 ): ChartPoint[] {
-  const profitByMonth = new Map<number, number>();
+  const dataByMonth = new Map<
+    number,
+    Pick<ChartPoint, "monthlyProfit" | "salesMonth" | "totalSold">
+  >();
 
   for (const item of items ?? []) {
     const match = /^(\d{4})-(\d{2})$/.exec(item.salesMonth?.trim() ?? "");
@@ -47,11 +53,27 @@ export function buildMonthlyChartPoints(
     const month = Number(match[2]);
     if (itemYear !== year || month < 1 || month > 12) continue;
 
-    profitByMonth.set(month, item.monthlyProfit ?? 0);
+    dataByMonth.set(month, {
+      monthlyProfit: item.monthlyProfit ?? 0,
+      salesMonth: item.salesMonth?.trim() ?? "",
+      totalSold: item.totalSold ?? 0,
+    });
   }
 
-  return monthLabels.map((label, index) => ({
-    label,
-    value: profitByMonth.get(index + 1) ?? 0,
-  }));
+  return monthLabels.map((label, index) => {
+    const month = index + 1;
+    const monthData = dataByMonth.get(month);
+    const salesMonth =
+      monthData?.salesMonth ?? `${year}-${String(month).padStart(2, "0")}`;
+    const monthlyProfit = monthData?.monthlyProfit ?? 0;
+    const totalSold = monthData?.totalSold ?? 0;
+
+    return {
+      label,
+      value: monthlyProfit,
+      monthlyProfit,
+      salesMonth,
+      totalSold,
+    };
+  });
 }

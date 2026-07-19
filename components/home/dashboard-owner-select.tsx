@@ -23,6 +23,11 @@ const DashboardOwnerSelect = ({
   const t = useTranslation("home");
   const { data: ownerSelectOptions = [] } = useOwnerLookupOptions("");
 
+  const options = useMemo(
+    () => [{ value: "", label: t.ownerAllLabel }, ...ownerSelectOptions],
+    [ownerSelectOptions, t.ownerAllLabel],
+  );
+
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
   const mmLeading = getMyanmarLeadingClass(locale);
@@ -48,7 +53,7 @@ const DashboardOwnerSelect = ({
         onChange={onChange}
         locale={locale}
         placeholder={t.ownerIdPlaceholder}
-        options={ownerSelectOptions}
+        options={options}
       />
     </View>
   );

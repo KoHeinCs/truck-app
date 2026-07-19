@@ -13,8 +13,10 @@ import {
   computeYAxisMax,
   formatProfitAxisLabel,
   toMyanmarDigits,
+  type ChartPoint,
 } from "@/utils/sales-performance-chart";
-import React, { useMemo, useState } from "react";
+import { formatAmount } from "@/utils/amountUtil";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -30,6 +32,90 @@ type ChartComponentProps = {
   selectedOwnerId?: string | null;
 };
 
+type ChartFocusTooltipProps = {
+  item: ChartPoint;
+  locale: "en" | "mm";
+  labels: {
+    month: string;
+    profit: string;
+    totalSold: string;
+  };
+  textStyle: ReturnType<typeof myanmarUITextStyle> | undefined;
+  mmLeading: string;
+};
+
+function ChartFocusTooltip({
+  item,
+  locale,
+  labels,
+  textStyle,
+  mmLeading,
+}: ChartFocusTooltipProps) {
+  const formatDisplay = (value: number | string) =>
+    locale === "mm" ? toMyanmarDigits(value) : String(value);
+
+  const rows = [
+    {
+      key: "month",
+      label: labels.month,
+      value: formatDisplay(item.salesMonth),
+      color: APP_COLORS.textMuted,
+    },
+    {
+      key: "profit",
+      label: labels.profit,
+      value: formatDisplay(formatAmount(item.monthlyProfit)),
+      color: APP_COLORS.primary,
+    },
+    {
+      key: "totalSold",
+      label: labels.totalSold,
+      value: formatDisplay(item.totalSold),
+      color: APP_COLORS.success,
+    },
+  ];
+
+  return (
+    <View
+      className="rounded-lg px-3 py-2"
+      style={{
+        backgroundColor: "#1e293b",
+        minWidth: 168,
+        marginBottom: 8,
+        marginLeft: -48,
+      }}
+    >
+      {rows.map((row, index) => (
+        <View
+          key={row.key}
+          className={`flex-row items-center justify-between gap-3 ${
+            index > 0 ? "mt-1.5" : ""
+          }`}
+        >
+          <View className="flex-row items-center gap-2">
+            <View
+              className="h-2.5 w-2.5 rounded-sm"
+              style={{ backgroundColor: row.color }}
+            />
+            <Text
+              className={`text-[11px] text-slate-300 ${mmLeading}`}
+              style={textStyle}
+            >
+              {row.label}
+            </Text>
+          </View>
+          <Text
+            className={`text-[11px] font-semibold text-white ${mmLeading}`}
+            style={textStyle}
+          >
+            {row.value}
+          </Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const role = useAuthStore((state) => state.role);
   const upperRole = (role || "").toUpperCase();
@@ -41,7 +127,6 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
 
   const showChart = upperRole === "ADMIN" || upperRole === "OWNER" || upperRole === "VIEWER";
-  const needsOwnerSelection = upperRole === "ADMIN" && !selectedOwnerId?.trim();
   const { data, isPending, isError } = useSalesPerformance(selectedYear, selectedOwnerId);
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
@@ -81,6 +166,28 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const yearOptions = useMemo(() => buildYearOptions(currentYear), [currentYear]);
   const displayYear = locale === "mm" ? toMyanmarDigits(selectedYear) : String(selectedYear);
 
+  const tooltipLabels = useMemo(
+    () => ({
+      month: t.chartMonthLabel,
+      profit: t.chartProfitLabel,
+      totalSold: t.chartTotalSoldLabel,
+    }),
+    [t.chartMonthLabel, t.chartProfitLabel, t.chartTotalSoldLabel],
+  );
+
+  const renderFocusTooltip = useCallback(
+    (item: ChartPoint) => (
+      <ChartFocusTooltip
+        item={item}
+        locale={locale}
+        labels={tooltipLabels}
+        textStyle={textStyle}
+        mmLeading={mmLeading}
+      />
+    ),
+    [locale, mmLeading, textStyle, tooltipLabels],
+  );
+
   if (!showChart) {
     return null;
   }
@@ -118,14 +225,7 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
       </View>
 
       <View className="mt-4 items-center justify-center" style={{ minHeight: 200 }}>
-        {needsOwnerSelection ? (
-          <Text
-            className={`text-sm text-slate-500 ${mmLeading}`}
-            style={textStyle}
-          >
-            {t.selectOwnerFirst}
-          </Text>
-        ) : isPending ? (
+        {isPending ? (
           <ActivityIndicator color={APP_COLORS.primary} size="large" />
         ) : isError ? (
           <Text
@@ -147,6 +247,15 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
             areaChart
             curved
             hideDataPoints
+            focusEnabled
+            showDataPointOnFocus
+            showStripOnFocus
+            showDataPointLabelOnFocus
+            stripColor={APP_COLORS.primary}
+            stripWidth={1}
+            focusedDataPointColor={APP_COLORS.primary}
+            focusedDataPointRadius={5}
+            focusedDataPointLabelComponent={renderFocusTooltip}
             maxValue={yAxisMax}
             noOfSections={4}
             width={chartWidth}

@@ -10,9 +10,9 @@ import type {
     OwnershipTruckStatus,
 } from "@/stores/server/ownership/search-columns";
 import type {OwnershipItem} from "@/stores/server/ownership/typed";
-import React, {useCallback, useMemo, useState} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {ActivityIndicator, FlatList, Text, View} from "react-native";
-import {type Href, useRouter} from "expo-router";
+import {type Href, useLocalSearchParams, useRouter} from "expo-router";
 import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {OwnershipAdvancedFilters} from "./components/ownership-advanced-filters";
@@ -51,6 +51,7 @@ const TABS: OwnershipTruckStatus[] = ["ACTIVE", "SOLD_OUT"];
 
 export default function OwnerShip() {
     const router = useRouter();
+    const params = useLocalSearchParams<{ status?: string | string[] }>();
     const locale = useLocaleStore((state) => state.locale);
     const fullName = useAuthStore((state) => state.fullName);
     const role = useAuthStore((state) => state.role);
@@ -67,6 +68,17 @@ export default function OwnerShip() {
         useState<OwnershipAdvancedFilterValues>(() => ({
             ...emptyOwnershipAdvancedApplied,
         }));
+
+    useEffect(() => {
+        const rawStatus = Array.isArray(params.status)
+            ? params.status[0]
+            : params.status;
+
+        if (rawStatus === "ACTIVE" || rawStatus === "SOLD_OUT") {
+            setStatus(rawStatus);
+        }
+    }, [params.status]);
+
     const patchUi = useCallback((next: Partial<OwnershipListUiState>) => {
         setUi((prev) => ({...prev, ...next}));
     }, []);

@@ -10,9 +10,10 @@ import { useProposalStats } from "@/stores/server/dashboard/proposal-stats-query
 import { useTruckStats } from "@/stores/server/dashboard/truck-stats-query";
 import { toMyanmarDigits } from "@/utils/sales-performance-chart";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import type { StyleProp, TextStyle } from "react-native";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 type SummaryCardTheme = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -28,6 +29,7 @@ type SummaryCardItemProps = {
   textStyle?: StyleProp<TextStyle>;
   mmLeading: string;
   displayValue: string;
+  onPress?: () => void;
 };
 
 function SummaryCardItem({
@@ -36,11 +38,14 @@ function SummaryCardItem({
   textStyle,
   mmLeading,
   displayValue,
+  onPress,
 }: SummaryCardItemProps) {
   return (
-    <View
+    <Pressable
+      onPress={onPress}
+      disabled={!onPress}
       className="relative min-h-[108px] flex-1 overflow-hidden rounded-2xl p-3"
-      style={{
+      style={({ pressed }) => ({
         backgroundColor: APP_COLORS.card,
         borderColor: APP_COLORS.border,
         borderWidth: 1,
@@ -49,7 +54,8 @@ function SummaryCardItem({
         shadowOpacity: 0.06,
         shadowRadius: 8,
         elevation: 2,
-      }}
+        opacity: onPress && pressed ? 0.92 : 1,
+      })}
     >
       <View
         className="absolute -right-6 -top-6 h-20 w-20 rounded-full"
@@ -72,13 +78,15 @@ function SummaryCardItem({
         </Text>
       </View>
 
-      <Text
-        className={`mt-3 text-2xl font-bold text-slate-900 ${mmLeading}`}
-        style={textStyle}
-      >
-        {displayValue}
-      </Text>
-    </View>
+      <View className="flex-1 items-center justify-center">
+        <Text
+          className={`text-2xl font-bold text-slate-900 ${mmLeading}`}
+          style={textStyle}
+        >
+          {displayValue}
+        </Text>
+      </View>
+    </Pressable>
   );
 }
 
@@ -87,6 +95,7 @@ type SummaryCardProps = {
 };
 
 const SummaryCard = ({ selectedOwnerId }: SummaryCardProps) => {
+  const router = useRouter();
   const role = useAuthStore((state) => state.role);
   const upperRole = (role || "").toUpperCase();
   const locale = useLocaleStore((state) => state.locale);
@@ -112,6 +121,23 @@ const SummaryCard = ({ selectedOwnerId }: SummaryCardProps) => {
 
   const formatCount = (value: number) =>
     locale === "mm" ? toMyanmarDigits(value) : String(value);
+
+  const openOwnershipTab = (status: "ACTIVE" | "SOLD_OUT") => {
+    router.push({
+      pathname: "/(tabs)/ownership",
+      params: { status },
+    });
+  };
+
+  const cardPressHandlers: Partial<Record<string, () => void>> = {
+    active: () => openOwnershipTab("ACTIVE"),
+    sold: () => openOwnershipTab("SOLD_OUT"),
+    inform: () =>
+      router.push({
+        pathname: "/(tabs)/proposal",
+        params: { status: "INFORM" },
+      }),
+  };
 
   const cards = useMemo(
     () => [
@@ -201,6 +227,7 @@ const SummaryCard = ({ selectedOwnerId }: SummaryCardProps) => {
                 textStyle={textStyle}
                 mmLeading={mmLeading}
                 displayValue={formatCount(card.value)}
+                onPress={cardPressHandlers[card.key]}
               />
             ))}
           </View>
@@ -214,6 +241,7 @@ const SummaryCard = ({ selectedOwnerId }: SummaryCardProps) => {
                 textStyle={textStyle}
                 mmLeading={mmLeading}
                 displayValue={formatCount(card.value)}
+                onPress={cardPressHandlers[card.key]}
               />
             ))}
           </View>

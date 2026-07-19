@@ -3,6 +3,7 @@
     "dashboardTitle": "Dashboard",
     "ownerIdLabel": "Owner",
     "ownerIdPlaceholder": "Select owner",
+    "ownerAllLabel": "All",
     "selectOwnerFirst": "Please select an owner first",
     "monthlyProfitTitle": "Monthly Profit",
     "selectYear": "Select year",
@@ -10,6 +11,9 @@
     "error": "Failed to load chart data",
     "topProfitTrucksTitle": "Top Profit Trucks",
     "profitLabel": "Profit (Ks)",
+    "chartMonthLabel": "Month",
+    "chartProfitLabel": "Profit",
+    "chartTotalSoldLabel": "Total Sold",
     "summary": {
       "activeTrucks": "Active Trucks",
       "soldTrucks": "Sold Trucks",

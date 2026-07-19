@@ -3,6 +3,7 @@
     "dashboardTitle": "Dashboard",
     "ownerIdLabel": "ယာဉ်ပိုင်ရှင်",
     "ownerIdPlaceholder": "ယာဉ်ပိုင်ရှင် ရွေးပါ",
+    "ownerAllLabel": "အားလုံး",
     "selectOwnerFirst": "ယာဉ်ပိုင်ရှင်ကို အရင်ရွေးပေးပါ",
     "monthlyProfitTitle": "လစဉ်အမြတ်ငွေစာရင်း",
     "selectYear": "နှစ်ရွေးပါ",
@@ -10,6 +11,9 @@
     "error": "ဒေတာဖတ်ယူ၍မရပါ",
     "topProfitTrucksTitle": "အမြတ်အစွန်းအများဆုံးကားများ",
     "profitLabel": "အမြတ်ငွေ (Ks)",
+    "chartMonthLabel": "လ",
+    "chartProfitLabel": "အမြတ်ငွေ",
+    "chartTotalSoldLabel": "ရောင်းချပြီး",
     "summary": {
       "activeTrucks": "လက်ရှိကားများ",
       "soldTrucks": "ရောင်းပြီးကားများ",
