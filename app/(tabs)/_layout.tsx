@@ -1,14 +1,28 @@
 import { APP_COLORS } from "@/constants/colors";
 import { useAuthStore } from "@/stores/auth-store";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useQueryClient } from "@tanstack/react-query";
 import { Redirect, Tabs, usePathname } from "expo-router";
-import React from "react";
+import React, { useCallback } from "react";
 
 export default function TabLayout() {
   const token = useAuthStore((state) => state.token);
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const hideTabBar =
     pathname === "/proposal/create" || pathname === "/proposal/edit";
+
+  const refreshHome = useCallback(() => {
+    void queryClient.resetQueries({ queryKey: ["dashboard"] });
+  }, [queryClient]);
+
+  const refreshOwnership = useCallback(() => {
+    void queryClient.resetQueries({ queryKey: ["ownership", "infinite"] });
+  }, [queryClient]);
+
+  const refreshProposal = useCallback(() => {
+    void queryClient.resetQueries({ queryKey: ["proposal", "infinite"] });
+  }, [queryClient]);
 
   if (!token) {
     return <Redirect href="/(auth)/login" />;
@@ -31,6 +45,9 @@ export default function TabLayout() {
             <Ionicons name="home" size={size} color={color} />
           ),
         }}
+        listeners={{
+          tabPress: refreshHome,
+        }}
       />
       <Tabs.Screen
         name="ownership"
@@ -41,6 +58,13 @@ export default function TabLayout() {
             <Ionicons name="car-sport" size={size} color={color} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            // Ownership detail စသည်များပေါ်နေရင် list ကိုပြန်ပို့
+            navigation.navigate("ownership", { screen: "index" });
+            refreshOwnership();
+          },
+        })}
       />
       <Tabs.Screen
         name="proposal"
@@ -51,6 +75,13 @@ export default function TabLayout() {
             <Ionicons name="create" size={size} color={color} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            // Cross-tab မှ detail ပေါ်ကျန်ခဲ့ရင် list (index) သို့ပြန်ပို့
+            navigation.navigate("proposal", { screen: "index" });
+            refreshProposal();
+          },
+        })}
       />
       <Tabs.Screen
         name="profile"

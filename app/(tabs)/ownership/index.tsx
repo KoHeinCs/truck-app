@@ -99,7 +99,8 @@ export default function OwnerShip() {
     const {data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending} = useOwnershipsInfinite(status, filters, role);
 
     const items = useMemo(
-        () => data?.pages.flatMap((page) => page.data.data) ?? [],
+        () =>
+            data?.pages.flatMap((page) => page.data?.data ?? []) ?? [],
         [data],
     );
 

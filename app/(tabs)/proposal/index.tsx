@@ -134,7 +134,8 @@ export default function ProposalScreen() {
         useProposalsInfinite(status, filters, role, true);
 
     const items = useMemo(
-        () => data?.pages.flatMap((page) => page.data.data) ?? [],
+        () =>
+            data?.pages.flatMap((page) => page.data?.data ?? []) ?? [],
         [data],
     );
 

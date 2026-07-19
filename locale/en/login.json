@@ -10,6 +10,10 @@
       "password": "Enter password"
     },
     "errorTitle": "Login Failed",
-    "errorBody": "Invalid credentials or network connection issue. Please try again."
+    "errorBody": "Invalid credentials or network connection issue. Please try again.",
+    "agreeLabel": "I agree",
+    "termsLink": "Terms and Conditions",
+    "termsTitle": "Terms and Conditions",
+    "agreeRequired": "Please agree to the Terms and Conditions to continue."
   }
 }

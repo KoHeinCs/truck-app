@@ -81,8 +81,6 @@ function ChartFocusTooltip({
       style={{
         backgroundColor: "#1e293b",
         minWidth: 168,
-        marginBottom: 8,
-        marginLeft: -48,
       }}
     >
       {rows.map((row, index) => (
@@ -175,16 +173,21 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
     [t.chartMonthLabel, t.chartProfitLabel, t.chartTotalSoldLabel],
   );
 
-  const renderFocusTooltip = useCallback(
-    (item: ChartPoint) => (
-      <ChartFocusTooltip
-        item={item}
-        locale={locale}
-        labels={tooltipLabels}
-        textStyle={textStyle}
-        mmLeading={mmLeading}
-      />
-    ),
+  const renderPointerTooltip = useCallback(
+    (items: ChartPoint[]) => {
+      const item = items[0];
+      if (!item) return null;
+
+      return (
+        <ChartFocusTooltip
+          item={item}
+          locale={locale}
+          labels={tooltipLabels}
+          textStyle={textStyle}
+          mmLeading={mmLeading}
+        />
+      );
+    },
     [locale, mmLeading, textStyle, tooltipLabels],
   );
 
@@ -247,15 +250,6 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
             areaChart
             curved
             hideDataPoints
-            focusEnabled
-            showDataPointOnFocus
-            showStripOnFocus
-            showDataPointLabelOnFocus
-            stripColor={APP_COLORS.primary}
-            stripWidth={1}
-            focusedDataPointColor={APP_COLORS.primary}
-            focusedDataPointRadius={5}
-            focusedDataPointLabelComponent={renderFocusTooltip}
             maxValue={yAxisMax}
             noOfSections={4}
             width={chartWidth}
@@ -275,8 +269,20 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
             formatYLabel={(label) => formatProfitAxisLabel(Number(label))}
             spacing={Math.max((chartWidth - 50) / 11, 18)}
             initialSpacing={8}
-            endSpacing={8}
+            endSpacing={24}
             disableScroll
+            pointerConfig={{
+              pointerStripHeight: 160,
+              pointerStripColor: APP_COLORS.primary,
+              pointerStripWidth: 1,
+              pointerColor: APP_COLORS.primary,
+              radius: 5,
+              pointerLabelWidth: 176,
+              pointerLabelHeight: 88,
+              activatePointersInstantlyOnTouch: true,
+              autoAdjustPointerLabelPosition: true,
+              pointerLabelComponent: renderPointerTooltip,
+            }}
           />
         )}
       </View>

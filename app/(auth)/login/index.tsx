@@ -1,3 +1,4 @@
+import {TermsModal} from "@/components/auth/terms-modal";
 import {useTranslation} from "@/hooks/use-translation";
 import {useLogin} from "@/stores/server/login/mutation";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -46,6 +47,11 @@ export default function LoginScreen() {
     });
 
     const onSubmit = (values: FormValues) => {
+        if (!agreed) {
+            Alert.alert(t.errorTitle, t.agreeRequired);
+            return;
+        }
+
         mutate(values, {
             onError: (err: unknown) => {
                 const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
@@ -59,6 +65,8 @@ export default function LoginScreen() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
+    const [agreed, setAgreed] = useState(false);
+    const [termsVisible, setTermsVisible] = useState(false);
 
     const handleSelectLocale = (option: AppLocale) => {
         setLocale(option);
@@ -267,20 +275,62 @@ export default function LoginScreen() {
                         </View>
                     </Card.Body>
 
-                    <Card.Footer className="pt-0">
+                    <Card.Footer className="pt-0 gap-3">
+                        <View className="flex-row items-start gap-3">
+                            <Pressable
+                                onPress={() => setAgreed((prev) => !prev)}
+                                className="h-5 w-5 items-center justify-center rounded"
+                                style={{
+                                    backgroundColor: agreed
+                                        ? APP_COLORS.primary
+                                        : APP_COLORS.inputBackground,
+                                    borderColor: agreed
+                                        ? APP_COLORS.primary
+                                        : APP_COLORS.border,
+                                    borderWidth: 1,
+                                    marginTop: 2,
+                                }}
+                                hitSlop={8}
+                            >
+                                {agreed ? (
+                                    <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+                                ) : null}
+                            </Pressable>
+
+                            <View className="flex-1 gap-1">
+                                <Pressable onPress={() => setAgreed((prev) => !prev)}>
+                                    <Text
+                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        style={[{color: APP_COLORS.textPrimary}, textStyle]}
+                                    >
+                                        {t.agreeLabel}
+                                    </Text>
+                                </Pressable>
+                                <Pressable onPress={() => setTermsVisible(true)} hitSlop={4}>
+                                    <Text
+                                        className={`text-sm font-semibold ${getMyanmarLeadingClass(locale)}`}
+                                        style={[{color: APP_COLORS.primary}, textStyle]}
+                                    >
+                                        {t.termsLink}
+                                    </Text>
+                                </Pressable>
+                            </View>
+                        </View>
+
                         <Button
                             onPress={handleSubmit(onSubmit)}
-                            isDisabled={isPending}
+                            isDisabled={isPending || !agreed}
                             className={`w-full ${getMyanmarLeadingClass(locale)}`}
                             animation={{
                                 highlight: {
                                     backgroundColor: {
-                                        value: APP_COLORS.primaryPressed, // Safely injects #456385 on click!
+                                        value: APP_COLORS.primaryPressed,
                                     }
                                 },
                             }}
                             style={{
-                                backgroundColor: APP_COLORS.primary
+                                backgroundColor: APP_COLORS.primary,
+                                opacity: agreed ? 1 : 0.55,
                             }}
                         >
                             {isPending ? (
@@ -293,6 +343,11 @@ export default function LoginScreen() {
                     </Card.Footer>
                 </Card>
             </KeyboardAvoidingView>
+
+            <TermsModal
+                visible={termsVisible}
+                onClose={() => setTermsVisible(false)}
+            />
         </SafeAreaView>
     );
 }
