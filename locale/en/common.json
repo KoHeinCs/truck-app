@@ -20,6 +20,12 @@
       "evening": "Good Evening",
       "night": "Good Night"
     },
-    "anyLabel": "Any"
+    "anyLabel": "Any",
+    "tabs": {
+      "home": "Home",
+      "ownership": "Ownership",
+      "proposal": "Proposal",
+      "profile": "Profile"
+    }
   }
 }

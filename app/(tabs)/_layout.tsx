@@ -3,7 +3,8 @@ import { useAuthStore } from "@/stores/auth-store";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQueryClient } from "@tanstack/react-query";
 import { Redirect, Tabs, usePathname } from "expo-router";
-import React, { useCallback } from "react";
+import React, {useCallback, useMemo} from "react";
+import {useTranslation} from "@/hooks/use-translation";
 
 type TabNav = {
   navigate: (name: string, params?: { screen: string }) => void;
@@ -29,11 +30,20 @@ function resetTabStack(
 }
 
 export default function TabLayout() {
+
   const token = useAuthStore((state) => state.token);
+  const {tabs:t} =  useTranslation('common')
   const pathname = usePathname();
   const queryClient = useQueryClient();
-  const hideTabBar =
-    pathname === "/proposal/create" || pathname === "/proposal/edit";
+
+  const hideTabBar = useMemo(()=> {
+      const hiddenPrefixes = ["/proposal/","/ownership/","/profile/"];
+      const isRootTab = pathname === "/" || pathname === "/ownership" || pathname === '/proposal' || pathname === "/proposal";
+      if (isRootTab) return false;
+      return hiddenPrefixes.some(prefix => pathname.startsWith(prefix))
+  },[pathname]);
+
+
 
   const refreshHome = useCallback(() => {
     void queryClient.resetQueries({ queryKey: ["dashboard"] });
@@ -64,6 +74,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
+          tabBarLabel:t.home,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
@@ -76,7 +87,7 @@ export default function TabLayout() {
         name="ownership"
         options={{
           title: "Truck",
-          tabBarLabel: "Truck",
+          tabBarLabel: t.ownership,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="car-sport" size={size} color={color} />
           ),
@@ -92,7 +103,7 @@ export default function TabLayout() {
         name="proposal"
         options={{
           title: "Proposal",
-          tabBarLabel: "Proposal",
+          tabBarLabel: t.proposal,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="create" size={size} color={color} />
           ),
@@ -108,7 +119,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarLabel: "Profile",
+          tabBarLabel: t.profile,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
