@@ -7,7 +7,6 @@ import { useTranslation } from "@/hooks/use-translation";
 import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
 import { Card } from "heroui-native";
-import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { CompactSelect } from "@/app/(tabs)/profile/user/components/compact-select";
 
@@ -36,33 +35,22 @@ export function ProposalAdvancedFilters({
                                         }: ProposalAdvancedFiltersProps) {
 
     const {search: t} = useTranslation('proposal')
-    const tCommon = useTranslation("common");
     const mmLeading = getMyanmarLeadingClass(locale);
 
-    const ownerOptions = userOptions
-        .filter((user: { role: string }) => user.role === "OWNER")
+    const ownerSelectOptions = userOptions
+        .filter((user: { role: string }) => user.role === "OWNER" || user.role === '')
         .map((user: { value: string; label: string }) => ({
             value: user.value,
             label: user.label
         }));
 
-    const informUserOptions = userOptions
+    const informUserSelectOptions = userOptions
         .filter((user: { role: string }) => user.role !== "VIEWER")
         .map((user: { value: string; label: string }) => ({
             value: user.value,
             label: user.label
         }));
 
-    const informUserSelectOptions = useMemo(
-        () => [{value:"",label:tCommon.anyLabel}, ...informUserOptions],
-        [informUserOptions,tCommon.anyLabel]
-    );
-
-
-    const ownerSelectOptions = useMemo(
-        () => [{value: "", label: tCommon.anyLabel}, ...ownerOptions],
-        [ownerOptions, tCommon.anyLabel],
-    );
 
     return (
         <Card

@@ -68,23 +68,26 @@ const Home = () => {
         </View>
 
         {/* owner select box */}
-        { ( isAdmin && isPending ) ?
-            (
+        {isAdmin ? (
+            isPending ? (
                 <View className="items-center py-8">
                   <ActivityIndicator color={APP_COLORS.primary} size="small" />
                 </View>
             ) : (
-            <View>
-              <CompactSelect
-                  label={home.ownerIdLabel}
-                  value={selectedOwnerId}
-                  onChange={setSelectedOwnerId}
-                  locale={locale}
-                  placeholder={home.ownerIdPlaceholder}
-                  options={options}
-              />
-            </View>
-        )}
+                <View>
+                  <CompactSelect
+                      label={home.ownerIdLabel}
+                      value={selectedOwnerId}
+                      onChange={setSelectedOwnerId}
+                      locale={locale}
+                      placeholder={home.ownerIdPlaceholder}
+                      options={options}
+                  />
+                </View>
+            )
+        ) : null}
+
+
 
         <View>
           <SummaryCard

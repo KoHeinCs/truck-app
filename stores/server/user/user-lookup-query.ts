@@ -37,7 +37,12 @@ const normalizeUserOptions
         return map.set(value, {value, label,role});
     }, new Map<string, UserLookupOption>());
 
-    return Array.from(uniqueOptionsMap.values());
+    const uniqueOptionsArray: UserLookupOption [] = Array.from(uniqueOptionsMap.values());
+
+    return [
+        { value: '', label: 'All' ,role:''},
+        ...uniqueOptionsArray
+    ]
 
 }
 
