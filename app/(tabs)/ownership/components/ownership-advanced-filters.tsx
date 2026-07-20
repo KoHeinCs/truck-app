@@ -21,7 +21,7 @@ type OwnershipAdvancedFiltersProps = {
     onReset: () => void;
     onApply: () => void;
     mmLeading: any;
-    ownerOptions: any;
+    ownerSelectOptions: any;
     status: string;
 };
 
@@ -34,17 +34,14 @@ export function OwnershipAdvancedFilters({
                                              onReset,
                                              onApply,
                                              mmLeading,
-                                             ownerOptions,
+                                             ownerSelectOptions,
                                              status
                                          }: OwnershipAdvancedFiltersProps) {
 
 
     const tCommon = useTranslation("common");
     const {search: t} = useTranslation('ownership')
-    const ownerSelectOptions = useMemo(
-        () => [{value: "", label: tCommon.anyLabel}, ...ownerOptions],
-        [ownerOptions, tCommon.anyLabel]
-    );
+
 
     return (
         <Card className="mb-4 p-5"

@@ -37,7 +37,11 @@ const normalizeOwnerOptions = (
     return map.set(value, { value, label });
   }, new Map<string, OwnerLookupOption>());
 
-  return Array.from(uniqueOptionsMap.values());
+  const uniqueOptionsArray: OwnerLookupOption[] =  Array.from(uniqueOptionsMap.values());
+  return [
+    { value: '', label: 'All' },
+      ...uniqueOptionsArray
+  ]
 
 };
 
@@ -46,7 +50,8 @@ export function useOwnerLookupOptions(query: string,enabled = true) {
     queryKey: ["owner-lookup", query.trim()],
     queryFn: () => lookupOwners(query),
     select: normalizeOwnerOptions,
-    staleTime: 0,
+    staleTime: 1000 * 60 * 10, // 10 mins
+    gcTime: 1000 * 60 * 15, // 15 mins
     enabled:enabled
   });
 }

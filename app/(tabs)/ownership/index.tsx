@@ -216,7 +216,7 @@ export default function OwnerShip() {
                                     patchUi({advancedOpen: false});
                                 }}
                                 mmLeading={mmLeading}
-                                ownerOptions={ownerOptions}
+                                ownerSelectOptions={ownerOptions}
                                 status={status}
                             />
                         ) : null}
