@@ -47,15 +47,20 @@ export const useLogin = () => {
 
 
         const {userId,parentOwnerId} = parseTokenDetails(token) || {};
+        const userRole = body.data.role;
 
         useAuthStore.getState().signIn({
           token,
           fullName: body.data.fullName,
-          role: body.data.role,
+          role: userRole,
           userId,
           parentOwnerId
         });
-        router.replace("/(tabs)");
+
+        if (userRole === 'WORKER')
+          router.replace("/(tabs)/proposal");
+        else
+          router.replace("/(tabs)");
       }
     },
   });

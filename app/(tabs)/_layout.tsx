@@ -35,8 +35,14 @@ export default function TabLayout() {
   const {tabs:t} =  useTranslation('common')
   const pathname = usePathname();
   const queryClient = useQueryClient();
+  const role = useAuthStore((state) => state.role);
 
-  const hideTabBar = useMemo(()=> {
+  const isOwner = useMemo(() => {
+        return ["ADMIN", "OWNER",'VIEWER'].includes(role ?? "");
+  }, [role]);
+
+
+    const hideTabBar = useMemo(()=> {
       const hiddenPrefixes = ["/proposal/","/ownership/","/profile/"];
       const isRootTab = pathname === "/" || pathname === "/ownership" || pathname === '/proposal' || pathname === "/proposal";
       if (isRootTab) return false;
@@ -68,6 +74,11 @@ export default function TabLayout() {
         tabBarActiveTintColor: APP_COLORS.primary,
         tabBarHideOnKeyboard: true,
         tabBarStyle: hideTabBar ? { display: "none" } : undefined,
+          tabBarItemStyle: {
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+          }
       }}
     >
       <Tabs.Screen
@@ -78,6 +89,8 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
+          tabBarButton: isOwner ? undefined : () => null,
+          tabBarItemStyle: isOwner ? { flex: 1 } : { display: "none", width: 0, height: 0 }
         }}
         listeners={{
           tabPress: refreshHome,
@@ -91,6 +104,8 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="car-sport" size={size} color={color} />
           ),
+            tabBarButton: isOwner ? undefined : () => null,
+            tabBarItemStyle: isOwner ? { flex: 1 } : { display: "none", width: 0, height: 0 }
         }}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
@@ -107,6 +122,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="create" size={size} color={color} />
           ),
+          tabBarItemStyle: { flex: 1 }
         }}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
@@ -123,6 +139,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
+          tabBarItemStyle: { flex: 1 }
         }}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
