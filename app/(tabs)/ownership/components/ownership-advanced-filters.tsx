@@ -4,7 +4,7 @@ import {COMPACT_ADVANCED_INPUT_CLASSNAME} from "@/constants/compact-input";
 import type {AppLocale} from "@/stores/client/locale-store";
 import type {OwnershipAdvancedFilters as OwnershipAdvancedFilterValues} from "@/stores/server/ownership/search-columns";
 import {Card} from "heroui-native";
-import React, {useMemo} from "react";
+import React from "react";
 import type {StyleProp, TextStyle} from "react-native";
 import {Pressable, Text, View} from "react-native";
 import {CompactSelect} from "@/app/(tabs)/profile/user/components/compact-select";
@@ -39,7 +39,6 @@ export function OwnershipAdvancedFilters({
                                          }: OwnershipAdvancedFiltersProps) {
 
 
-    const tCommon = useTranslation("common");
     const {search: t} = useTranslation('ownership')
 
 
