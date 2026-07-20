@@ -43,6 +43,7 @@ export function OwnershipRunningBalanceCard({
 
     const proposalNo = String(item.proposalNo ?? "").trim();
     const balance = item.balance ?? 0;
+    const isSoldProposal = (item.credit ?? 0 ) > 0 ;
     const balanceClassName = balance < 0 ? "text-red-700" : "text-green-700";
     const serviceTypeLabel = useMemo(
         () => resolveServiceTypeLabel(item?.serviceType ?? "", local),
@@ -60,7 +61,7 @@ export function OwnershipRunningBalanceCard({
             <View className="flex-row items-start justify-between gap-2">
                 {/* proposal no. , proposal date */}
                 <View className="flex-1">
-                    {proposalNo && onPressProposal ? (
+                    {!isSoldProposal && proposalNo && onPressProposal ? (
                         <Pressable
                             accessibilityRole="link"
                             onPress={() => onPressProposal(proposalNo)}
@@ -74,7 +75,7 @@ export function OwnershipRunningBalanceCard({
                         </Pressable>
                     ) : (
                         <Text className={`text-sm font-bold ${mmLeading}`}
-                              style={[style, {color: APP_COLORS.primary}]}
+                              style={[style, {color: APP_COLORS.textPrimary}]}
                         >
                             {proposalNo || "-"}
                         </Text>

@@ -4,7 +4,7 @@
     "MSG0001": { "title": "ERROR", "content": "Plate number already exists" },
     "MSG2000": { "title": "ERROR", "content": "Truck already has an owner" },
     "MSG2001": { "title": "ERROR", "content": "Truck ownership not found" },
-    "MSG2002": { "title": "ERROR", "content": "Cannot delete active truck ownership" },
+    "MSG2002": { "title": "ERROR", "content": "The truck's status must be 'Sold', and the sale date must also match." },
     "MSG3000": { "title": "ERROR", "content": "Only inform active trucks" },
     "MSG3001": { "title": "ERROR", "content": "Only sell active trucks" },
     "MSG3002": { "title": "ERROR", "content": "Only update active trucks" },

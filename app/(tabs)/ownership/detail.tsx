@@ -42,6 +42,7 @@ export default function OwnershipDetailScreen() {
     const role = useAuthStore((state) => state.role);
     const currentRole = (role || "").toUpperCase();
     const isAdmin = currentRole === "ADMIN";
+    const isViewer = currentRole === "VIEWER";
     const router = useRouter();
     const qc = useQueryClient();
     const insets = useSafeAreaInsets();
@@ -58,9 +59,13 @@ export default function OwnershipDetailScreen() {
     const style = locale === "mm" ? mmTextStyle : undefined;
     const mmLeading = getMyanmarLeadingClass(locale);
 
-    const params = useLocalSearchParams<{ ownershipId?: string; }>();
+    const params = useLocalSearchParams<{ ownershipId?: string;ownershipStatus?:string }>();
 
     const ownershipId = String(params.ownershipId ?? "").trim();
+    const ownershipStatus = String(params.ownershipStatus ?? "").trim().toUpperCase();
+    const isSoldOut = ownershipStatus === 'SOLD_OUT' ;
+    const hasManagementAuthorityForOwner = !isViewer && !isSoldOut;
+    const showEditAction = isAdmin || hasManagementAuthorityForOwner;
     const hasRequiredParams = !!ownershipId;
     const takePendingRunningBalanceRefresh =
         useOwnershipRunningBalanceRefreshStore((state) => state.takePending);
@@ -233,7 +238,7 @@ export default function OwnershipDetailScreen() {
                 </Text>
 
                 <View className="flex-row items-center gap-2">
-                    {isAdmin && (
+                    {isAdmin && !isSoldOut ? (
                         <Pressable
                             accessibilityRole="button"
                             onPress={onSell}
@@ -248,22 +253,25 @@ export default function OwnershipDetailScreen() {
                         >
                             <Ionicons name="pricetag-outline" size={22} color="#475569"/>
                         </Pressable>
-                    )}
+                    ):null}
 
-                    <Pressable
-                        accessibilityRole="button"
-                        onPress={onEdit}
-                        disabled={!ownershipId}
-                        className="h-11 w-11 items-center justify-center rounded-full"
-                        style={({pressed}) => ({
-                            backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.card,
-                            borderColor: APP_COLORS.border,
-                            borderWidth: 1,
-                            opacity: ownershipId ? 1 : 0.5,
-                        })}
-                    >
-                        <Ionicons name="create-outline" size={22} color="#475569"/>
-                    </Pressable>
+                    { showEditAction && (
+                            <Pressable
+                                accessibilityRole="button"
+                                onPress={onEdit}
+                                disabled={!ownershipId}
+                                className="h-11 w-11 items-center justify-center rounded-full"
+                                style={({pressed}) => ({
+                                    backgroundColor: pressed ? APP_COLORS.primary : APP_COLORS.card,
+                                    borderColor: APP_COLORS.border,
+                                    borderWidth: 1,
+                                    opacity: ownershipId ? 1 : 0.5,
+                                })}
+                            >
+                                <Ionicons name="create-outline" size={22} color="#475569"/>
+                            </Pressable>
+                        )
+                    }
                 </View>
             </View>
 
@@ -367,7 +375,7 @@ export default function OwnershipDetailScreen() {
                             </Text>
                         )}
 
-                        {isAdmin && summaryItem ? (
+                        {isAdmin && summaryItem && isSoldOut ? (
                             <Pressable
                                 onPress={openDeleteModal}
                                 disabled={!ownershipId || isDeleting}

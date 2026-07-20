@@ -119,7 +119,7 @@ export default function OwnerShip() {
         if (!item.id) return;
         router.push({
             pathname: "/(tabs)/ownership/detail",
-            params: {ownershipId: item.id},
+            params: {ownershipId: item.id,ownershipStatus:status},
         });
     }, 600);
 
