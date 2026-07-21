@@ -122,7 +122,7 @@ export  function Step2({ headcount, initialTotalCost, initialPeople, locale, sty
                                     onChangeText={(val) => handleUpdatePerson(index, 'name', val)}
                                     placeholder={`${t.placeholders.name} #${index + 1}`}
                                     placeholderTextColor={APP_COLORS.textMuted}
-                                    style={[{ backgroundColor: APP_COLORS.card, borderColor: APP_COLORS.border, borderWidth: 1, color: APP_COLORS.textPrimary }, style]}
+                                    style={[{ backgroundColor: APP_COLORS.inputBackground, borderColor: APP_COLORS.border, borderWidth: 1, color: APP_COLORS.textPrimary }, style]}
                                     className={`text-sm font-medium ${mmLeading}`}
                                     {...(Platform.OS === "android" && locale === "mm" ? { includeFontPadding: false } : {})}
                                 />
@@ -133,8 +133,8 @@ export  function Step2({ headcount, initialTotalCost, initialPeople, locale, sty
                                     onChangeText={(val) => handleUpdatePerson(index, 'amount', val)}
                                     placeholder={t.placeholders.amount}
                                     placeholderTextColor={APP_COLORS.textMuted}
-                                    keyboardType="decimal-pad"
-                                    style={[{ backgroundColor: APP_COLORS.card, borderColor: APP_COLORS.border, borderWidth: 1, color: APP_COLORS.textPrimary }, style]}
+                                    keyboardType="number-pad"
+                                    style={[{ backgroundColor: APP_COLORS.inputBackground, borderColor: APP_COLORS.border, borderWidth: 1, color: APP_COLORS.textPrimary }, style]}
                                     className={`text-sm font-bold ${mmLeading}`}
                                     {...(Platform.OS === "android" && locale === "mm" ? { includeFontPadding: false } : {})}
                                 />

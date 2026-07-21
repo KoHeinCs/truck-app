@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import {View, Text, Pressable, ScrollView,Alert} from 'react-native';
+import {View, Text, Pressable, ScrollView, Alert, Platform, KeyboardAvoidingView} from 'react-native';
 import {APP_COLORS} from '@/constants/colors';
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -67,12 +67,16 @@ export default function Profit() {
                 <View className="h-11 w-11"/>
             </View>
 
+
             <ScrollView
                 className="px-4"
                 contentContainerStyle={{
                     paddingBottom: insets.bottom + 80,
                     flexGrow: 1,
                 }}
+                keyboardShouldPersistTaps="handled"
+                automaticallyAdjustKeyboardInsets
+                keyboardDismissMode="on-drag"
             >
                 <View className="mt-4 rounded-2xl p-4"
                       style={{
@@ -125,7 +129,6 @@ export default function Profit() {
                         )}
 
                     </View>
-
 
                 </View>
 

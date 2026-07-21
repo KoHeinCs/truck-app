@@ -183,6 +183,7 @@ export default function ChangePasswordScreen() {
                 style={styles.flex}
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
+                {/* back , title */}
                 <View className="flex-row items-center px-4 pb-3 pt-1">
                     <Pressable
                         onPress={() => router.back()}
@@ -208,7 +209,11 @@ export default function ChangePasswordScreen() {
                         paddingBottom: insets.bottom + 80,
                         flexGrow: 1,
                     }}
+                    keyboardShouldPersistTaps="handled"
+                    automaticallyAdjustKeyboardInsets
+                    keyboardDismissMode="on-drag"
                 >
+                    {/* info card */}
                     <View
                         className="rounded-2xl p-4"
                         style={{
@@ -240,6 +245,7 @@ export default function ChangePasswordScreen() {
                         </View>
                     </View>
 
+                    {/* form */}
                     <View
                         className="mt-4 rounded-2xl  p-4"
                         style={{
@@ -248,6 +254,7 @@ export default function ChangePasswordScreen() {
                             borderWidth: 1
                         }}
                     >
+                        <View className="gap-3">
                         {renderPasswordField(
                             "oldPassword",
                             t.currentLabel,
@@ -269,8 +276,10 @@ export default function ChangePasswordScreen() {
                             showConfirm,
                             () => setShowConfirm((value) => !value),
                         )}
+                        </View>
                     </View>
 
+                    {/* submit button */}
                     <Pressable
                         accessibilityRole="button"
                         disabled={isPending}
@@ -293,6 +302,7 @@ export default function ChangePasswordScreen() {
                         )}
                     </Pressable>
                 </ScrollView>
+
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
