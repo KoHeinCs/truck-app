@@ -62,16 +62,15 @@ export function useUsersInfinite(
         pageSize: TEAM_PAGE_SIZE,
         columns: buildUserSearchColumns(filters),
       }),
-    getNextPageParam: (lastPage) => {
+    getNextPageParam: (lastPage,_pages, lastPageParam) => {
       const meta = lastPage.data;
       if (!meta) return undefined;
+      if (meta.last) return undefined;
       const { totalPages, page } = meta;
       if (typeof totalPages === "number" && totalPages > 0) {
         if (page >= totalPages - 1) return undefined;
-      } else if (meta.last) {
-        return undefined;
       }
-      return page + 1;
+      return lastPageParam + 1;
     },
     /** Treat server as source of truth: no “fresh for 60s” window; remount refetches. */
     staleTime: 0,
