@@ -9,9 +9,6 @@ import { axios } from "../api";
 import { buildServiceTypeSearchColumns } from "./search-columns";
 import type { ServiceTypeItem, ServiceTypeListResponse } from "./typed";
 
-const SERVICE_TYPE_LOOKUP_PAGE_SIZE = 100;
-const SERVICE_TYPE_LOOKUP_STALE_TIME = 5 * 60 * 1000;
-
 const lookupColumns = buildServiceTypeSearchColumns({
   quickQuery: "",
   active: true,
@@ -24,7 +21,7 @@ const fetchServiceTypeLookup = async (): Promise<ServiceTypeItem[]> => {
     "/service-type/search",
     {
       page: 1,
-      pageSize: SERVICE_TYPE_LOOKUP_PAGE_SIZE,
+      pageSize: -1,
       columns: lookupColumns,
     },
   );
@@ -49,7 +46,8 @@ export function useServiceTypeLookup() {
   const query = useQuery({
     queryKey: ["service-type-lookup"],
     queryFn: fetchServiceTypeLookup,
-    staleTime: SERVICE_TYPE_LOOKUP_STALE_TIME,
+    staleTime: 1000 * 60 * 10, // 10 mins
+    gcTime: 1000 * 60 * 15, // 15 mins
     refetchOnWindowFocus: false,
   });
 

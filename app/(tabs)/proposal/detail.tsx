@@ -47,10 +47,15 @@ function getOwnershipId(
     return String(detail?.ownershipRefId ?? fallback).trim();
 }
 
-function handleNotes(notes:any){
+function handleNotes(
+    notes:any,
+    locale: string,
+    resolveServiceTypeLabel: (key: string, locale: string) => string
+){
+
     if (!notes || typeof notes !== 'string') return '';
 
-    return notes.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/g, (match) => {
+    let processedNotes =  notes.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/g, (match) => {
         const date = new Date(match + 'Z');
         return date.toLocaleString('en-GB', {
             year: 'numeric',
@@ -62,6 +67,15 @@ function handleNotes(notes:any){
             timeZone: 'UTC'
         });
     });
+
+    const serviceTypePattern = /(Service Type.*?:\s*)([A-Z_]+)(\s*(?:->|→)\s*)([A-Z_]+)/g;
+    processedNotes = processedNotes.replace(serviceTypePattern, (fullMatch, prefix, oldKey, arrow, newKey) => {
+        const oldLabel = resolveServiceTypeLabel(oldKey, locale);
+        const newLabel = resolveServiceTypeLabel(newKey, locale);
+        return `${prefix}\n     ${oldLabel}${arrow}\n     ${newLabel}`;
+    });
+
+    return processedNotes;
 
 }
 
@@ -559,6 +573,8 @@ export default function ProposalDetailScreen() {
                                                         mmLeading={mmLeading}
                                                         style={style}
                                                         tActionStatus = {tActionStatus}
+                                                        locale={locale}
+                                                        resolveServiceTypeLabel={resolveServiceTypeLabel}
                                                     />
                                                 ))}
                                             </View>
@@ -803,7 +819,9 @@ type ProposalHistoryCardProps = {
     labels: HistoryLabels;
     mmLeading: string;
     style: any,
-    tActionStatus:any
+    tActionStatus:any;
+    locale: string;
+    resolveServiceTypeLabel: (key: any, locale: any) => any;
 };
 
 function ProposalHistoryCard(
@@ -812,11 +830,18 @@ function ProposalHistoryCard(
         item,
         mmLeading,
         style,
-        tActionStatus
+        tActionStatus,
+        locale,
+        resolveServiceTypeLabel
     }: ProposalHistoryCardProps
 ) {
+
     const remark = String(item.remark ?? "").trim();
-    const notes = String(item.notes ?? "").trim();
+    const rawNotes = String(item.notes ?? "").trim();
+
+    const notes = useMemo(() => {
+        return handleNotes(rawNotes, locale, resolveServiceTypeLabel);
+    }, [rawNotes, locale, resolveServiceTypeLabel]);
 
     return (
         <View
@@ -896,7 +921,7 @@ function ProposalHistoryCard(
                                 className={`mt-1 text-sm font-medium ${mmLeading}`}
                                 style={[style,{color:APP_COLORS.textPrimary}]}
                             >
-                                {handleNotes(notes)}
+                                {notes}
                             </Text>
                         </View>
                     ) : null}
