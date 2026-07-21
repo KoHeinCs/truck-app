@@ -14,7 +14,7 @@ import {useRouter} from "expo-router";
 import {Input} from "heroui-native";
 import React, {useCallback, useMemo} from "react";
 import {Controller, useForm} from "react-hook-form";
-import {Alert, Pressable, ScrollView, Text, View} from "react-native";
+import {Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View} from "react-native";
 import {
     SafeAreaView,
     useSafeAreaInsets,
@@ -107,7 +107,7 @@ export default function CreateServiceTypeScreen() {
     }, [qc, router]);
 
     return (
-        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
+        <SafeAreaView className="flex-1" style={{backgroundColor: APP_COLORS.background, flex: 1}}>
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
@@ -126,12 +126,21 @@ export default function CreateServiceTypeScreen() {
                 <View className="h-11 w-11"/>
             </View>
 
+            <KeyboardAvoidingView
+                className="flex-1"
+                style={{flex : 1}}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+            >
+
             <ScrollView
                 className="px-4"
                 contentContainerStyle={{
                     paddingBottom: insets.bottom + 80,
                     flexGrow: 1,
                 }}
+                keyboardShouldPersistTaps="handled"
+                automaticallyAdjustKeyboardInsets
+                keyboardDismissMode="on-drag"
             >
                 <View
                     className="mt-4 rounded-2xl  p-4"
@@ -279,6 +288,8 @@ export default function CreateServiceTypeScreen() {
                     </Text>
                 </Pressable>
             </ScrollView>
+            </KeyboardAvoidingView>
+
         </SafeAreaView>
     );
 }

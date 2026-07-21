@@ -14,7 +14,7 @@ import {useLocalSearchParams, useRouter} from "expo-router";
 import {Input, Select} from "heroui-native";
 import React, {useCallback, useMemo} from "react";
 import {Controller, useForm} from "react-hook-form";
-import {Alert, Pressable, ScrollView, Text, View} from "react-native";
+import {Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View} from "react-native";
 import {
     SafeAreaView,
     useSafeAreaInsets,
@@ -142,7 +142,7 @@ export default function EditServiceTypeScreen() {
     }, [tLookup.serviceTypeStatus])
 
     return (
-        <SafeAreaView className="flex-1 " style={{backgroundColor: APP_COLORS.background}}>
+        <SafeAreaView className="flex-1 " style={{backgroundColor: APP_COLORS.background,flex:1}}>
             {/* back button && title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
@@ -163,12 +163,21 @@ export default function EditServiceTypeScreen() {
                 <View className="h-11 w-11"/>
             </View>
 
+            <KeyboardAvoidingView
+                className="flex-1"
+                style={{flex : 1}}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+            >
+
             <ScrollView
                 className="px-4"
                 contentContainerStyle={{
                     paddingBottom: insets.bottom + 80,
                     flexGrow: 1,
                 }}
+                keyboardShouldPersistTaps="handled"
+                automaticallyAdjustKeyboardInsets
+                keyboardDismissMode="on-drag"
             >
                 {/* form fields */}
                 <View
@@ -404,6 +413,7 @@ export default function EditServiceTypeScreen() {
                     </Pressable>
                 </View>
             </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }

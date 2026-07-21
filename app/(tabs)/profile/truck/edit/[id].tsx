@@ -17,7 +17,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
     ActivityIndicator,
-    Alert,
+    Alert, KeyboardAvoidingView, Platform,
     Pressable,
     ScrollView,
     Text,
@@ -261,7 +261,7 @@ export default function EditTruckScreen() {
     }, [qc, router]);
 
     return (
-        <SafeAreaView className="flex-1 " style={{backgroundColor: APP_COLORS.background}}>
+        <SafeAreaView className="flex-1 " style={{backgroundColor: APP_COLORS.background , flex:1}}>
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
@@ -285,12 +285,21 @@ export default function EditTruckScreen() {
                     <ActivityIndicator color={APP_COLORS.primary}/>
                 </View>
             ) : (
+                <KeyboardAvoidingView
+                    className="flex-1"
+                    style={{flex : 1}}
+                    behavior={Platform.OS === "ios" ? "padding" : undefined}
+                >
+
                 <ScrollView
                     className="px-4"
                     contentContainerStyle={{
                         paddingBottom: insets.bottom + 80,
                         flexGrow: 1,
                     }}
+                    keyboardShouldPersistTaps="handled"
+                    automaticallyAdjustKeyboardInsets
+                    keyboardDismissMode="on-drag"
                 >
 
                     <View className="mt-1 rounded-2xl p-4"
@@ -469,6 +478,8 @@ export default function EditTruckScreen() {
                     </View>
 
                 </ScrollView>
+
+                </KeyboardAvoidingView>
             )}
         </SafeAreaView>
     );

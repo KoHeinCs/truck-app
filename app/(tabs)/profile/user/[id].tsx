@@ -24,7 +24,7 @@ import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {
     ActivityIndicator,
-    Alert,
+    Alert, KeyboardAvoidingView,
     Platform,
     Pressable,
     ScrollView,
@@ -317,7 +317,8 @@ export default function TeamEditUserScreen() {
     }, [qc, router]);
 
     return (
-        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
+        <SafeAreaView className="flex-1" style={{backgroundColor: APP_COLORS.background, flex: 1}}>
+
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
@@ -342,9 +343,17 @@ export default function TeamEditUserScreen() {
                     <ActivityIndicator color={APP_COLORS.primary}/>
                 </View>
             ) : (
+                <KeyboardAvoidingView
+                    className="flex-1"
+                    style={{flex : 1}}
+                    behavior={Platform.OS === "ios" ? "padding" : undefined}
+                >
                 <ScrollView
                     className="px-4"
                     contentContainerStyle={{paddingBottom: insets.bottom + 80, flexGrow: 1}}
+                    keyboardShouldPersistTaps="handled"
+                    automaticallyAdjustKeyboardInsets
+                    keyboardDismissMode="on-drag"
                 >
                     {/* warning section */}
                     <View
@@ -859,6 +868,7 @@ export default function TeamEditUserScreen() {
                         </View>
                     </View>
                 </ScrollView>
+                </KeyboardAvoidingView>
             )}
         </SafeAreaView>
     );

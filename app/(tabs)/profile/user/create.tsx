@@ -17,7 +17,7 @@ import {Input, Select} from "heroui-native";
 import React, {useCallback, useMemo, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {
-    Alert,
+    Alert, KeyboardAvoidingView,
     Platform,
     Pressable,
     ScrollView,
@@ -213,7 +213,8 @@ export default function TeamCreateUserScreen() {
     }, [qc, router]);
 
     return (
-        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
+        <SafeAreaView className="flex-1" style={{backgroundColor: APP_COLORS.background, flex: 1}}>
+
             <View className="flex-row items-center px-4 pb-3 pt-1">
                 <Pressable
                     onPress={onBack}
@@ -233,12 +234,21 @@ export default function TeamCreateUserScreen() {
                 <View className="h-11 w-11"/>
             </View>
 
+            <KeyboardAvoidingView
+                className="flex-1"
+                style={{flex : 1}}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+            >
+
             <ScrollView
                 className="px-4"
                 contentContainerStyle={{
                     paddingBottom: insets.bottom + 80,
                     flexGrow: 1,
                 }}
+                keyboardShouldPersistTaps="handled"
+                automaticallyAdjustKeyboardInsets
+                keyboardDismissMode="on-drag"
             >
                 <View className="rounded-2xl p-4"
                       style={{
@@ -939,6 +949,9 @@ export default function TeamCreateUserScreen() {
                     </Text>
                 </Pressable>
             </ScrollView>
+
+            </KeyboardAvoidingView>
+
         </SafeAreaView>
     );
 }
