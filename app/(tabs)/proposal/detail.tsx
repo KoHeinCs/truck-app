@@ -400,24 +400,6 @@ export default function ProposalDetailScreen() {
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
-                                    {/* service shop */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.serviceShop}
-                                        </Text>
-                                        <Text
-                                            className={`text-sm font-semibold  ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textPrimary}]}
-                                        >
-                                            {detail?.serviceShop || "-"}
-                                        </Text>
-                                    </View>
-
-                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
-
                                     {/* service date */}
                                     <View className="flex-row items-center justify-between gap-x-4">
                                         <Text
@@ -431,6 +413,24 @@ export default function ProposalDetailScreen() {
                                             style={[style, {color: APP_COLORS.textPrimary}]}
                                         >
                                             {formatDateTime(detail?.serviceDate || "")}
+                                        </Text>
+                                    </View>
+
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
+
+                                    {/* service shop */}
+                                    <View className="flex-row items-center justify-between gap-x-4">
+                                        <Text
+                                            className={`text-sm font-medium ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textMuted}]}
+                                        >
+                                            {t.labels.serviceShop}
+                                        </Text>
+                                        <Text
+                                            className={`text-sm font-semibold  ${mmLeading}`}
+                                            style={[style, {color: APP_COLORS.textPrimary}]}
+                                        >
+                                            {detail?.serviceShop || "-"}
                                         </Text>
                                     </View>
 

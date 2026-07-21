@@ -30,6 +30,8 @@ import {
     Text,
     TextInput,
     View,
+    KeyboardAvoidingView,
+    Platform
 } from "react-native";
 import {
     SafeAreaView,
@@ -37,8 +39,6 @@ import {
 } from "react-native-safe-area-context";
 import {useQueryClient} from "@tanstack/react-query";
 import {z} from "zod";
-
-
 
 
 function buildSchema(locale: "en" | "mm") {
@@ -179,7 +179,9 @@ export default function EditProposalScreen() {
     };
 
     return (
-        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
+        <SafeAreaView
+            className="flex-1"
+            style={{backgroundColor: APP_COLORS.background, flex: 1}}>
 
             {/* back button , page title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
@@ -209,6 +211,12 @@ export default function EditProposalScreen() {
                         </View>
                     ) :
                     (
+                        <KeyboardAvoidingView
+                            className="flex-1"
+                            style={{flex : 1}}
+                            behavior={Platform.OS === "ios" ? "padding" : undefined}
+                        >
+
                         <ScrollView
                             className="px-4"
                             contentContainerStyle={{
@@ -216,6 +224,8 @@ export default function EditProposalScreen() {
                                 flexGrow: 1,
                             }}
                             keyboardShouldPersistTaps="handled"
+                            automaticallyAdjustKeyboardInsets
+                            keyboardDismissMode="on-drag"
                         >
                             <View
                                 className="mt-1 rounded-2xl  p-4"
@@ -347,19 +357,6 @@ export default function EditProposalScreen() {
                                         )}
                                     />
 
-                                    {/* service shop input field */}
-                                    <FormInput
-                                        control={control}
-                                        name="serviceShop"
-                                        label={t.labels.serviceShop}
-                                        placeholder={t.placeholders.serviceShop}
-                                        locale={locale}
-                                        required
-                                        error={errors.serviceShop?.message}
-                                        mmLeading={mmLeading}
-                                        style={style}
-                                    />
-
                                     {/* service date */}
                                     <Controller
                                         control={control}
@@ -390,6 +387,19 @@ export default function EditProposalScreen() {
                                                 )}
                                             </View>
                                         )}
+                                    />
+
+                                    {/* service shop input field */}
+                                    <FormInput
+                                        control={control}
+                                        name="serviceShop"
+                                        label={t.labels.serviceShop}
+                                        placeholder={t.placeholders.serviceShop}
+                                        locale={locale}
+                                        required
+                                        error={errors.serviceShop?.message}
+                                        mmLeading={mmLeading}
+                                        style={style}
                                     />
 
                                     {/* description */}
@@ -489,6 +499,8 @@ export default function EditProposalScreen() {
                                 </View>
                             </View>
                         </ScrollView>
+
+                        </KeyboardAvoidingView>
                     )
             }
         </SafeAreaView>

@@ -22,6 +22,8 @@ import {
     Text,
     TextInput,
     View,
+    KeyboardAvoidingView,
+    Platform
 } from "react-native";
 import {
     SafeAreaView,
@@ -191,7 +193,9 @@ export default function CreateProposalScreen() {
         : undefined;
 
     return (
-        <SafeAreaView style={{backgroundColor: APP_COLORS.background, flex: 1}}>
+        <SafeAreaView
+            className="flex-1"
+            style={{backgroundColor: APP_COLORS.background, flex: 1}}>
 
             {/* back button , page title */}
             <View className="flex-row items-center px-4 pb-3 pt-1">
@@ -213,6 +217,12 @@ export default function CreateProposalScreen() {
                 <View className="h-11 w-11"/>
             </View>
 
+            <KeyboardAvoidingView
+                className="flex-1"
+                style={{flex:1}}
+                behavior={Platform.OS === 'ios' ? 'padding' :undefined}
+            >
+
             {/* step1 form , step2/review form */}
             <ScrollView
                 className="px-4"
@@ -221,6 +231,8 @@ export default function CreateProposalScreen() {
                     flexGrow: 1,
                 }}
                 keyboardShouldPersistTaps="handled"
+                automaticallyAdjustKeyboardInsets
+                keyboardDismissMode="on-drag"
             >
                 <View
                     className="mt-1 rounded-2xl  p-4"
@@ -299,13 +311,6 @@ export default function CreateProposalScreen() {
                                                 mmLeading={mmLeading}
                                                 style={style}
                                             />
-                                            {/* service shop */}
-                                            <PreviewRow
-                                                label={t.labels.serviceShop}
-                                                value={reviewValues.serviceShop}
-                                                mmLeading={mmLeading}
-                                                style={style}
-                                            />
                                             {/* service date */}
                                             <PreviewRow
                                                 label={t.labels.serviceDate}
@@ -314,6 +319,13 @@ export default function CreateProposalScreen() {
                                                         return formatLocalDateTime(reviewValues.serviceDate);
                                                     }
                                                 )()}
+                                                mmLeading={mmLeading}
+                                                style={style}
+                                            />
+                                            {/* service shop */}
+                                            <PreviewRow
+                                                label={t.labels.serviceShop}
+                                                value={reviewValues.serviceShop}
                                                 mmLeading={mmLeading}
                                                 style={style}
                                             />
@@ -555,18 +567,6 @@ export default function CreateProposalScreen() {
                                         )}
                                     />
 
-                                    {/* service shop input field */}
-                                    <FormInput
-                                        control={control}
-                                        name="serviceShop"
-                                        label={t.labels.serviceShop}
-                                        placeholder={t.placeholders.serviceShop}
-                                        required
-                                        error={errors.serviceShop?.message}
-                                        mmLeading={mmLeading}
-                                        style={style}
-                                    />
-
                                     {/* service date */}
                                     <Controller
                                         control={control}
@@ -594,6 +594,18 @@ export default function CreateProposalScreen() {
                                                 )}
                                             </View>
                                         )}
+                                    />
+
+                                    {/* service shop input field */}
+                                    <FormInput
+                                        control={control}
+                                        name="serviceShop"
+                                        label={t.labels.serviceShop}
+                                        placeholder={t.placeholders.serviceShop}
+                                        required
+                                        error={errors.serviceShop?.message}
+                                        mmLeading={mmLeading}
+                                        style={style}
                                     />
 
                                     {/* description textarea */}
@@ -681,6 +693,9 @@ export default function CreateProposalScreen() {
                     }
                 </View>
             </ScrollView>
+
+            </KeyboardAvoidingView>
+
         </SafeAreaView>
     );
 }
