@@ -8,7 +8,6 @@ import { useAuthStore } from "@/stores/auth-store";
 import { useLocaleStore } from "@/stores/client/locale-store";
 import { useProposalStats } from "@/stores/server/dashboard/proposal-stats-query";
 import { useTruckStats } from "@/stores/server/dashboard/truck-stats-query";
-import { toMyanmarDigits } from "@/utils/sales-performance-chart";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
@@ -119,8 +118,7 @@ const SummaryCard = ({ selectedOwnerId }: SummaryCardProps) => {
   const isPending = isTruckPending || isProposalPending;
   const isError = isTruckError || isProposalError;
 
-  const formatCount = (value: number) =>
-    locale === "mm" ? toMyanmarDigits(value) : String(value);
+  const formatCount = (value: number) => String(value);
 
   const openOwnershipTab = (status: "ACTIVE" | "SOLD_OUT") => {
     router.push({

@@ -1,10 +1,7 @@
 {
   "home": {
-    "dashboardTitle": "Dashboard",
     "ownerIdLabel": "Owner",
     "ownerIdPlaceholder": "Select owner",
-    "ownerAllLabel": "All",
-    "selectOwnerFirst": "Please select an owner first",
     "monthlyProfitTitle": "Monthly Profit",
     "selectYear": "Select year",
     "empty": "No data available",
@@ -18,7 +15,7 @@
       "activeTrucks": "Active Trucks",
       "soldTrucks": "Sold Trucks",
       "totalTrucks": "Total Trucks",
-      "informTasks": "To Inform"
+      "informTasks": "Informed proposals"
     },
     "months": {
       "jan": "Jan",

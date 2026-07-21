@@ -12,7 +12,6 @@ import {
   buildYearOptions,
   computeYAxisMax,
   formatProfitAxisLabel,
-  toMyanmarDigits,
   type ChartPoint,
 } from "@/utils/sales-performance-chart";
 import { formatAmount } from "@/utils/amountUtil";
@@ -51,8 +50,7 @@ function ChartFocusTooltip({
   textStyle,
   mmLeading,
 }: ChartFocusTooltipProps) {
-  const formatDisplay = (value: number | string) =>
-    locale === "mm" ? toMyanmarDigits(value) : String(value);
+  const formatDisplay = (value: number | string) =>String(value);
 
   const rows = [
     {
@@ -162,7 +160,7 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const yAxisMax = useMemo(() => computeYAxisMax(maxProfit), [maxProfit]);
   const chartWidth = screenWidth - 64;
   const yearOptions = useMemo(() => buildYearOptions(currentYear), [currentYear]);
-  const displayYear = locale === "mm" ? toMyanmarDigits(selectedYear) : String(selectedYear);
+  const displayYear = String(selectedYear);
 
   const tooltipLabels = useMemo(
     () => ({
@@ -316,7 +314,7 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
             <ScrollView className="mt-3 max-h-56">
               {yearOptions.map((year) => {
                 const isSelected = year === selectedYear;
-                const label =locale === "mm" ? toMyanmarDigits(year) : String(year);
+                const label = String(year);
 
                 return (
                   <Pressable
