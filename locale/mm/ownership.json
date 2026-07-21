@@ -144,11 +144,10 @@
       }
     },
     "sellOwnership": {
-      "title": "ထပ်ကားရောင်းရန်",
-      "subtitle": "အရောင်းအချက်အလက်များဖြည့်သွင်းပါ",
+      "title": "ကားရောင်းရန်",
       "labels": {
-        "sellAmount": "အဆိုပြုငွေ (သိန်း)",
-        "sellDate": "ရောင်းရက်",
+        "sellAmount": "ရောင်းချသည့်ငွေပမာဏ",
+        "sellDate": "ရောင်းချသည့်ရက်",
         "soldPlace": "ရောင်းချသည့်နေရာ"
       },
       "placeholders": {
@@ -163,9 +162,9 @@
       },
       "dialog": {
         "successTitle": "အောင်မြင်သည်",
-        "successBody": "ကားရောင်းချပြီးပါပြီ။",
+        "successBody": "ရောင်းချပြီးပါပြီ။",
         "errorTitle": "အမှား",
-        "errorBody": "ကားရောင်းချ၍ မရပါ။"
+        "errorBody": "ရောင်းချ၍ မရပါ။"
       }
     },
     "detailOwnership": {

@@ -41,7 +41,7 @@ function buildSchema(locale: "en" | "mm") {
             .string()
             .min(
                 1,
-                locale === "mm" ? "အဆိုပြုငွေ လိုအပ်သည်" : "Proposed amount is required",
+                locale === "mm" ? "ရောင်းချသည့်ငွေပမာဏ လိုအပ်သည်" : "Sell amount is required",
             )
             .refine((value) => /^\d{1,9}(\.\d{1,2})?$/.test(value.trim()), {
                 message:
@@ -57,7 +57,7 @@ function buildSchema(locale: "en" | "mm") {
             }),
         sellDate: z
             .string()
-            .min(1, locale === "mm" ? "ရောင်းရက် လိုအပ်သည်" : "Sale date is required")
+            .min(1, locale === "mm" ? "ရောင်းချသည့်ရက် လိုအပ်သည်" : "Sell date is required")
             .refine((value) => !!toIsoDate(value), { message: DATE_MSG[locale] })
             .refine((value) => {
                 const iso = toIsoDate(value);
@@ -66,7 +66,7 @@ function buildSchema(locale: "en" | "mm") {
             }, {
                 message:
                     locale === "mm"
-                        ? "ရောင်းရက်သည် အနာဂတ်မဖြစ်ရပါ"
+                        ? "ရောင်းချသည့်ရက် အနာဂတ်မဖြစ်ရပါ"
                         : "Sold date cannot be in the future",
             }),
         soldPlace: z

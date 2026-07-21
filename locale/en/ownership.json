@@ -145,9 +145,8 @@
     },
     "sellOwnership": {
       "title": "Sell Truck",
-      "subtitle": "Fill in sales information",
       "labels": {
-        "sellAmount": "Proposed Amount (Lakhs)",
+        "sellAmount": "Sell Amount",
         "sellDate": "Sale Date",
         "soldPlace": "Sell Place"
       },

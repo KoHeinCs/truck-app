@@ -52,7 +52,8 @@ export function useUserLookupOptions(query: string, enabled = true) {
         queryKey: ["all-users-lookup", query.trim()],
         queryFn: () => lookupUsers(query),
         select: normalizeUserOptions,
-        staleTime: 0,
+        staleTime: 1000 * 60 * 10, // 10 mins
+        gcTime: 1000 * 60 * 15, // 15 mins
         enabled:enabled
     })
 }
