@@ -47,6 +47,10 @@ const SETTINGS_ROWS = [
         key: "language",
         icon: "language" as const,
     },
+    {
+        key: "terms",
+        icon: "document-text" as const,
+    },
 ];
 
 export default function ProfileScreen() {
@@ -110,6 +114,8 @@ export default function ProfileScreen() {
                 return router.push("/(tabs)/profile/security");
             if (row.key === "language")
                 return router.push("/(tabs)/profile/language");
+            if (row.key === "terms")
+                return router.push("/(tabs)/profile/terms");
         },
         600,
     );
