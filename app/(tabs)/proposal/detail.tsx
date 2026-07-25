@@ -29,7 +29,6 @@ import {
     Pressable,
     ScrollView,
     Text,
-    useWindowDimensions,
     View,
 } from "react-native";
 import {
@@ -87,8 +86,6 @@ export default function ProposalDetailScreen() {
         (state) => state.markPending,
     );
     const insets = useSafeAreaInsets();
-    const {width: screenWidth} = useWindowDimensions();
-    const isCompact = screenWidth < 400;
     const locale = useLocaleStore((state) => state.locale);
     const loginRole = useAuthStore((state) => state.role);
     const loginUserId = useAuthStore((state) => state.userId);
@@ -326,7 +323,7 @@ export default function ProposalDetailScreen() {
                                 {/* proposal number && proposal status */}
                                 <View className="flex-row items-start justify-between gap-2">
                                     <Text
-                                        className={`min-w-0 flex-1 text-xl font-bold tracking-tight ${mmLeading}`}
+                                        className={`min-w-0 flex-1 text-lg font-bold tracking-tight ${mmLeading}`}
                                         style={[style, {color: APP_COLORS.primary}]}
                                         numberOfLines={2}
                                     >
@@ -340,7 +337,7 @@ export default function ProposalDetailScreen() {
                                         }}
                                     >
                                         <Text
-                                            className={`${isCompact ? "text-xs" : "text-sm"} font-semibold uppercase ${mmLeading}`}
+                                            className={`text-sm font-semibold uppercase ${mmLeading}`}
                                             style={[
                                                 {color: getStatusBadgeStyle(detail?.status ?? "INFORM").textColor}, style
                                             ]}
@@ -371,7 +368,7 @@ export default function ProposalDetailScreen() {
                                         value={formatAmount(Number(detail?.proposalAmount ?? 0))}
                                         mmLeading={mmLeading}
                                         style={style}
-                                        valueClassName={`${isCompact ? "text-xl" : "text-2xl"} font-bold tracking-tight`}
+                                        valueClassName={`text-xl font-bold tracking-tight`}
                                         valueColor={APP_COLORS.textPrimary}
                                         numberOfLines={1}
                                     />
