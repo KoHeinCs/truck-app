@@ -54,8 +54,9 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
                       borderWidth:1
                   }}
             >
-                <Card.Body className="px-4 py-4">
-                    <View className="flex-row justify-between gap-3">
+                <Card.Body className="px-3 gap-0">
+
+                    <View className="flex-row  justify-between gap-3">
                         {/* equipment name , plate no. */}
                         <View className="flex-1">
                             <Text
@@ -89,7 +90,7 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
                         </View>
                     </View>
 
-                    <View className="mt-4 border-t border-slate-100 pt-3">
+                    <View className="mt-1 border-t border-slate-100 pt-2">
                         <View className="flex-row">
                             {/* license city */}
                             <InfoCell
@@ -105,20 +106,11 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
                                 style={style}
                                 mmLeading={mmLeading}
                             />
-                            {/* license validity days */}
-                            <InfoCell
-                                label={labels.totalLicenseValidityDays}
-                                value={formatDays(
-                                    item.totalLicenseValidityDays,
-                                    labels.daySuffix,
-                                )}
-                                style={style}
-                                mmLeading={mmLeading}
-                            />
+
                         </View>
                     </View>
 
-                    <View className="mt-3 border-t border-slate-100 pt-3">
+                    <View className="mt-1 border-t border-slate-100 pt-2">
                         <View className="flex-row">
                             {/* buy date */}
                             <InfoCell
@@ -128,19 +120,10 @@ export function OwnershipCard({item, labels, onPress, style, mmLeading}: Ownersh
                                 mmLeading={mmLeading}
                             />
 
-                            {/* sell date */}
-                            <InfoCell
-                                label={labels.sellDate}
-                                value={formatDate(item.sellDate)}
-                                style={style}
-                                mmLeading={mmLeading}
-                            />
-
                             {/* estimated sell amount */}
                             <InfoCell
                                 label={labels.estimatedSellAmt}
                                 value={estimatedSellAmt}
-                                className="flex-[2]"
                                 style={style}
                                 mmLeading={mmLeading}
                             />
@@ -169,11 +152,11 @@ function InfoCell({
                   }: InfoCellProps) {
     return (
         <View className={className}>
-            <Text className={`text-[11px] font-medium ${mmLeading}`} style={[style,{color:APP_COLORS.textMuted}]}>
+            <Text className={`text-xs font-medium ${mmLeading}`} style={[style,{color:APP_COLORS.textMuted}]}>
                 {label}
             </Text>
             <Text
-                className={`mt-0.5 text-xs font-semibold ${mmLeading}`}
+                className={`mt-0.5 text-xs font-bold ${mmLeading}`}
                 style={[style,{color:APP_COLORS.textPrimary}]}
             >
                 {value}

@@ -148,8 +148,8 @@ export function OwnershipSummaryCard({
                 />
             </View>
 
-            {/* license city , end date , validity days */}
-            <View className="flex-row mt-1 pt-2 border-t border-slate-200 ">
+            {/* license city , end date */}
+            <View className="flex-row mt-1 pt-1 gap-x-3 ">
                 {/* license city */}
                 <InfoCell
                     label={labels.licenseCity}
@@ -164,13 +164,7 @@ export function OwnershipSummaryCard({
                     style={style}
                     mmLeading={mmLeading}
                 />
-                {/* license validity days */}
-                <InfoCell
-                    label={labels.totalLicenseValidityDays}
-                    value={formatDays(item?.totalLicenseValidityDays, labels.daySuffix)}
-                    style={style}
-                    mmLeading={mmLeading}
-                />
+
             </View>
 
 

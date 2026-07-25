@@ -22,7 +22,6 @@ type OwnershipAdvancedFiltersProps = {
     onApply: () => void;
     mmLeading: any;
     ownerSelectOptions: any;
-    status: string;
 };
 
 export function OwnershipAdvancedFilters({
@@ -34,8 +33,7 @@ export function OwnershipAdvancedFilters({
                                              onReset,
                                              onApply,
                                              mmLeading,
-                                             ownerSelectOptions,
-                                             status
+                                             ownerSelectOptions
                                          }: OwnershipAdvancedFiltersProps) {
 
 
@@ -94,18 +92,6 @@ export function OwnershipAdvancedFilters({
                         onChange={(licenseEndDate) => onChange({licenseEndDate})}
                         style={style}
                     />
-                    {status === 'SOLD_OUT' && (
-                        <FilterInput
-                            label={t.labels.profit}
-                            value={filters.profit}
-                            placeholder={t.placeholders.profit}
-                            keyboardType="number-pad"
-                            locale={locale}
-                            style={style}
-                            onChangeText={(profit) => onChange({profit})}
-                            mmLeading={mmLeading}
-                        />
-                    )}
 
                 </View>
 

@@ -52,7 +52,7 @@
       }
     },
     "createProposal": {
-      "title": "စာရင်းအသစ် ထည့်ရန်",
+      "title": "စာရင်းအသစ် တင်ရန်",
       "reviewTitle": "အချက်အလက်ပြန်စစ်ရန်",
       "labels": {
         "truck": "ယာဉ်နံပါတ်",
@@ -126,9 +126,9 @@
       "labels": {
         "truck": "ယာဉ်နံပါတ်",
         "amount": "ကျသင့်ငွေပမာဏ",
-        "serviceType": "ဝန်ဆောင်မှု အမျိုးအစား",
+        "serviceType": "ဝန်ဆောင်မှု",
         "serviceShop": "ဆိုင်/ငွေလက်ခံသူ",
-        "serviceDate": "ဝန်ဆောင်မှု ပေးသည့်အချိန်",
+        "serviceDate": "ဝန်ဆောင်မှုပေးချိန်",
         "proposalDate": "စာရင်းတင်ရက်",
         "createdBy": "စာရင်းတင်သူ",
         "ownerId": "ယာဉ်ပိုင်ရှင်",
@@ -148,9 +148,9 @@
       },
       "dialog": {
         "terminateSuccessTitle": "အောင်မြင်သည်",
-        "terminateSuccessBody": "အဆိုပြုချက်ကို ရပ်ဆိုင်းပြီးပါပြီ။",
+        "terminateSuccessBody": "ဤအဆိုပြုချက်ကို ရပ်ဆိုင်းပြီးပါပြီ။",
         "approveSuccessTitle": "အောင်မြင်သည်",
-        "approveSuccessBody": "အဆိုပြုချက်ကို လက်ခံပြီးပါပြီ။",
+        "approveSuccessBody": "ဤအဆိုပြုလွှာအတွက် ငွေရှင်းပြီးပါပြီ။",
         "errorTitle": "အမှားအယွင်း",
         "errorBody": "လုပ်ဆောင်ချက် မအောင်မြင်ပါ။"
       }
