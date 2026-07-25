@@ -29,6 +29,7 @@ import {
     Pressable,
     ScrollView,
     Text,
+    useWindowDimensions,
     View,
 } from "react-native";
 import {
@@ -86,6 +87,8 @@ export default function ProposalDetailScreen() {
         (state) => state.markPending,
     );
     const insets = useSafeAreaInsets();
+    const {width: screenWidth} = useWindowDimensions();
+    const isCompact = screenWidth < 400;
     const locale = useLocaleStore((state) => state.locale);
     const loginRole = useAuthStore((state) => state.role);
     const loginUserId = useAuthStore((state) => state.userId);
@@ -322,24 +325,22 @@ export default function ProposalDetailScreen() {
 
                                 {/* proposal number && proposal status */}
                                 <View className="flex-row items-start justify-between gap-2">
-                                    <View className="flex-1">
-                                        <Text
-                                            className={`text-xl font-bold tracking-tight  ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.primary}]}
-                                            numberOfLines={1}
-                                        >
-                                            {detail?.proposalNo || "-"}
-                                        </Text>
-                                    </View>
+                                    <Text
+                                        className={`min-w-0 flex-1 text-xl font-bold tracking-tight ${mmLeading}`}
+                                        style={[style, {color: APP_COLORS.primary}]}
+                                        numberOfLines={2}
+                                    >
+                                        {detail?.proposalNo || "-"}
+                                    </Text>
                                     <View
-                                        className="rounded-xl  px-3 py-1.5"
+                                        className="shrink-0 rounded-xl px-2.5 py-1.5"
                                         style={{
                                             backgroundColor: getStatusBadgeStyle(detail?.status ?? "INFORM").backgroundColor,
                                             borderColor: getStatusBadgeStyle(detail?.status ?? "INFORM").borderColor
                                         }}
                                     >
                                         <Text
-                                            className={`text-sm font-semibold uppercase  ${mmLeading}`}
+                                            className={`${isCompact ? "text-xs" : "text-sm"} font-semibold uppercase ${mmLeading}`}
                                             style={[
                                                 {color: getStatusBadgeStyle(detail?.status ?? "INFORM").textColor}, style
                                             ]}
@@ -353,177 +354,89 @@ export default function ProposalDetailScreen() {
                                 <View className="mt-5 gap-y-3">
 
                                     {/* truck  plate no */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.truck}
-                                        </Text>
-                                        <Text
-                                            className={`text-base font-semibold  ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textSecondary}]}
-                                        >
-                                            {detail?.plateNo || "-"}
-                                        </Text>
-                                    </View>
+                                    <DetailRow
+                                        label={t.labels.truck}
+                                        value={detail?.plateNo || "-"}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                        valueClassName="text-base font-semibold"
+                                        valueColor={APP_COLORS.textSecondary}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* amount */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.amount}
-                                        </Text>
-                                        <Text
-                                            numberOfLines={1}
-                                            ellipsizeMode="tail"
-                                            className={`text-2xl font-bold tracking-tight ${mmLeading}`}
-                                            style={[
-                                                style,
-                                                {color: APP_COLORS.textPrimary}
-                                            ]}
-                                        >
-                                            {formatAmount(Number(detail?.proposalAmount ?? 0))}
-                                        </Text>
-                                    </View>
+                                    <DetailRow
+                                        label={t.labels.amount}
+                                        value={formatAmount(Number(detail?.proposalAmount ?? 0))}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                        valueClassName={`${isCompact ? "text-xl" : "text-2xl"} font-bold tracking-tight`}
+                                        valueColor={APP_COLORS.textPrimary}
+                                        numberOfLines={1}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* service type */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.serviceType}
-                                        </Text>
-                                        <Text
-                                            className={`text-sm font-semibold  ${mmLeading}`}
-                                            style={[
-                                                style,
-                                                {color: APP_COLORS.textPrimary}
-                                            ]}
-                                        >
-                                            {serviceTypeLabel}
-                                        </Text>
-                                    </View>
+                                    <DetailRow
+                                        label={t.labels.serviceType}
+                                        value={serviceTypeLabel}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* service date */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.serviceDate}
-                                        </Text>
-                                        <Text
-                                            className={`text-sm font-semibold  ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textPrimary}]}
-                                        >
-                                            {formatDateTime(detail?.serviceDate || "")}
-                                        </Text>
-                                    </View>
+                                    <DetailRow
+                                        label={t.labels.serviceDate}
+                                        value={formatDateTime(detail?.serviceDate || "")}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* service shop */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.serviceShop}
-                                        </Text>
-                                        <Text
-                                            className={`text-sm font-semibold  ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textPrimary}]}
-                                        >
-                                            {detail?.serviceShop || "-"}
-                                        </Text>
-                                    </View>
+                                    <DetailRow
+                                        label={t.labels.serviceShop}
+                                        value={detail?.serviceShop || "-"}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* proposal date */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.proposalDate}
-                                        </Text>
-                                        <Text
-                                            className={`text-sm font-semibold  ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textPrimary}]}
-
-                                        >
-                                            {formatDate(detail?.proposalDate || "")}
-                                        </Text>
-                                    </View>
+                                    <DetailRow
+                                        label={t.labels.proposalDate}
+                                        value={formatDate(detail?.proposalDate || "")}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* created user && his phone number */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.createdBy}
-                                        </Text>
-                                        <View className="items-end">
-                                            <Text
-                                                className={`text-sm font-semibold ${mmLeading}`}
-                                                style={[style, {color: APP_COLORS.textPrimary}]}
-
-                                            >
-                                                {detail?.createdUserFullName || detail?.createdBy || "-"}
-                                            </Text>
-                                            {detail?.createdUserPhone ? (
-                                                <Text
-                                                    className={`mt-0.5 text-xs  ${mmLeading}`}
-                                                    style={[style, {color: APP_COLORS.textSecondary}]}
-
-                                                >
-                                                    {detail.createdUserPhone}
-                                                </Text>
-                                            ) : null}
-                                        </View>
-                                    </View>
+                                    <DetailPersonRow
+                                        label={t.labels.createdBy}
+                                        name={detail?.createdUserFullName || detail?.createdBy || "-"}
+                                        phone={detail?.createdUserPhone}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
                                     {/* owner && his phone number */}
-                                    <View className="flex-row items-center justify-between gap-x-4">
-                                        <Text
-                                            className={`text-sm font-medium ${mmLeading}`}
-                                            style={[style, {color: APP_COLORS.textMuted}]}
-                                        >
-                                            {t.labels.ownerId}
-                                        </Text>
-                                        <View className="items-end">
-                                            <Text
-                                                className={`text-sm font-semibold  ${mmLeading}`}
-                                                style={[style, {color: APP_COLORS.textPrimary}]}
-                                            >
-                                                {detail?.ownerFullName || "-"}
-                                            </Text>
-                                            {detail?.ownerPhone ? (
-                                                <Text
-                                                    className={`mt-0.5 text-xs  ${mmLeading}`}
-                                                    style={[style, {color: APP_COLORS.textSecondary}]}
-                                                >
-                                                    {detail.ownerPhone}
-                                                </Text>
-                                            ) : null}
-                                        </View>
-                                    </View>
+                                    <DetailPersonRow
+                                        label={t.labels.ownerId}
+                                        name={detail?.ownerFullName || "-"}
+                                        phone={detail?.ownerPhone}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                    />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
 
@@ -806,6 +719,88 @@ export default function ProposalDetailScreen() {
 
 
         </SafeAreaView>
+    );
+}
+
+type DetailRowProps = {
+    label: string;
+    value: string;
+    mmLeading: string;
+    style: any;
+    valueClassName?: string;
+    valueColor?: string;
+    numberOfLines?: number;
+};
+
+function DetailRow({
+    label,
+    value,
+    mmLeading,
+    style,
+    valueClassName = "text-sm font-semibold",
+    valueColor = APP_COLORS.textPrimary,
+    numberOfLines,
+}: DetailRowProps) {
+    return (
+        <View className="flex-row items-start justify-between gap-x-3">
+            <Text
+                className={`max-w-[42%] shrink text-sm font-medium ${mmLeading}`}
+                style={[style, {color: APP_COLORS.textMuted}]}
+            >
+                {label}
+            </Text>
+            <Text
+                className={`min-w-0 flex-1 text-right ${valueClassName} ${mmLeading}`}
+                style={[style, {color: valueColor}]}
+                numberOfLines={numberOfLines}
+                ellipsizeMode={numberOfLines ? "tail" : undefined}
+            >
+                {value}
+            </Text>
+        </View>
+    );
+}
+
+type DetailPersonRowProps = {
+    label: string;
+    name: string;
+    phone?: string | null;
+    mmLeading: string;
+    style: any;
+};
+
+function DetailPersonRow({
+    label,
+    name,
+    phone,
+    mmLeading,
+    style,
+}: DetailPersonRowProps) {
+    return (
+        <View className="flex-row items-start justify-between gap-x-3">
+            <Text
+                className={`max-w-[42%] shrink text-sm font-medium ${mmLeading}`}
+                style={[style, {color: APP_COLORS.textMuted}]}
+            >
+                {label}
+            </Text>
+            <View className="min-w-0 flex-1 items-end">
+                <Text
+                    className={`text-right text-sm font-semibold ${mmLeading}`}
+                    style={[style, {color: APP_COLORS.textPrimary}]}
+                >
+                    {name}
+                </Text>
+                {phone ? (
+                    <Text
+                        className={`mt-0.5 text-right text-xs ${mmLeading}`}
+                        style={[style, {color: APP_COLORS.textSecondary}]}
+                    >
+                        {phone}
+                    </Text>
+                ) : null}
+            </View>
+        </View>
     );
 }
 

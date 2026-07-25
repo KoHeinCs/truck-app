@@ -7,8 +7,11 @@ import { useTranslation } from "@/hooks/use-translation";
 import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
 import { Card } from "heroui-native";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, useWindowDimensions, View } from "react-native";
 import { CompactSelect } from "@/app/(tabs)/profile/user/components/compact-select";
+
+/** Side-by-side date fields clip Myanmar datetime placeholders below this width. */
+const COMPACT_FILTER_WIDTH = 400;
 
 type ProposalAdvancedFiltersProps = {
     filters: ProposalAdvancedFilterValues;
@@ -36,6 +39,9 @@ export function ProposalAdvancedFilters({
 
     const {search: t} = useTranslation('proposal')
     const mmLeading = getMyanmarLeadingClass(locale);
+    const {width} = useWindowDimensions();
+    const isCompact = width < COMPACT_FILTER_WIDTH;
+    const pairClassName = isCompact ? "gap-3" : "flex-row gap-2";
 
     const ownerSelectOptions = userOptions
         .filter((user: { role: string }) => user.role === "OWNER" || user.role === '')
@@ -54,7 +60,7 @@ export function ProposalAdvancedFilters({
 
     return (
         <Card
-            className="mb-4 p-5"
+            className={`mb-4 ${isCompact ? "p-4" : "p-5"}`}
             style={{
                 backgroundColor: APP_COLORS.card,
                 borderColor: APP_COLORS.border,
@@ -71,7 +77,7 @@ export function ProposalAdvancedFilters({
                 </Text>
 
                 {/* proposal number , plate number */}
-                <View className="flex-row gap-2">
+                <View className={pairClassName}>
                     <FilterInput
                         label={t.labels.proposalNo}
                         value={filters.proposalNo}
@@ -80,6 +86,7 @@ export function ProposalAdvancedFilters({
                         mmLeading={mmLeading}
                         onChangeText={(proposalNo) => onChange({proposalNo})}
                         style={style}
+                        fullWidth={isCompact}
                     />
                     <FilterInput
                         label={t.labels.plateNo}
@@ -89,11 +96,12 @@ export function ProposalAdvancedFilters({
                         mmLeading={mmLeading}
                         onChangeText={(plateNo) => onChange({plateNo})}
                         style={style}
+                        fullWidth={isCompact}
                     />
                 </View>
 
                 {/* proposal date [from-to] */}
-                <View className="flex-row gap-2">
+                <View className={pairClassName}>
                     <FilterDateField
                         label={t.labels.proposalDateFrom}
                         value={filters.proposalDateFrom}
@@ -104,6 +112,7 @@ export function ProposalAdvancedFilters({
                         mode="date"
                         onChange={(proposalDateFrom) => onChange({proposalDateFrom})}
                         style={style}
+                        fullWidth={isCompact}
                     />
                     <FilterDateField
                         label={t.labels.proposalDateTo}
@@ -115,11 +124,12 @@ export function ProposalAdvancedFilters({
                         mode="date"
                         onChange={(proposalDateTo) => onChange({proposalDateTo})}
                         style={style}
+                        fullWidth={isCompact}
                     />
                 </View>
 
-                {/* service date [from-to] */}
-                <View className="flex-row gap-2">
+                {/* service date [from-to] — always stack: datetime placeholder is too wide for half columns */}
+                <View className="gap-3">
                     <FilterDateField
                         label={t.labels.serviceDateFrom}
                         value={filters.serviceDateFrom}
@@ -129,6 +139,7 @@ export function ProposalAdvancedFilters({
                         doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         onChange={(serviceDateFrom) => onChange({serviceDateFrom})}
                         style={style}
+                        fullWidth
                     />
                     <FilterDateField
                         label={t.labels.serviceDateTo}
@@ -139,6 +150,7 @@ export function ProposalAdvancedFilters({
                         doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
                         onChange={(serviceDateTo) => onChange({serviceDateTo})}
                         style={style}
+                        fullWidth
                     />
                 </View>
 
@@ -208,7 +220,8 @@ type FilterInputProps = {
     locale: AppLocale;
     mmLeading: string;
     onChangeText: (next: string) => void;
-    style: any
+    style: any;
+    fullWidth?: boolean;
 };
 
 function FilterInput({
@@ -218,10 +231,11 @@ function FilterInput({
                          locale,
                          mmLeading,
                          onChangeText,
-                         style
+                         style,
+                         fullWidth = false,
                      }: FilterInputProps) {
     return (
-        <View className="flex-1 gap-1">
+        <View className={`${fullWidth ? "w-full" : "min-w-0 flex-1"} gap-1`}>
             <Text
                 className={`text-sm font-medium ${mmLeading}`}
                 style={[{color: APP_COLORS.textMuted},style]}
@@ -251,6 +265,7 @@ type FilterDateFieldProps = {
     mode?: "date" | "datetime";
     onChange: (next: string) => void;
     style: any;
+    fullWidth?: boolean;
 };
 
 function FilterDateField({
@@ -262,10 +277,11 @@ function FilterDateField({
                              doneLabel,
                              mode = "datetime",
                              onChange,
-                             style
+                             style,
+                             fullWidth = false,
                          }: FilterDateFieldProps) {
     return (
-        <View className="flex-1 gap-1">
+        <View className={`${fullWidth ? "w-full" : "min-w-0 flex-1"} gap-1`}>
             <Text
                 className={`text-sm font-medium ${mmLeading}`}
                 style={[{color: APP_COLORS.textMuted},style]}

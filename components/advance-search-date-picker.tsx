@@ -83,7 +83,7 @@ export function AdvanceSearchDatePicker({
         <View>
             <Pressable
                 onPress={openPicker}
-                className={`flex-row items-center justify-between rounded-xl p-3 ${triggerClassName ?? ""}`}
+                className={`flex-row items-center gap-1.5 rounded-xl px-2.5 py-3 ${triggerClassName ?? ""}`}
                 style={{
                     backgroundColor: APP_COLORS.inputBackground,
                     borderColor: APP_COLORS.border,
@@ -93,12 +93,15 @@ export function AdvanceSearchDatePicker({
                 <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
-                    className={`text-xs font-medium  ${value ? APP_COLORS.textPrimary : APP_COLORS.textMuted} ${mmLeading}`}
-                    style={style}
+                    className={`min-w-0 flex-1 text-xs font-medium ${mmLeading}`}
+                    style={[
+                        style,
+                        {color: value ? APP_COLORS.textPrimary : APP_COLORS.textMuted},
+                    ]}
                 >
                     {value || placeholder}
                 </Text>
-                <Ionicons name="calendar-outline" size={18} color="#94a3b8"/>
+                <Ionicons name="calendar-outline" size={16} color="#94a3b8"/>
             </Pressable>
 
             {open && Platform.OS === "android" ? (
