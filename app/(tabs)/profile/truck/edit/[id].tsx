@@ -288,7 +288,7 @@ export default function EditTruckScreen() {
                 <KeyboardAvoidingView
                     className="flex-1"
                     style={{flex : 1}}
-                    behavior={Platform.OS === "ios" ? "padding" : undefined}
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
                 >
 
                 <ScrollView

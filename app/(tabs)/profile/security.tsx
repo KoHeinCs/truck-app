@@ -181,7 +181,7 @@ export default function ChangePasswordScreen() {
         <SafeAreaView style={styles.safeArea}>
             <KeyboardAvoidingView
                 style={styles.flex}
-                behavior={Platform.OS === "ios" ? "padding" : undefined}
+                behavior={Platform.OS === "ios" ? "padding" : 'height'}
             >
                 {/* back , title */}
                 <View className="flex-row items-center px-4 pb-3 pt-1">
