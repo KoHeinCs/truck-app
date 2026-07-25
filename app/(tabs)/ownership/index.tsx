@@ -217,7 +217,6 @@ export default function OwnerShip() {
                                 }}
                                 mmLeading={mmLeading}
                                 ownerSelectOptions={ownerOptions}
-                                status={status}
                             />
                         ) : null}
                     </View>
