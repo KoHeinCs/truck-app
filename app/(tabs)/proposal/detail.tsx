@@ -324,7 +324,7 @@ export default function ProposalDetailScreen() {
                                 <View className="flex-row items-start justify-between gap-2">
                                     <View className="flex-1">
                                         <Text
-                                            className={`text-xl font-bold tracking-tight  ${mmLeading}`}
+                                            className={`text-lg font-bold tracking-tight  ${mmLeading}`}
                                             style={[style, {color: APP_COLORS.primary}]}
                                             numberOfLines={1}
                                         >
@@ -381,7 +381,7 @@ export default function ProposalDetailScreen() {
                                         <Text
                                             numberOfLines={1}
                                             ellipsizeMode="tail"
-                                            className={`text-2xl font-bold tracking-tight ${mmLeading}`}
+                                            className={`text-xl font-bold tracking-tight ${mmLeading}`}
                                             style={[
                                                 style,
                                                 {color: APP_COLORS.textPrimary}
