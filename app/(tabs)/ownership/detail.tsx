@@ -63,13 +63,10 @@ export default function OwnershipDetailScreen() {
 
     const ownershipId = String(params.ownershipId ?? "").trim();
     const ownershipStatus = String(params.ownershipStatus ?? "").trim().toUpperCase();
-    const isSoldOut = ownershipStatus === 'SOLD_OUT' ;
-    const hasManagementAuthorityForOwner = !isViewer && !isSoldOut;
-    const showEditAction = isAdmin || hasManagementAuthorityForOwner;
     const hasRequiredParams = !!ownershipId;
+
     const takePendingRunningBalanceRefresh =
         useOwnershipRunningBalanceRefreshStore((state) => state.takePending);
-    const {resolveServiceTypeLabel} = useServiceTypeLookup();
 
     useFocusEffect(
         useCallback(() => {
@@ -88,6 +85,23 @@ export default function OwnershipDetailScreen() {
     const summaryItem = detailResponse?.data;
     const records = runningBalanceData?.data ?? [];
     const isPending = isDetailPending || isRunningBalancePending;
+    
+    const permissions = useMemo(()=> {
+        if (isPending || !detailResponse)
+            return {showEditAction:false,showSellAction:false,showDeleteAction:false};
+
+        const isSoldOut = ownershipStatus === 'SOLD_OUT' ;
+        const hasManagementAuthorityForOwner = !isViewer && !isSoldOut;
+        return {
+            showEditAction:isAdmin || hasManagementAuthorityForOwner,
+            showSellAction: isAdmin && !isSoldOut,
+            showDeleteAction: isAdmin && isSoldOut
+        }
+
+    },[isPending,detailResponse,ownershipStatus,isViewer,isAdmin])
+
+    const {resolveServiceTypeLabel} = useServiceTypeLookup();
+
     const itemCountLabel = t.running.labels.itemCount.replace(
         "{count}",
         String(records.length),
@@ -238,7 +252,7 @@ export default function OwnershipDetailScreen() {
                 </Text>
 
                 <View className="flex-row items-center gap-2">
-                    {isAdmin && !isSoldOut ? (
+                    {permissions.showSellAction && (
                         <Pressable
                             accessibilityRole="button"
                             onPress={onSell}
@@ -253,9 +267,9 @@ export default function OwnershipDetailScreen() {
                         >
                             <Ionicons name="pricetag-outline" size={22} color="#475569"/>
                         </Pressable>
-                    ):null}
+                    )}
 
-                    { showEditAction && (
+                    { permissions.showEditAction && (
                             <Pressable
                                 accessibilityRole="button"
                                 onPress={onEdit}
@@ -375,7 +389,7 @@ export default function OwnershipDetailScreen() {
                             </Text>
                         )}
 
-                        {isAdmin && summaryItem && isSoldOut ? (
+                        {permissions.showDeleteAction && (
                             <Pressable
                                 onPress={openDeleteModal}
                                 disabled={!ownershipId || isDeleting}
@@ -403,7 +417,7 @@ export default function OwnershipDetailScreen() {
                                     </Text>
                                 </View>
                             </Pressable>
-                        ) : null}
+                        )}
                     </ScrollView>
                 </View>
             )}
