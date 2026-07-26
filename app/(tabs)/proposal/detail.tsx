@@ -161,8 +161,8 @@ export default function ProposalDetailScreen() {
         router.push({
             pathname: "/(tabs)/proposal/edit",
             params: {
-                proposalNo,
                 ownershipId: getOwnershipId(detail, ownershipId),
+                detailStr : JSON.stringify(detail)
             },
         });
     }, 600);

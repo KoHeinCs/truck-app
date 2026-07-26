@@ -4,7 +4,6 @@ import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-fo
 import {useTranslation} from "@/hooks/use-translation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useLocaleStore, type AppLocale} from "@/stores/client/locale-store";
-import {useProposalDetail} from "@/stores/server/proposal/query";
 import type {ProposalDetail} from "@/stores/server/proposal/typed";
 import {useUpdateProposal} from "@/stores/server/proposal/update-mutation";
 import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
@@ -87,19 +86,22 @@ export default function EditProposalScreen() {
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const errorCatalog = useTranslation("error");
-
     const {editProposal: t} = useTranslation('proposal')
+
     const params = useLocalSearchParams<{
-        proposalNo?: string;
         ownershipId?: string;
+        detailStr?: string;
     }>();
-    const proposalNo = String(params.proposalNo ?? "").trim();
     const ownershipId = String(params.ownershipId ?? "").trim();
-    const {data, isPending: isDetailPending} = useProposalDetail(
-        proposalNo,
-        ownershipId,
-    );
-    const detail = data?.data;
+    const detail = useMemo<ProposalDetail|null>(() => {
+        if (!params.detailStr) return null;
+        try {
+            return JSON.parse(params.detailStr);
+        } catch (e) {
+            return null;
+        }
+    }, [params.detailStr]);
+
     const {mutate, isPending} = useUpdateProposal();
 
     const mmLeading = getMyanmarLeadingClass(locale);
@@ -139,12 +141,11 @@ export default function EditProposalScreen() {
     const {serviceTypes} = useServiceTypeLookup();
 
     const onBack = useCallback(() => {
-        qc.invalidateQueries({queryKey: ["proposal"]});
         router.back();
-    }, [qc, router]);
+    }, [ router]);
 
     const onSubmit = (values: FormValues) => {
-        if (!detail?.id) return;
+        if (!detail?.id || !detail?.proposalNo) return;
 
         const serviceDate = parseServiceDateDisplayToApi(values.serviceDate);
         if (!serviceDate) return;
@@ -163,6 +164,10 @@ export default function EditProposalScreen() {
             },
             {
                 onSuccess: () => {
+
+                    qc.invalidateQueries({queryKey: ["proposal", "detail", detail?.proposalNo, ownershipId]});
+                    qc.invalidateQueries({queryKey:["proposal", "history", detail?.proposalNo, ownershipId]})
+
                     Alert.alert(t.dialog.successTitle, t.dialog.successBody, [
                         {text: t.actions.done, onPress: () => router.back()},
                     ]);
@@ -203,306 +208,297 @@ export default function EditProposalScreen() {
             </View>
 
             {/* edit form */}
-            {
-                isDetailPending ?
-                    (
-                        <View className="flex-1 items-center justify-center">
-                            <ActivityIndicator color={APP_COLORS.primary}/>
-                        </View>
-                    ) :
-                    (
-                        <KeyboardAvoidingView
-                            className="flex-1"
-                            style={{flex : 1}}
-                            behavior={Platform.OS === "ios" ? "padding" : "height"}
-                        >
+            <KeyboardAvoidingView
+                className="flex-1"
+                style={{flex : 1}}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
 
-                        <ScrollView
-                            className="px-4"
-                            contentContainerStyle={{
-                                paddingBottom: insets.bottom + 80,
-                                flexGrow: 1,
-                            }}
-                            keyboardShouldPersistTaps="handled"
-                            automaticallyAdjustKeyboardInsets
-                            keyboardDismissMode="on-drag"
-                        >
-                            <View
-                                className="mt-1 rounded-2xl  p-4"
-                                style={{
-                                    backgroundColor: APP_COLORS.card,
-                                    borderColor: APP_COLORS.border,
-                                    borderWidth: 1
-                                }}
+                <ScrollView
+                    className="px-4"
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + 80,
+                        flexGrow: 1,
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                    automaticallyAdjustKeyboardInsets
+                    keyboardDismissMode="on-drag"
+                >
+                    <View
+                        className="mt-1 rounded-2xl  p-4"
+                        style={{
+                            backgroundColor: APP_COLORS.card,
+                            borderColor: APP_COLORS.border,
+                            borderWidth: 1
+                        }}
+                    >
+
+                        {/* proposal number */}
+                        <View className="mb-4 gap-1">
+                            <Text
+                                className={`text-sm font-medium ${mmLeading}`}
+                                style={[style, {color: APP_COLORS.textSecondary}]}
                             >
+                                {t.labels.proposalNo}
+                            </Text>
+                            <Text
+                                className={`text-base font-medium  ${mmLeading}`}
+                                style={[style, {color: APP_COLORS.textPrimary}]}
+                            >
+                                {detail?.proposalNo || "-"}
+                            </Text>
+                        </View>
 
-                                {/* proposal number */}
-                                <View className="mb-4 gap-1">
-                                    <Text
-                                        className={`text-sm font-medium ${mmLeading}`}
-                                        style={[style, {color: APP_COLORS.textSecondary}]}
-                                    >
-                                        {t.labels.proposalNo}
-                                    </Text>
-                                    <Text
-                                        className={`text-base font-medium  ${mmLeading}`}
-                                        style={[style, {color: APP_COLORS.textPrimary}]}
-                                    >
-                                        {detail?.proposalNo || "-"}
-                                    </Text>
-                                </View>
+                        <View className="gap-4">
 
-                                <View className="gap-4">
+                            {/* proposal amount input field */}
+                            <FormInput
+                                control={control}
+                                name="proposalAmount"
+                                label={t.labels.amount}
+                                placeholder={t.placeholders.amount}
+                                locale={locale}
+                                keyboardType="decimal-pad"
+                                required
+                                error={errors.proposalAmount?.message}
+                                mmLeading={mmLeading}
+                                style={style}
+                            />
 
-                                    {/* proposal amount input field */}
-                                    <FormInput
-                                        control={control}
-                                        name="proposalAmount"
-                                        label={t.labels.amount}
-                                        placeholder={t.placeholders.amount}
-                                        locale={locale}
-                                        keyboardType="decimal-pad"
-                                        required
-                                        error={errors.proposalAmount?.message}
-                                        mmLeading={mmLeading}
-                                        style={style}
-                                    />
-
-                                    {/* service type select box */}
-                                    <Controller
-                                        control={control}
-                                        name="serviceType"
-                                        render={({field: {value, onChange}}) => (
-                                            <View className="gap-2">
-                                                <RequiredLabel
-                                                    label={t.labels.serviceType}
-                                                    mmLeading={mmLeading}
-                                                    style={style}
+                            {/* service type select box */}
+                            <Controller
+                                control={control}
+                                name="serviceType"
+                                render={({field: {value, onChange}}) => (
+                                    <View className="gap-2">
+                                        <RequiredLabel
+                                            label={t.labels.serviceType}
+                                            mmLeading={mmLeading}
+                                            style={style}
+                                        />
+                                        <Select
+                                            value={getSelectedServiceType(value, serviceTypes, locale)}
+                                            onValueChange={(next) => {
+                                                if (next && !Array.isArray(next)) {
+                                                    onChange(next.value);
+                                                }
+                                            }}
+                                        >
+                                            <Select.Trigger
+                                                className={`p-3 ${mmLeading} `}
+                                                style={{
+                                                    backgroundColor: APP_COLORS.inputBackground,
+                                                    borderColor: APP_COLORS.border,
+                                                    borderWidth: 1
+                                                }}
+                                            >
+                                                <Select.Value
+                                                    placeholder={t.placeholders.serviceType}
+                                                    className={`text-base font-medium ${mmLeading}`}
+                                                    style={[{color: APP_COLORS.textPrimary}, style]}
                                                 />
-                                                <Select
-                                                    value={getSelectedServiceType(value, serviceTypes, locale)}
-                                                    onValueChange={(next) => {
-                                                        if (next && !Array.isArray(next)) {
-                                                            onChange(next.value);
-                                                        }
+                                                <Select.TriggerIndicator/>
+                                            </Select.Trigger>
+                                            <Select.Portal>
+                                                <Select.Overlay/>
+                                                <Select.Content
+                                                    className="rounded-2xl"
+                                                    style={{
+                                                        backgroundColor: APP_COLORS.card,
+                                                        borderColor: APP_COLORS.border,
+                                                        borderWidth: 1
                                                     }}
+                                                    presentation="popover"
+                                                    width="trigger"
                                                 >
-                                                    <Select.Trigger
-                                                        className={`p-3 ${mmLeading} `}
-                                                        style={{
-                                                            backgroundColor: APP_COLORS.inputBackground,
-                                                            borderColor: APP_COLORS.border,
-                                                            borderWidth: 1
-                                                        }}
-                                                    >
-                                                        <Select.Value
-                                                            placeholder={t.placeholders.serviceType}
-                                                            className={`text-base font-medium ${mmLeading}`}
-                                                            style={[{color: APP_COLORS.textPrimary}, style]}
-                                                        />
-                                                        <Select.TriggerIndicator/>
-                                                    </Select.Trigger>
-                                                    <Select.Portal>
-                                                        <Select.Overlay/>
-                                                        <Select.Content
-                                                            className="rounded-2xl"
-                                                            style={{
-                                                                backgroundColor: APP_COLORS.card,
-                                                                borderColor: APP_COLORS.border,
-                                                                borderWidth: 1
-                                                            }}
-                                                            presentation="popover"
-                                                            width="trigger"
-                                                        >
-                                                            {serviceTypes.map((serviceType) => {
-                                                                    const itemLabel = getServiceTypeLabel(serviceType, locale);
-                                                                    const isSelected = serviceType.serviceType === value;
+                                                    {serviceTypes.map((serviceType) => {
+                                                            const itemLabel = getServiceTypeLabel(serviceType, locale);
+                                                            const isSelected = serviceType.serviceType === value;
 
-                                                                    return (
-                                                                        <Select.Item
-                                                                            className=" text-xs"
-                                                                            key={String(serviceType.id)}
-                                                                            value={serviceType.serviceType}
-                                                                            label={itemLabel}
-                                                                            style={{
-                                                                                backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
-                                                                                paddingVertical: 12,
-                                                                                paddingHorizontal: 16,
-                                                                            }}
-                                                                        >
-                                                                            <Select.ItemLabel
-                                                                                className={`text-xs ${mmLeading}`}
-                                                                                style={[{
-                                                                                    color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
-                                                                                    fontWeight: isSelected ? "600" : "400"
-                                                                                }, style]}
-                                                                            />
-                                                                            <Select.ItemIndicator/>
-                                                                        </Select.Item>
-                                                                    )
-                                                                }
-                                                            )}
-                                                        </Select.Content>
-                                                    </Select.Portal>
-                                                </Select>
-                                                {!!errors.serviceType?.message && (
-                                                    <Text
-                                                        className={`text-xs font-normal ${mmLeading}`}
-                                                        style={[{color: APP_COLORS.error}, style]}
-                                                    >
-                                                        {String(errors.serviceType.message)}
-                                                    </Text>
-                                                )}
-                                            </View>
-                                        )}
-                                    />
-
-                                    {/* service date */}
-                                    <Controller
-                                        control={control}
-                                        name="serviceDate"
-                                        render={({field: {value, onChange}}) => (
-                                            <View className="gap-2">
-                                                <RequiredLabel
-                                                    label={t.labels.serviceDate}
-                                                    mmLeading={mmLeading}
-                                                    style={style}
-                                                />
-                                                <ServiceDatePicker
-                                                    value={value}
-                                                    onChange={onChange}
-                                                    placeholder={t.placeholders.serviceDate}
-                                                    doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
-                                                    locale={locale}
-                                                    style={style}
-                                                    maximumDate={new Date()}
-                                                />
-                                                {!!errors.serviceDate?.message && (
-                                                    <Text
-                                                        className={`text-xs font-normal ${mmLeading}`}
-                                                        style={[{color: APP_COLORS.error}, style]}
-                                                    >
-                                                        {String(errors.serviceDate.message)}
-                                                    </Text>
-                                                )}
-                                            </View>
-                                        )}
-                                    />
-
-                                    {/* service shop input field */}
-                                    <FormInput
-                                        control={control}
-                                        name="serviceShop"
-                                        label={t.labels.serviceShop}
-                                        placeholder={t.placeholders.serviceShop}
-                                        locale={locale}
-                                        required
-                                        error={errors.serviceShop?.message}
-                                        mmLeading={mmLeading}
-                                        style={style}
-                                    />
-
-                                    {/* description */}
-                                    <Controller
-                                        control={control}
-                                        name="description"
-                                        render={({field: {value, onChange}}) => (
-                                            <View className="gap-2">
-                                                <RequiredLabel
-                                                    label={t.labels.description}
-                                                    mmLeading={mmLeading}
-                                                    style={style}
-                                                />
-                                                <TextInput
-                                                    value={value}
-                                                    onChangeText={onChange}
-                                                    placeholder={t.placeholders.description}
-                                                    placeholderTextColor={APP_COLORS.textMuted}
-                                                    multiline={true}
-                                                    numberOfLines={4}
-                                                    scrollEnabled={true}
-                                                    maxLength={511}
-                                                    textAlignVertical="top"
-                                                    className={`min-h-[126px] rounded-xl p-3 text-base font-medium ${mmLeading}`}
-                                                    style={[style, {
-                                                        backgroundColor: APP_COLORS.inputBackground,
-                                                        borderColor: errors.description ? APP_COLORS.error : APP_COLORS.border,
-                                                        borderWidth: 1,
-                                                        color: APP_COLORS.textPrimary
-                                                    }]}
-                                                />
-                                                {!!errors.description?.message && (
-                                                    <Text
-                                                        className={`text-xs font-normal ${mmLeading}`}
-                                                        style={[{color: APP_COLORS.error}, style]}
-                                                    >
-                                                        {String(errors.description.message)}
-                                                    </Text>
-                                                )}
-                                            </View>
-                                        )}
-                                    />
-
-                                    {/* remark */}
-                                    <FormInput
-                                        control={control}
-                                        name="remark"
-                                        label={t.labels.remark}
-                                        placeholder={t.placeholders.remark}
-                                        locale={locale}
-                                        required
-                                        error={errors.remark?.message}
-                                        mmLeading={mmLeading}
-                                        style={style}
-                                    />
-
-                                    {/* back && submit button */}
-                                    <View className="flex-row gap-3 pt-2">
-                                        <Pressable
-                                            onPress={onBack}
-                                            disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl  h-13 "
-                                            style={({pressed}) => ({
-                                                backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
-                                                opacity: isPending ? 0.7 : 1,
-                                                borderColor: APP_COLORS.border,
-                                                borderWidth: 1
-                                            })}
-                                        >
+                                                            return (
+                                                                <Select.Item
+                                                                    className=" text-xs"
+                                                                    key={String(serviceType.id)}
+                                                                    value={serviceType.serviceType}
+                                                                    label={itemLabel}
+                                                                    style={{
+                                                                        backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                                                        paddingVertical: 12,
+                                                                        paddingHorizontal: 16,
+                                                                    }}
+                                                                >
+                                                                    <Select.ItemLabel
+                                                                        className={`text-xs ${mmLeading}`}
+                                                                        style={[{
+                                                                            color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                                            fontWeight: isSelected ? "600" : "400"
+                                                                        }, style]}
+                                                                    />
+                                                                    <Select.ItemIndicator/>
+                                                                </Select.Item>
+                                                            )
+                                                        }
+                                                    )}
+                                                </Select.Content>
+                                            </Select.Portal>
+                                        </Select>
+                                        {!!errors.serviceType?.message && (
                                             <Text
-                                                className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
-                                                style={style}
+                                                className={`text-xs font-normal ${mmLeading}`}
+                                                style={[{color: APP_COLORS.error}, style]}
                                             >
-                                                {t.actions.cancel}
+                                                {String(errors.serviceType.message)}
                                             </Text>
-                                        </Pressable>
-                                        <Pressable
-                                            onPress={handleSubmit(onSubmit)}
-                                            disabled={isPending}
-                                            className="flex-1 items-center justify-center rounded-xl h-13"
-                                            style={({pressed}) => ({
-                                                backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
-                                                opacity: isPending ? 0.7 : 1,
-                                                borderColor: APP_COLORS.border,
-                                                borderWidth: 1
-                                            })}
-                                        >
-                                            <Text
-                                                className={`text-sm font-semibold text-white ${mmLeading}`}
-                                                style={style}
-                                            >
-                                                {isPending ? t.actions.updating : t.actions.update}
-                                            </Text>
-                                        </Pressable>
+                                        )}
                                     </View>
+                                )}
+                            />
 
-                                </View>
+                            {/* service date */}
+                            <Controller
+                                control={control}
+                                name="serviceDate"
+                                render={({field: {value, onChange}}) => (
+                                    <View className="gap-2">
+                                        <RequiredLabel
+                                            label={t.labels.serviceDate}
+                                            mmLeading={mmLeading}
+                                            style={style}
+                                        />
+                                        <ServiceDatePicker
+                                            value={value}
+                                            onChange={onChange}
+                                            placeholder={t.placeholders.serviceDate}
+                                            doneLabel={locale === "mm" ? "ရွေးချယ်မည်" : "Done"}
+                                            locale={locale}
+                                            style={style}
+                                            maximumDate={new Date()}
+                                        />
+                                        {!!errors.serviceDate?.message && (
+                                            <Text
+                                                className={`text-xs font-normal ${mmLeading}`}
+                                                style={[{color: APP_COLORS.error}, style]}
+                                            >
+                                                {String(errors.serviceDate.message)}
+                                            </Text>
+                                        )}
+                                    </View>
+                                )}
+                            />
+
+                            {/* service shop input field */}
+                            <FormInput
+                                control={control}
+                                name="serviceShop"
+                                label={t.labels.serviceShop}
+                                placeholder={t.placeholders.serviceShop}
+                                locale={locale}
+                                required
+                                error={errors.serviceShop?.message}
+                                mmLeading={mmLeading}
+                                style={style}
+                            />
+
+                            {/* description */}
+                            <Controller
+                                control={control}
+                                name="description"
+                                render={({field: {value, onChange}}) => (
+                                    <View className="gap-2">
+                                        <RequiredLabel
+                                            label={t.labels.description}
+                                            mmLeading={mmLeading}
+                                            style={style}
+                                        />
+                                        <TextInput
+                                            value={value}
+                                            onChangeText={onChange}
+                                            placeholder={t.placeholders.description}
+                                            placeholderTextColor={APP_COLORS.textMuted}
+                                            multiline={true}
+                                            numberOfLines={4}
+                                            scrollEnabled={true}
+                                            maxLength={511}
+                                            textAlignVertical="top"
+                                            className={`min-h-[126px] rounded-xl p-3 text-base font-medium ${mmLeading}`}
+                                            style={[style, {
+                                                backgroundColor: APP_COLORS.inputBackground,
+                                                borderColor: errors.description ? APP_COLORS.error : APP_COLORS.border,
+                                                borderWidth: 1,
+                                                color: APP_COLORS.textPrimary
+                                            }]}
+                                        />
+                                        {!!errors.description?.message && (
+                                            <Text
+                                                className={`text-xs font-normal ${mmLeading}`}
+                                                style={[{color: APP_COLORS.error}, style]}
+                                            >
+                                                {String(errors.description.message)}
+                                            </Text>
+                                        )}
+                                    </View>
+                                )}
+                            />
+
+                            {/* remark */}
+                            <FormInput
+                                control={control}
+                                name="remark"
+                                label={t.labels.remark}
+                                placeholder={t.placeholders.remark}
+                                locale={locale}
+                                required
+                                error={errors.remark?.message}
+                                mmLeading={mmLeading}
+                                style={style}
+                            />
+
+                            {/* back && submit button */}
+                            <View className="flex-row gap-3 pt-2">
+                                <Pressable
+                                    onPress={onBack}
+                                    disabled={isPending}
+                                    className="flex-1 items-center justify-center rounded-xl  h-13 "
+                                    style={({pressed}) => ({
+                                        backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent',
+                                        opacity: isPending ? 0.7 : 1,
+                                        borderColor: APP_COLORS.border,
+                                        borderWidth: 1
+                                    })}
+                                >
+                                    <Text
+                                        className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
+                                        style={style}
+                                    >
+                                        {t.actions.cancel}
+                                    </Text>
+                                </Pressable>
+                                <Pressable
+                                    onPress={handleSubmit(onSubmit)}
+                                    disabled={isPending}
+                                    className="flex-1 items-center justify-center rounded-xl h-13"
+                                    style={({pressed}) => ({
+                                        backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary,
+                                        opacity: isPending ? 0.7 : 1,
+                                        borderColor: APP_COLORS.border,
+                                        borderWidth: 1
+                                    })}
+                                >
+                                    <Text
+                                        className={`text-sm font-semibold text-white ${mmLeading}`}
+                                        style={style}
+                                    >
+                                        {isPending ? t.actions.updating : t.actions.update}
+                                    </Text>
+                                </Pressable>
                             </View>
-                        </ScrollView>
 
-                        </KeyboardAvoidingView>
-                    )
-            }
+                        </View>
+                    </View>
+                </ScrollView>
+
+            </KeyboardAvoidingView>
+
         </SafeAreaView>
     );
 }
