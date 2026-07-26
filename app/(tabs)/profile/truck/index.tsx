@@ -159,7 +159,7 @@ export default function TruckManagementScreen() {
           }
         }}
         ListHeaderComponent={
-          <View className="pb-3">
+          <View className="pb-3 pt-1">
             <TruckSearchToolbar
               locale={locale}
               quickQuery={ui.quickQuery}

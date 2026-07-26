@@ -261,7 +261,7 @@ export default function TeamManagementScreen() {
           }
         }}
         ListHeaderComponent={
-          <View className=" pb-3">
+          <View className=" pb-3 pt-1">
             <TeamSearchToolbar
               locale={locale}
               quickQuery={ui.quickQuery}

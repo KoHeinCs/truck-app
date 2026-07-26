@@ -172,7 +172,7 @@ export default function ServiceTypeManagementScreen() {
                 }}
                 // search && advance search
                 ListHeaderComponent={
-                    <View className="pb-3">
+                    <View className="pb-3 pt-1">
                         <ServiceSearchToolbar
                             locale={locale}
                             quickQuery={ui.quickQuery}
