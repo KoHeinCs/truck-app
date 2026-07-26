@@ -89,43 +89,58 @@ export default function ProposalDetailScreen() {
     const locale = useLocaleStore((state) => state.locale);
     const loginRole = useAuthStore((state) => state.role);
     const loginUserId = useAuthStore((state) => state.userId);
+
     const mmLeading = getMyanmarLeadingClass(locale);
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
+
     const errorCatalog = useTranslation("error");
     const {detailProposal: t} = useTranslation('proposal')
     const {actionStatus : tActionStatus } = useTranslation('lookup')
+
     const params = useLocalSearchParams<{
         proposalNo?: string;
         ownershipId?: string;
     }>();
     const proposalNo = String(params.proposalNo ?? "").trim();
     const ownershipId = String(params.ownershipId ?? "").trim();
+
     const {data, isPending} = useProposalDetail(proposalNo, ownershipId);
     const {data: historyData} = useProposalHistory(proposalNo, ownershipId);
     const detail = data?.data;
     const histories = historyData?.data ?? [];
+
     const {mutate: approveProposal, isPending: isApproving} = useApproveProposal();
     const {mutate: terminateProposal, isPending: isTerminating} = useTerminateProposal();
+
     const [approveModalOpen, setApproveModalOpen] = useState(false);
     const [terminateModalOpen, setTerminateModalOpen] = useState(false);
     const [approveRemark, setApproveRemark] = useState("");
     const [terminateRemark, setTerminateRemark] = useState("");
 
-    const currentRole = (loginRole || "").toUpperCase();
-    const proposalStatus = (detail?.status || "").toUpperCase();
-    const ownerId = (detail?.ownerId || "").trim();
+    const permissions = useMemo(()=>{
 
-    const isInformState = proposalStatus === 'INFORM';
-    const isApprovedState = proposalStatus === 'APPROVED';
-    const isAdminRole = currentRole === 'ADMIN';
+        if (isPending || !detail)
+            return {showApproveAction : false,showTerminateAction : false,showEditAction : false};
 
-    const isProposalOwner = (currentRole === 'OWNER' && loginUserId === ownerId)
-    const hasManagementAuthority = isAdminRole || isProposalOwner;
+        const currentRole = (loginRole || "").toUpperCase();
+        const proposalStatus = (detail?.status || "").toUpperCase();
+        const ownerId = (detail?.ownerId || "").trim();
 
-    const showApproveAction = isInformState && hasManagementAuthority;
-    const showTerminateAction = (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole);
-    const showEditAction = (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole);
+        const isInformState = proposalStatus === 'INFORM';
+        const isApprovedState = proposalStatus === 'APPROVED';
+        const isAdminRole = currentRole === 'ADMIN';
+
+        const isProposalOwner = (currentRole === 'OWNER' && loginUserId === ownerId);
+        const hasManagementAuthority = isAdminRole || isProposalOwner;
+
+        return {
+            showApproveAction: isInformState && hasManagementAuthority,
+            showTerminateAction: (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole) ,
+            showEditAction : (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole)
+        }
+
+    }, [isPending, detail,loginRole,loginUserId]);
 
 
     const isSubmitting = isApproving || isTerminating;
@@ -142,7 +157,7 @@ export default function ProposalDetailScreen() {
     }, [markListRefreshPending, router]);
 
     const onEdit = useThrottledCallback(() => {
-        if (!proposalNo) return;
+        if (!proposalNo || !detail) return;
         router.push({
             pathname: "/(tabs)/proposal/edit",
             params: {
@@ -271,7 +286,7 @@ export default function ProposalDetailScreen() {
                     style={[style, {color: APP_COLORS.textPrimary}]}>
                     {t.title}
                 </Text>
-                {showEditAction ? (
+                {permissions.showEditAction ? (
                     <Pressable
                         accessibilityRole="button"
                         onPress={onEdit}
@@ -494,7 +509,7 @@ export default function ProposalDetailScreen() {
 
                             {/* terminate && approve buttons */}
                             <View className="mb-2 mt-5 flex-row w-full gap-3">
-                                {showTerminateAction && (
+                                {permissions.showTerminateAction && (
                                     <Button
                                         isDisabled={isSubmitting}
                                         onPress={() => setTerminateModalOpen(true)}
@@ -522,7 +537,7 @@ export default function ProposalDetailScreen() {
                                 )}
 
 
-                                {showApproveAction && (
+                                {permissions.showApproveAction && (
                                     <Button
                                         isDisabled={isSubmitting}
                                         onPress={() => setApproveModalOpen(true)}
