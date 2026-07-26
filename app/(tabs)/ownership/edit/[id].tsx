@@ -8,7 +8,6 @@ import {useTranslation} from "@/hooks/use-translation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useAuthStore} from "@/stores/auth-store";
 import {useLocaleStore} from "@/stores/client/locale-store";
-import {useOwnershipDetail} from "@/stores/server/ownership/query";
 import {useUpdateOwnership} from "@/stores/server/ownership/update-mutation";
 import {formatDate, toIsoDate} from "@/utils/dateUtil";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -32,6 +31,7 @@ import {
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import {z} from "zod";
+import {OwnershipItem} from "@/stores/server/ownership/typed";
 
 const DATE_MSG = {
     en: "Use dd/mm/yyyy",
@@ -99,14 +99,24 @@ export default function OwnershipEditScreen() {
     const errorCatalog = useTranslation("error");
     const {mutate, isPending} = useUpdateOwnership();
 
-    const params = useLocalSearchParams<{ id?: string | string[] }>();
+    const params = useLocalSearchParams<{
+        id?: string | string[] ;
+        detailStr?: string;
+    }>();
     const rawId = params.id;
     const ownershipId = Array.isArray(rawId)
         ? String(rawId[0] ?? "").trim()
         : String(rawId ?? "").trim();
 
-    const {data, isPending: isLoading, isError, refetch} = useOwnershipDetail(ownershipId);
-    const detail = data?.data;
+    const detail = useMemo<OwnershipItem|null>(() => {
+        if (!params.detailStr) return null;
+        try {
+            return JSON.parse(params.detailStr);
+        } catch (e) {
+            return null;
+        }
+    },[params.detailStr]);
+
     const version = detail?.version;
 
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
@@ -347,32 +357,6 @@ export default function OwnershipEditScreen() {
                     automaticallyAdjustKeyboardInsets
                     keyboardDismissMode="on-drag"
                 >
-                {/* fetch details error */}
-                {isError ? (
-                    <View
-                        className="mb-4 rounded-2xl border p-4"
-                        style={{
-                            backgroundColor: APP_COLORS.errorSoft,
-                            borderColor: APP_COLORS.error,
-                        }}
-                    >
-                        <Text
-                            className={`text-sm ${mmLeading}`}
-                            style={[{color: APP_COLORS.error}, style]}
-                        >
-                            {t.dialog.errorBody}
-                        </Text>
-                        <Pressable
-                            onPress={() => refetch()}
-                            className="mt-3 self-start rounded-xl px-4 py-2"
-                            style={{backgroundColor: APP_COLORS.primary}}
-                        >
-                            <Text className={`text-sm font-semibold text-white ${mmLeading}`} style={style}>
-                                {locale === "mm" ? "ပြန်ကြိုးစားမည်" : "Retry"}
-                            </Text>
-                        </Pressable>
-                    </View>
-                ) : null}
 
                 {/* edit form details */}
                 <View
@@ -381,10 +365,12 @@ export default function OwnershipEditScreen() {
                         backgroundColor: APP_COLORS.card,
                         borderColor: APP_COLORS.border,
                         borderWidth: 1,
-                        opacity: isLoading && !detail ? 0.6 : 1,
+                        opacity: 1,
                     }}
                 >
                     <View className="gap-3">
+
+                        {/* ownership info title */}
                         <Text
                             className={`text-sm font-bold ${mmLeading}`}
                             style={[style, {color: APP_COLORS.textPrimary}]}
@@ -392,12 +378,33 @@ export default function OwnershipEditScreen() {
                             {t.ownershipDetailsTitle}
                         </Text>
 
-                        {/* loding state */}
-                        {isLoading && !detail ? (
-                            <View className="items-center py-4">
-                                <ActivityIndicator color={APP_COLORS.primary}/>
+                        {/* plate no. */}
+                        <View className="gap-1.5">
+                            <View className="flex-row items-center gap-1">
+                                <Text
+                                    className={`text-sm font-medium ${mmLeading}`}
+                                    style={[{color: APP_COLORS.textMuted}, style]}
+                                >
+                                    {t.labels.plateNo}
+                                </Text>
                             </View>
-                        ) : null}
+                            <Input
+                                value={String(detail?.truckPlateNo ?? "")}
+                                autoCapitalize="none"
+                                editable={false}
+                                style={[
+                                    {
+                                        backgroundColor: APP_COLORS.border,
+                                        borderColor: APP_COLORS.border,
+                                        borderWidth: 1,
+                                        color: APP_COLORS.textPrimary,
+                                    },
+                                    style,
+                                ]}
+                                className={`py-0 text-sm font-medium ${mmLeading}`}
+                            />
+
+                        </View>
 
                         {/* equipment name */}
                         {renderTextInput("equipmentName", {required: true})}

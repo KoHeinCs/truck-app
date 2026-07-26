@@ -30,10 +30,8 @@ export function useUpdateOwnership() {
   return useMutation({
     mutationFn: updateOwnership,
     onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: ["ownership", "infinite"] });
-      qc.invalidateQueries({
-        queryKey: ["ownership", "find", variables.ownershipId],
-      });
+      qc.invalidateQueries({queryKey: ["ownership", "find", variables.ownershipId],});
+      qc.invalidateQueries({queryKey: ["ownership", "runningBalance", variables.ownershipId],});
     },
   });
 }

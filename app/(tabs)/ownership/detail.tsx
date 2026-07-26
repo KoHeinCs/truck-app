@@ -85,7 +85,7 @@ export default function OwnershipDetailScreen() {
     const summaryItem = detailResponse?.data;
     const records = runningBalanceData?.data ?? [];
     const isPending = isDetailPending || isRunningBalancePending;
-    
+
     const permissions = useMemo(()=> {
         if (isPending || !detailResponse)
             return {showEditAction:false,showSellAction:false,showDeleteAction:false};
@@ -116,7 +116,10 @@ export default function OwnershipDetailScreen() {
         if (!ownershipId) return;
         router.push({
             pathname: "/(tabs)/ownership/edit/[id]",
-            params: {id: ownershipId},
+            params: {
+                id: ownershipId,
+                detailStr : JSON.stringify(summaryItem)
+            },
         });
     }, 600);
 

@@ -114,6 +114,7 @@
       "ownershipDetailsTitle": "Ownership Details",
       "labels": {
         "equipmentName": "Equipment Name",
+        "plateNo": "Plate No",
         "buyDate": "Buy Date",
         "licenseCity": "License City",
         "licenseEndDate": "License End Date",

@@ -114,6 +114,7 @@
       "ownershipDetailsTitle": "ပိုင်ဆိုင်မှုအချက်အလက်",
       "labels": {
         "equipmentName": "ကားအမည်",
+        "plateNo": "ကားနံပါတ်",
         "buyDate": "ဝယ်ယူရက်",
         "licenseCity": "လိုင်စင်မြို့",
         "licenseEndDate": "လိုင်စင်ကုန်ဆုံးရက်",
