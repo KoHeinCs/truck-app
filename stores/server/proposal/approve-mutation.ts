@@ -35,7 +35,7 @@ export function useApproveProposal() {
   return useMutation({
     mutationFn: approveProposal,
     onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: ["proposal"] });
+      qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
       markOwnershipRunningBalanceRefresh(variables.ownershipId);
     },
   });

@@ -22,7 +22,7 @@ export function useTerminateProposal() {
   return useMutation({
     mutationFn: terminateProposal,
     onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: ["proposal"] });
+      qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
       markOwnershipRunningBalanceRefresh(variables.ownershipId);
     },
   });
