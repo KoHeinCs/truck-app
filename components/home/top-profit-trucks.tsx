@@ -3,6 +3,7 @@ import {
   getMyanmarLeadingClass,
   myanmarUITextStyle,
 } from "@/constants/myanmar-font";
+import { useThrottledCallback } from "@/hooks/use-throttled-callback";
 import { useTranslation } from "@/hooks/use-translation";
 import { useAuthStore } from "@/stores/auth-store";
 import { useLocaleStore } from "@/stores/client/locale-store";
@@ -10,8 +11,9 @@ import { useTruckStats } from "@/stores/server/dashboard/truck-stats-query";
 import type { TopProfitTruck } from "@/stores/server/dashboard/typed";
 import { formatAmount } from "@/utils/amountUtil";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 function formatProfitAmount(value: number): string {
   return formatAmount(value).replace(/\s*Ks$/, "");
@@ -23,6 +25,7 @@ type TopProfitTruckRowProps = {
   profitLabel: string;
   textStyle: ReturnType<typeof myanmarUITextStyle> | undefined;
   mmLeading: string;
+  onPress: (truck: TopProfitTruck) => void;
 };
 
 function TopProfitTruckRow({
@@ -31,18 +34,21 @@ function TopProfitTruckRow({
   profitLabel,
   textStyle,
   mmLeading,
+  onPress,
 }: TopProfitTruckRowProps) {
   const equipmentName = truck.equipmentName?.trim() || "-";
   const plateNo = truck.truckPlateNo?.trim() || "-";
 
   return (
-    <View
+    <Pressable
+      accessibilityRole="button"
+      onPress={() => onPress(truck)}
       className="flex-row items-center gap-3 rounded-xl px-3 py-3"
-      style={{
+      style={({ pressed }) => ({
         borderColor: APP_COLORS.border,
         borderWidth: 1,
-        backgroundColor: APP_COLORS.card,
-      }}
+        backgroundColor: pressed ? APP_COLORS.inputBackground : APP_COLORS.card,
+      })}
     >
       <View
         className="h-8 w-8 items-center justify-center rounded-full"
@@ -85,7 +91,7 @@ function TopProfitTruckRow({
           {profitLabel}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -94,6 +100,7 @@ type TopProfitTrucksProps = {
 };
 
 const TopProfitTrucks = ({ selectedOwnerId }: TopProfitTrucksProps) => {
+  const router = useRouter();
   const role = useAuthStore((state) => state.role);
   const upperRole = (role || "").toUpperCase();
   const locale = useLocaleStore((state) => state.locale);
@@ -106,6 +113,15 @@ const TopProfitTrucks = ({ selectedOwnerId }: TopProfitTrucksProps) => {
 
   const showSection = upperRole === "ADMIN" || upperRole === "OWNER" || upperRole === "VIEWER";
   const trucks = data?.data?.topProfitTrucks ?? [];
+
+  const openOwnershipDetail = useThrottledCallback((truck: TopProfitTruck) => {
+    const ownershipId = String(truck.id ?? "").trim();
+    if (!ownershipId) return;
+    router.push({
+      pathname: "/(tabs)/ownership/detail",
+      params: { ownershipId },
+    });
+  }, 600);
 
   if (!showSection) {
     return null;
@@ -158,6 +174,7 @@ const TopProfitTrucks = ({ selectedOwnerId }: TopProfitTrucksProps) => {
               profitLabel={t.profitLabel}
               textStyle={textStyle}
               mmLeading={mmLeading}
+              onPress={openOwnershipDetail}
             />
           ))
         )}

@@ -153,7 +153,7 @@ export default function ProposalDetailScreen() {
 
     const onBack = useCallback(() => {
         markListRefreshPending();
-        router.back();
+        router.replace("/(tabs)/proposal");
     }, [markListRefreshPending, router]);
 
     const onEdit = useThrottledCallback(() => {

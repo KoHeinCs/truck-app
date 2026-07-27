@@ -4,7 +4,7 @@ import {
 } from "@/constants/myanmar-font";
 import {Select} from "heroui-native";
 import React, {useMemo} from "react";
-import {Text, View} from "react-native";
+import {ScrollView, Text, useWindowDimensions, View} from "react-native";
 import {APP_COLORS} from "@/constants/colors";
 
 type SelectOption = {
@@ -29,6 +29,9 @@ export function CompactSelect({
                                   placeholder,
                                   options,
                               }: CompactSelectProps) {
+
+    const {height: screenHeight} = useWindowDimensions();
+    const contentMaxHeight = Math.min(280, screenHeight * 0.4);
 
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
@@ -86,36 +89,47 @@ export function CompactSelect({
                         style={{
                             backgroundColor:APP_COLORS.card,
                             borderColor:APP_COLORS.border,
-                            borderWidth:1
+                            borderWidth:1,
+                            maxHeight: contentMaxHeight,
                         }}
                         presentation="popover"
+                        placement="bottom"
+                        align="start"
                         width="trigger"
                     >
-                        {options.map((option) => {
-                            const itemLabel = option.label;
-                            const isSelected = option.value === value;
-                            return (
-                                <Select.Item
-                                    key={option.value}
-                                    value={option.value}
-                                    label={itemLabel}
-                                    style={{
-                                        backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
-                                        paddingVertical:12,
-                                        paddingHorizontal:16,
-                                    }}
-                                >
-                                    <Select.ItemLabel
-                                        className={`text-xs ${getMyanmarLeadingClass(locale)}`}
-                                        style={[style,{
-                                            color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
-                                            fontWeight: isSelected ? "600" : "400"
-                                        }]}
-                                    />
-                                    <Select.ItemIndicator />
-                                </Select.Item>
-                            );
-                        })}
+                        <ScrollView
+                            nestedScrollEnabled
+                            bounces={false}
+                            showsVerticalScrollIndicator
+                            style={{ maxHeight: contentMaxHeight }}
+                            keyboardShouldPersistTaps="handled"
+                        >
+                            {options.map((option) => {
+                                const itemLabel = option.label;
+                                const isSelected = option.value === value;
+                                return (
+                                    <Select.Item
+                                        key={option.value}
+                                        value={option.value}
+                                        label={itemLabel}
+                                        style={{
+                                            backgroundColor: isSelected ? APP_COLORS.primarySoft : 'transparent',
+                                            paddingVertical:12,
+                                            paddingHorizontal:16,
+                                        }}
+                                    >
+                                        <Select.ItemLabel
+                                            className={`text-xs ${getMyanmarLeadingClass(locale)}`}
+                                            style={[style,{
+                                                color: isSelected ? APP_COLORS.primary : APP_COLORS.textPrimary,
+                                                fontWeight: isSelected ? "600" : "400"
+                                            }]}
+                                        />
+                                        <Select.ItemIndicator />
+                                    </Select.Item>
+                                );
+                            })}
+                        </ScrollView>
                     </Select.Content>
                 </Select.Portal>
             </Select>
