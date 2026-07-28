@@ -32,6 +32,10 @@
       "APPROVED": "APPROVED",
       "UPDATE": "UPDATED",
       "TERMINATED": "TERMINATED"
+    },
+    "truckStatus": {
+      "ACTIVE": "Active",
+      "SOLD_OUT": "Sold Out"
     }
   }
 }

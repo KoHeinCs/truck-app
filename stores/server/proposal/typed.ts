@@ -57,6 +57,7 @@ export interface ProposalDetail {
   ownerId?: string;
   ownerFullName?: string;
   ownerPhone?: string;
+  truckStatus?: string;
 }
 
 export interface ProposalHistoryItem {

@@ -96,7 +96,7 @@ export default function ProposalDetailScreen() {
 
     const errorCatalog = useTranslation("error");
     const {detailProposal: t} = useTranslation('proposal')
-    const {actionStatus : tActionStatus } = useTranslation('lookup')
+    const {actionStatus : tActionStatus,truckStatus:tTruckStatus } = useTranslation('lookup')
 
     const params = useLocalSearchParams<{
         proposalNo?: string;
@@ -125,21 +125,24 @@ export default function ProposalDetailScreen() {
         if (isPending || !detail)
             return {showApproveAction : false,showTerminateAction : false,showEditAction : false};
 
+
         const currentRole = (loginRole || "").toUpperCase();
         const proposalStatus = (detail?.status || "").toUpperCase();
         const ownerId = (detail?.ownerId || "").trim();
+        const truckStatus = (detail?.truckStatus || "").toUpperCase();
 
         const isInformState = proposalStatus === 'INFORM';
         const isApprovedState = proposalStatus === 'APPROVED';
         const isAdminRole = currentRole === 'ADMIN';
+        const isActiveTruck = truckStatus === 'ACTIVE';
 
         const isProposalOwner = (currentRole === 'OWNER' && loginUserId === ownerId);
         const hasManagementAuthority = isAdminRole || isProposalOwner;
 
         return {
-            showApproveAction: isInformState && hasManagementAuthority,
-            showTerminateAction: (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole) ,
-            showEditAction : (isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole)
+            showApproveAction: isActiveTruck && isInformState && hasManagementAuthority,
+            showTerminateAction: isActiveTruck && ((isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole)) ,
+            showEditAction : isActiveTruck && ((isInformState && hasManagementAuthority) || (isApprovedState && isAdminRole))
         }
 
     }, [isPending, detail,loginRole,loginUserId]);
@@ -174,7 +177,7 @@ export default function ProposalDetailScreen() {
             }
 
         }
-    }, [markListRefreshPending, router,proposalNo,ownershipId,fromRoute]);
+    }, [markListRefreshPending, router,ownershipId,fromRoute]);
 
     const onEdit = useThrottledCallback(() => {
         if (!proposalNo || !detail) return;
@@ -389,6 +392,18 @@ export default function ProposalDetailScreen() {
                                     <DetailRow
                                         label={t.labels.truck}
                                         value={detail?.plateNo || "-"}
+                                        mmLeading={mmLeading}
+                                        style={style}
+                                        valueClassName="text-base font-semibold"
+                                        valueColor={APP_COLORS.textSecondary}
+                                    />
+
+                                    <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
+
+                                    {/* truck  status */}
+                                    <DetailRow
+                                        label={t.labels.truckStatus}
+                                        value={tTruckStatus[(detail?.truckStatus ?? "ACTIVE") as "ACTIVE" | "SOLD_OUT"]}
                                         mmLeading={mmLeading}
                                         style={style}
                                         valueClassName="text-base font-semibold"

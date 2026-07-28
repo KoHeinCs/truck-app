@@ -135,7 +135,8 @@
         "description": "Description",
         "remark": "Remark",
         "notes": "Notes",
-        "done": "Done"
+        "done": "Done",
+        "truckStatus": "Truck Status"
       },
       "placeholders": {
         "terminatedRemark": "Enter termination reason or remark",
