@@ -14,7 +14,7 @@ import {Avatar, Button, Card} from "heroui-native";
 import React, {useMemo,useState} from "react";
 import {ActivityIndicator, Alert, Pressable, ScrollView, Text, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {LogoutModal} from './logout-modal'
+import {LogoutModal} from '@/components/profile/logout-modal'
 import {useLogout} from "@/stores/server/logout/mutation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 

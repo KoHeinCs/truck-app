@@ -21,8 +21,8 @@ import {
     View,
 } from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {ServiceSearchToolbar} from "./components/service-search-toolbar";
-import {ServiceTypeCardItem} from "./components/service-type-card";
+import {ServiceSearchToolbar} from "@/components/profile/service/service-search-toolbar";
+import {ServiceTypeCardItem} from "@/components/profile/service/service-type-card";
 import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 import {ServiceTypeItem} from "@/stores/server/service-type/typed";
 import {useTranslation} from "@/hooks/use-translation";

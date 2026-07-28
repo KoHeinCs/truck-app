@@ -7,9 +7,9 @@ import {useRouter} from "expo-router";
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
 import {useTranslation} from "@/hooks/use-translation";
-import {Step1} from "./components/Step1";
-import {Step2,PersonRecord} from './components/Step2'
-import {Step3} from "./components/Step3"
+import {Step1} from "@/components/profile/profit/Step1";
+import {Step2,PersonRecord} from '@/components/profile/profit/Step2'
+import {Step3} from "@/components/profile/profit/Step3"
 import {formatAmount} from '@/utils/amountUtil'
 
 export type AppLocale = "en" | "mm";

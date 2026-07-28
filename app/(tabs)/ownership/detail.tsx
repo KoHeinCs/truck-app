@@ -33,8 +33,8 @@ import {
     SafeAreaView,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import {OwnershipRunningBalanceCard} from "./components/ownership-running-balance-card";
-import {OwnershipSummaryCard} from "./components/ownership-summary-card";
+import {OwnershipRunningBalanceCard} from "@/components/ownership/ownership-running-balance-card";
+import {OwnershipSummaryCard} from "@/components/ownership/ownership-summary-card";
 import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
 import {useAuthStore} from "@/stores/auth-store";
 

@@ -8,7 +8,7 @@ import type { AppLocale } from "@/stores/client/locale-store";
 import type { ProposalAdvancedFilters as ProposalAdvancedFilterValues } from "@/stores/server/proposal/search-columns";
 import { Card } from "heroui-native";
 import { Pressable, Text, useWindowDimensions, View } from "react-native";
-import { CompactSelect } from "@/app/(tabs)/profile/user/components/compact-select";
+import { CompactSelect } from "@/components/profile/user/compact-select";
 
 /** Side-by-side date fields clip Myanmar datetime placeholders below this width. */
 const COMPACT_FILTER_WIDTH = 400;

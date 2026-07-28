@@ -10,7 +10,7 @@ import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-fo
 import {useLocaleStore} from "@/stores/client/locale-store";
 import {useTimeBasedGreeting} from "@/hooks/use-time-based-greeting";
 import {useTranslation} from "@/hooks/use-translation";
-import { CompactSelect } from "@/app/(tabs)/profile/user/components/compact-select";
+import { CompactSelect } from "@/components/profile/user/compact-select";
 import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-query";
 
 const Home = () => {

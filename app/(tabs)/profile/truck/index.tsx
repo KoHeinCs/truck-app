@@ -24,8 +24,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TruckCardItem } from "./components/truck-card";
-import { TruckSearchToolbar } from "./components/truck-search-toolbar";
+import { TruckCardItem } from "@/components/profile/truck/truck-card";
+import { TruckSearchToolbar } from "@/components/profile/truck/truck-search-toolbar";
 
 type TruckListUiState = {
   quickQuery: string;

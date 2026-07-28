@@ -28,9 +28,9 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CompactSelect } from "./components/compact-select";
-import { TeamSearchToolbar } from "./components/team-search-toolbar";
-import { TeamUserCard } from "./components/team-user-card";
+import { CompactSelect } from "@/components/profile/user/compact-select";
+import { TeamSearchToolbar } from "@/components/profile/user/team-search-toolbar";
+import { TeamUserCard } from "@/components/profile/user/team-user-card";
 
 type SelectBoolValue = "all" | "true" | "false";
 

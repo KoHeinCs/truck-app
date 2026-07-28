@@ -15,11 +15,11 @@ import {ActivityIndicator, FlatList, Text, View} from "react-native";
 import {type Href, useLocalSearchParams, useRouter} from "expo-router";
 import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {OwnershipAdvancedFilters} from "./components/ownership-advanced-filters";
-import {OwnershipCard} from "./components/ownership-card";
-import {OwnershipHeader} from "./components/ownership-header";
-import {OwnershipSearchToolbar} from "./components/ownership-search-toolbar";
-import {OwnershipTabs} from "./components/ownership-tabs";
+import {OwnershipAdvancedFilters} from "@/components/ownership/ownership-advanced-filters";
+import {OwnershipCard} from "@/components/ownership/ownership-card";
+import {OwnershipHeader} from "@/components/ownership/ownership-header";
+import {OwnershipSearchToolbar} from "@/components/ownership/ownership-search-toolbar";
+import {OwnershipTabs} from "@/components/ownership/ownership-tabs";
 import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-query";
 import {useTranslation} from "@/hooks/use-translation";
 

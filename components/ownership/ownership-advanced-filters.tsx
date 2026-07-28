@@ -7,7 +7,7 @@ import {Card} from "heroui-native";
 import React from "react";
 import type {StyleProp, TextStyle} from "react-native";
 import {Pressable, Text, View} from "react-native";
-import {CompactSelect} from "@/app/(tabs)/profile/user/components/compact-select";
+import {CompactSelect} from "@/components/profile/user/compact-select";
 import {useTranslation} from "@/hooks/use-translation";
 import {AdvanceSearchDatePicker} from "@/components/advance-search-date-picker";
 
