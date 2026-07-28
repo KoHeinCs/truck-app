@@ -160,6 +160,7 @@ export default function ProposalScreen() {
             params: {
                 proposalNo: item.proposalNo,
                 ownershipId: item.ownershipId,
+                fromRoute:'proposal_master'
             },
         })
     }, 600);

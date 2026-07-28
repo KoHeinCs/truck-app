@@ -59,8 +59,9 @@ export default function OwnershipDetailScreen() {
     const style = locale === "mm" ? mmTextStyle : undefined;
     const mmLeading = getMyanmarLeadingClass(locale);
 
-    const params = useLocalSearchParams<{ ownershipId?: string;ownershipStatus?:string }>();
+    const params = useLocalSearchParams<{ ownershipId?: string;ownershipStatus?:string,fromRoute?:string }>();
 
+    const fromRoute = String(params.fromRoute ?? "").trim();
     const ownershipId = String(params.ownershipId ?? "").trim();
     const ownershipStatus = String(params.ownershipStatus ?? "").trim().toUpperCase();
     const hasRequiredParams = !!ownershipId;
@@ -108,9 +109,23 @@ export default function OwnershipDetailScreen() {
     );
 
     const onBack = useCallback(() => {
-        qc.invalidateQueries({queryKey: ["ownership", "infinite"]});
-        router.back();
-    }, [qc, router]);
+
+        switch (fromRoute){
+            case 'ownership_master' : {
+                qc.invalidateQueries({queryKey: ["ownership", "infinite"]});
+                router.back();
+                break;
+            }
+            case 'dashboard' : {
+                router.replace("/");
+                break;
+            }
+            default:{
+                router.replace("/ownership")
+                break;
+            }
+        }
+    }, [qc, router,fromRoute]);
 
     const onEdit = useThrottledCallback(() => {
         if (!ownershipId) return;
@@ -138,6 +153,7 @@ export default function OwnershipDetailScreen() {
             params: {
                 proposalNo,
                 ownershipId,
+                fromRoute
             },
         });
     }, 600);

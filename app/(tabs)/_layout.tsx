@@ -11,22 +11,31 @@ type TabNav = {
 };
 
 type TabRoute = {
-  name: string;
-  state?: { index: number };
+    name: string;
+    state?: { index: number };
+    params?: {
+        screen?: string;
+        [key: string]: any;
+    };
 };
 
 /** Nested stack မှာ detail စသည် ကျန်ရင် root (index) သို့ပြန်ရှင်း */
 function resetTabStack(
-  e: { preventDefault: () => void },
-  navigation: TabNav,
-  route: TabRoute,
+    e: { preventDefault: () => void },
+    navigation: TabNav,
+    route: TabRoute,
 ) {
-  const nested = route.state;
-  // Default tab jump က detail ကိုပြန်ခေါ်မယ့်အရင် တားမယ်
-  if (nested && nested.index > 0) {
-    e.preventDefault();
-  }
-  navigation.navigate(route.name, { screen: "index" });
+
+    const nestedState = route.state;
+    const currentScreen = route?.params?.screen;
+
+    const isNestedInState = nestedState && nestedState.index > 0;
+    const isNestedInParams = currentScreen && currentScreen !== "index";
+
+    if (isNestedInState || isNestedInParams) {
+        e.preventDefault();
+    }
+    navigation.navigate(route.name, {screen: "index"});
 }
 
 export default function TabLayout() {
@@ -44,7 +53,7 @@ export default function TabLayout() {
 
     const hideTabBar = useMemo(()=> {
       const hiddenPrefixes = ["/proposal/","/ownership/","/profile/"];
-      const isRootTab = pathname === "/" || pathname === "/ownership" || pathname === '/proposal' || pathname === "/proposal";
+      const isRootTab = pathname === "/" || pathname === "/ownership" || pathname === '/proposal' || pathname === "/profile";
       if (isRootTab) return false;
       return hiddenPrefixes.some(prefix => pathname.startsWith(prefix))
   },[pathname]);
@@ -92,9 +101,12 @@ export default function TabLayout() {
           tabBarButton: isOwner ? undefined : () => null,
           tabBarItemStyle: isOwner ? { flex: 1 } : { display: "none", width: 0, height: 0 }
         }}
-        listeners={{
-          tabPress: refreshHome,
-        }}
+        listeners={({ navigation, route }) => ({
+            tabPress: (e) => {
+                resetTabStack(e, navigation, route);
+                refreshHome();
+            },
+        })}
       />
       <Tabs.Screen
         name="ownership"

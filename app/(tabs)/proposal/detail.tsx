@@ -101,9 +101,11 @@ export default function ProposalDetailScreen() {
     const params = useLocalSearchParams<{
         proposalNo?: string;
         ownershipId?: string;
+        fromRoute?: string;
     }>();
     const proposalNo = String(params.proposalNo ?? "").trim();
     const ownershipId = String(params.ownershipId ?? "").trim();
+    const fromRoute = String(params.fromRoute ?? "").trim();
 
     const {data, isPending} = useProposalDetail(proposalNo, ownershipId);
     const {data: historyData} = useProposalHistory(proposalNo, ownershipId);
@@ -152,9 +154,27 @@ export default function ProposalDetailScreen() {
     );
 
     const onBack = useCallback(() => {
-        markListRefreshPending();
-        router.replace("/(tabs)/proposal");
-    }, [markListRefreshPending, router]);
+
+        switch (fromRoute){
+            case 'proposal_master':{
+                markListRefreshPending();
+                router.back();
+                break;
+            }
+            case 'ownership_master':
+            case 'dashboard':{
+                router.replace({
+                    pathname:'/ownership/detail',
+                    params:{ownershipId,ownershipStatus:'SOLD_OUT',fromRoute}
+                })
+                break;
+            }default:{
+                router.replace('/proposal');
+                break;
+            }
+
+        }
+    }, [markListRefreshPending, router,proposalNo,ownershipId,fromRoute]);
 
     const onEdit = useThrottledCallback(() => {
         if (!proposalNo || !detail) return;

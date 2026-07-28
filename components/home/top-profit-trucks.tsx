@@ -119,7 +119,7 @@ const TopProfitTrucks = ({ selectedOwnerId }: TopProfitTrucksProps) => {
     if (!ownershipId) return;
     router.push({
       pathname: "/(tabs)/ownership/detail",
-      params: { ownershipId },
+      params: { ownershipId ,ownershipStatus:'SOLD_OUT',fromRoute:'dashboard'},
     });
   }, 600);
 
