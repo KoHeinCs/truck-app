@@ -109,7 +109,7 @@ export default function ProposalDetailScreen() {
 
     const {data, isPending} = useProposalDetail(proposalNo, ownershipId);
     const {data: historyData} = useProposalHistory(proposalNo, ownershipId);
-    const detail = data?.data;
+    const detail:ProposalDetail|undefined = data?.data;
     const histories = historyData?.data ?? [];
 
     const {mutate: approveProposal, isPending: isApproving} = useApproveProposal();
@@ -157,27 +157,34 @@ export default function ProposalDetailScreen() {
     );
 
     const onBack = useCallback(() => {
+        alert(`fromRoute : ${fromRoute} , canGoBack : ${router.canGoBack()}`);
+         const status = detail?.truckStatus;
 
-        switch (fromRoute){
-            case 'proposal_master':{
+        switch (fromRoute) {
+            case 'proposal_master': {
                 markListRefreshPending();
                 router.back();
                 break;
             }
             case 'ownership_master':
-            case 'dashboard':{
+            case 'dashboard': {
                 router.replace({
-                    pathname:'/ownership/detail',
-                    params:{ownershipId,ownershipStatus:'SOLD_OUT',fromRoute}
+                    pathname: '/ownership/detail',
+                    params: {ownershipId, status, fromRoute}
                 })
+                // router.back();
                 break;
-            }default:{
+            }
+            default: {
                 router.replace('/proposal');
                 break;
             }
 
         }
-    }, [markListRefreshPending, router,ownershipId,fromRoute]);
+
+
+
+    }, [markListRefreshPending, router,ownershipId,fromRoute,detail]);
 
     const onEdit = useThrottledCallback(() => {
         if (!proposalNo || !detail) return;

@@ -109,8 +109,9 @@ export default function OwnershipDetailScreen() {
     );
 
     const onBack = useCallback(() => {
+        alert(`fromRoute : ${fromRoute} , canGoBack : ${router.canGoBack()}`);
 
-        switch (fromRoute){
+        switch (fromRoute) {
             case 'ownership_master' : {
                 qc.invalidateQueries({queryKey: ["ownership", "infinite"]});
                 router.back();
@@ -118,13 +119,15 @@ export default function OwnershipDetailScreen() {
             }
             case 'dashboard' : {
                 router.replace("/");
+                //router.back();
                 break;
             }
-            default:{
+            default: {
                 router.replace("/ownership")
                 break;
             }
         }
+
     }, [qc, router,fromRoute]);
 
     const onEdit = useThrottledCallback(() => {
