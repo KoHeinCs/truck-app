@@ -100,7 +100,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      backBehavior={"order"}
+      backBehavior={isWorker ? "history" : "order"}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: APP_COLORS.primary,
