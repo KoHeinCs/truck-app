@@ -157,9 +157,7 @@ export default function ProposalDetailScreen() {
     );
 
     const onBack = useCallback(() => {
-        alert(`fromRoute : ${fromRoute} , canGoBack : ${router.canGoBack()}`);
-         const status = detail?.truckStatus;
-
+        const status = detail?.truckStatus;
         switch (fromRoute) {
             case 'proposal_master': {
                 markListRefreshPending();

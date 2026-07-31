@@ -109,7 +109,6 @@ export default function OwnershipDetailScreen() {
     );
 
     const onBack = useCallback(() => {
-        alert(`fromRoute : ${fromRoute} , canGoBack : ${router.canGoBack()}`);
 
         switch (fromRoute) {
             case 'ownership_master' : {
