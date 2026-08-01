@@ -14,6 +14,7 @@ import {APP_COLORS} from "@/constants/colors";
 import {Feather, Ionicons} from "@expo/vector-icons";
 import type {AppLocale} from "@/stores/client/locale-store";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
+import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 
 function buildSchema(locale: "en" | "mm") {
     return z.object({
@@ -29,29 +30,37 @@ type FormValues = z.infer<ReturnType<typeof buildSchema>>;
 const LOCALE_OPTIONS: AppLocale[] = ["en", "mm"];
 
 export default function LoginScreen() {
+
     const t = useTranslation("login");
     const errorCatalog = useTranslation("error");
     const locale = useLocaleStore((state) => state.locale);
     const setLocale = useLocaleStore((state) => state.setLocale);
+    const mmLeading = getMyanmarLeadingClass(locale);
+
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
+    const [agreed, setAgreed] = useState(false);
+    const [termsVisible, setTermsVisible] = useState(false);
+
+    const validationSchema = useMemo(() => buildSchema(locale), [locale]);
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const textStyle = locale === "mm" ? mmTextStyle : undefined;
 
-
     const {mutate, isPending} = useLogin();
     const {control, handleSubmit, formState: {errors},} = useForm<FormValues>({
-        resolver: zodResolver(buildSchema(locale)),
+        resolver: zodResolver(validationSchema),
         defaultValues: {
             username: "HHA09455733730",
             password: "Ashwetaw@ger123",
         },
     });
 
-    const onSubmit = (values: FormValues) => {
+    const onSubmit = useThrottledCallback((values:FormValues)=>{
         if (!agreed) {
             Alert.alert(t.errorTitle, t.agreeRequired);
             return;
         }
-
         mutate(values, {
             onError: (err: unknown) => {
                 const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
@@ -61,12 +70,8 @@ export default function LoginScreen() {
                 Alert.alert(title, message);
             },
         });
-    };
+    },600)
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [localeMenuOpen, setLocaleMenuOpen] = useState(false);
-    const [agreed, setAgreed] = useState(false);
-    const [termsVisible, setTermsVisible] = useState(false);
 
     const handleSelectLocale = (option: AppLocale) => {
         setLocale(option);
@@ -77,7 +82,7 @@ export default function LoginScreen() {
         <SafeAreaView style={{flex: 1, backgroundColor: APP_COLORS.background}}>
             {localeMenuOpen ? (
                 <Pressable
-                    style={[StyleSheet.absoluteFillObject, {zIndex: 5}]}
+                    style={[StyleSheet.absoluteFill, {zIndex: 5}]}
                     onPress={() => setLocaleMenuOpen(false)}
                 />
             ) : null}
@@ -168,21 +173,22 @@ export default function LoginScreen() {
                 >
                     <Card.Header className="pb-0">
                         <Card.Title
-                            className={`text-base font-bold ${getMyanmarLeadingClass(locale)}`}
+                            className={`text-base font-bold ${mmLeading}`}
                             style={[{color: APP_COLORS.textPrimary}, textStyle]}
                         >
                             {t.title}
                         </Card.Title>
                         <Card.Description
-                            className={`text-sm font-semibold ${getMyanmarLeadingClass(locale)}`}
+                            className={`text-sm font-semibold ${mmLeading}`}
                             style={[{color: APP_COLORS.textPrimary}, textStyle]}>
                             {t.description}
                         </Card.Description>
                     </Card.Header>
 
+                    {/* username , password */}
                     <Card.Body className="gap-3">
                         <View className="gap-2">
-                            <Text className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                            <Text className={`text-sm font-medium ${mmLeading}`}
                                   style={[{color: APP_COLORS.textSecondary}, textStyle]}>
                                 {t.username}
                             </Text>
@@ -193,7 +199,7 @@ export default function LoginScreen() {
                                     <Input
                                         value={value}
                                         onChangeText={onChange}
-                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        className={`text-sm font-medium ${mmLeading}`}
                                         placeholder={t.placeholders.username}
                                         placeholderTextColor={APP_COLORS.textMuted}
                                         autoCapitalize="none"
@@ -208,7 +214,7 @@ export default function LoginScreen() {
                             />
                             {!!errors.username?.message ? (
                                 <Text
-                                    className={`text-xs font-normal ${getMyanmarLeadingClass(locale)} `}
+                                    className={`text-xs font-normal ${mmLeading} `}
                                     style={[{color: APP_COLORS.error}, textStyle]}
                                 >
                                     {errors.username.message}
@@ -218,7 +224,7 @@ export default function LoginScreen() {
 
                         <View className="gap-2">
 
-                            <Text className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                            <Text className={`text-sm font-medium ${mmLeading}`}
                                   style={[{color: APP_COLORS.textSecondary}, textStyle]}>
                                 {t.password}
                             </Text>
@@ -231,7 +237,7 @@ export default function LoginScreen() {
 
                                         <Input
                                             value={value}
-                                            className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                            className={`text-sm font-medium ${mmLeading}`}
                                             onChangeText={onChange}
                                             placeholder={t.placeholders.password}
                                             placeholderTextColor={APP_COLORS.textMuted}
@@ -266,7 +272,7 @@ export default function LoginScreen() {
                                 )}
                             />
                             {!!errors.password?.message ? (
-                                <Text className={`text-xs font-normal ${getMyanmarLeadingClass(locale)}`}
+                                <Text className={`text-xs font-normal ${mmLeading}`}
                                       style={[{color: APP_COLORS.error}, textStyle]}
                                 >
                                     {errors.password.message}
@@ -300,7 +306,7 @@ export default function LoginScreen() {
                             <View className="flex-1 gap-1">
                                 <Pressable onPress={() => setAgreed((prev) => !prev)}>
                                     <Text
-                                        className={`text-sm font-medium ${getMyanmarLeadingClass(locale)}`}
+                                        className={`text-sm font-medium ${mmLeading}`}
                                         style={[{color: APP_COLORS.textPrimary}, textStyle]}
                                     >
                                         {t.agreeLabel}
@@ -308,7 +314,7 @@ export default function LoginScreen() {
                                 </Pressable>
                                 <Pressable onPress={() => setTermsVisible(true)} hitSlop={4}>
                                     <Text
-                                        className={`text-sm font-semibold ${getMyanmarLeadingClass(locale)}`}
+                                        className={`text-sm font-semibold ${mmLeading}`}
                                         style={[{color: APP_COLORS.primary}, textStyle]}
                                     >
                                         {t.termsLink}
@@ -320,7 +326,7 @@ export default function LoginScreen() {
                         <Button
                             onPress={handleSubmit(onSubmit)}
                             isDisabled={isPending || !agreed}
-                            className={`w-full ${getMyanmarLeadingClass(locale)}`}
+                            className={`w-full ${mmLeading}`}
                             animation={{
                                 highlight: {
                                     backgroundColor: {
@@ -336,7 +342,7 @@ export default function LoginScreen() {
                             {isPending ? (
                                 <Spinner size="sm" color="white"/>
                             ) : (
-                                <Text className={`text-sm ${getMyanmarLeadingClass(locale)} font-bold`}
+                                <Text className={`text-sm ${mmLeading} font-bold`}
                                       style={[{color: "#FFFFFF"}]}>{t.login}</Text>
                             )}
                         </Button>
