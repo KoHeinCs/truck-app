@@ -6,60 +6,6 @@ import {Redirect, Tabs, usePathname} from "expo-router";
 import React, {useCallback, useMemo} from "react";
 import {useTranslation} from "@/hooks/use-translation";
 
-type TabNav = {
-  navigate: (name: string, params?: { screen: string }) => void;
-  dispatch: (action: any) => void;
-};
-
-type TabRoute = {
-    name: string;
-    state?: {
-        index: number;
-        routes?: Array<{ name: string; [key: string]: any }>;
-    };
-    params?: {
-        screen?: string;
-        [key: string]: any;
-    };
-};
-
-/**
- * Resets a nested stack layout back to its root index upon pressing an already active tab
- */
-function resetTabStack(
-    e: { preventDefault: () => void },
-    navigation: TabNav,
-    route: TabRoute,
-) {
-    const nestedState = route.state;
-    const currentScreen = route?.params?.screen;
-
-    const isNestedInState = nestedState && (
-        nestedState.index > 0 ||
-        (nestedState.routes && nestedState.routes[nestedState.index]?.name !== "index")
-    );
-    const isNestedInParams = currentScreen && currentScreen !== "index";
-
-    if (isNestedInState || isNestedInParams) {
-        e.preventDefault();
-        navigation.dispatch({
-            type: 'RESET',
-            payload: {
-                index: 0,
-                routes: [
-                    {
-                        name: route.name,
-                        state: {
-                            index: 0,
-                            routes: [{ name: "index" }],
-                        },
-                    },
-                ],
-            }
-        });
-    }
-}
-
 export default function TabLayout() {
 
   const token = useAuthStore((state) => state.token);
@@ -119,9 +65,8 @@ export default function TabLayout() {
             <Ionicons name="home" size={size} color={color} />
           )
         }}
-        listeners={({ navigation, route }) => ({
-            tabPress: (e) => {
-                resetTabStack(e, navigation, route);
+        listeners={() => ({
+            tabPress: () => {
                 refreshHome();
             },
         })}
@@ -137,9 +82,8 @@ export default function TabLayout() {
             <Ionicons name="car-sport" size={size} color={color} />
           )
         }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            resetTabStack(e, navigation, route);
+        listeners={() => ({
+          tabPress: () => {
             refreshOwnership();
           },
         })}
@@ -154,9 +98,8 @@ export default function TabLayout() {
             <Ionicons name="create" size={size} color={color} />
           )
         }}
-        listeners={({ navigation, route }) => ({
+        listeners={() => ({
           tabPress: (e) => {
-            resetTabStack(e, navigation, route);
             refreshProposal();
           },
         })}
@@ -171,11 +114,6 @@ export default function TabLayout() {
             <Ionicons name="person" size={size} color={color} />
           )
         }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            resetTabStack(e, navigation, route);
-          },
-        })}
       />
     </Tabs>
   );
