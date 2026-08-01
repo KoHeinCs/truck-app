@@ -24,7 +24,7 @@ const searchTrucks = async (payload: TruckSearchPayload): Promise<TruckListRespo
   return data;
 };
 
-const fetchTruckSearchOptions = async (): Promise<TruckSearchResponse> => {
+const fetchAllActiveTrucks = async (): Promise<TruckSearchResponse> => {
   const { data } = await axios.get("/truck/search");
   return data;
 };
@@ -68,8 +68,7 @@ export function useTrucksInfinite(
 export function useTruckSearchOptions() {
   return useQuery({
     queryKey: ["trucks", "search-options"],
-    queryFn: fetchTruckSearchOptions,
-    staleTime: 60_000,
+    queryFn: fetchAllActiveTrucks,
     refetchOnWindowFocus: false,
   });
 }

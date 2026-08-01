@@ -10,7 +10,6 @@ import type {TruckItem} from "@/stores/server/truck/typed";
 import {parseServiceDateDisplayToApi} from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useQueryClient} from "@tanstack/react-query";
 import {useRouter} from "expo-router";
 import {Input, Select} from "heroui-native";
 import React, {useCallback, useMemo, useState} from "react";
@@ -101,7 +100,6 @@ function matchesTruckQuery(item: TruckItem, query: string): boolean {
 export default function CreateProposalScreen() {
 
     const router = useRouter();
-    const qc = useQueryClient();
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const {createProposal: t} = useTranslation('proposal')
@@ -146,9 +144,8 @@ export default function CreateProposalScreen() {
     const {serviceTypes} = useServiceTypeLookup();
 
     const onBack = useCallback(() => {
-        qc.invalidateQueries({queryKey: ["proposal"]});
         router.back();
-    }, [qc, router]);
+    }, [router]);
 
     const createFromReview = (values: ReviewValues) => {
         const serviceDate = parseServiceDateDisplayToApi(values.serviceDate);
@@ -403,6 +400,7 @@ export default function CreateProposalScreen() {
                                                         color: APP_COLORS.textPrimary
                                                     }, style]}
                                                     className={` text-base font-medium ${mmLeading} `}
+                                                    autoCapitalize={'characters'}
                                                 />
                                                 {!!errors.truckId?.message && (
                                                     <Text
@@ -431,6 +429,7 @@ export default function CreateProposalScreen() {
                                                                 color: APP_COLORS.textPrimary
                                                             }, style]}
                                                             className={`mb-2 border py-0 h-11 ${mmLeading} `}
+                                                            autoCapitalize={'characters'}
                                                         />
                                                         {trucks.slice(0, 5).map((truck) => (
                                                             <Pressable

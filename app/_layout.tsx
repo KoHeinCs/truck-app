@@ -9,8 +9,8 @@ import "../global.css";
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            staleTime: 0, // data ကိုချက်ချင်း stale ဖြစ်စေ
-            gcTime: 0, // v5 (cacheTime in v4)
+            staleTime: 1000 * 60 * 5 , // Keep data fresh for 5 mins to prevent spamming
+            gcTime: 1000 * 60 * 10, // Keep in garbage collection cache for 10 minutes
             refetchOnMount: true,
             refetchOnWindowFocus: true,
         },
