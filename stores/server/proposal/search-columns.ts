@@ -184,7 +184,7 @@ export function buildProposalSearchColumns(
   const plateNo = f.plateNo.trim();
   if (plateNo) {
     columns.push(
-      column("plateNo", { value: plateNo, type: "contains", matchCase: false }),
+      column("plateNo", { value: plateNo, type: "eq", matchCase: false }),
     );
   }
 
@@ -222,7 +222,7 @@ export function buildProposalSearchColumns(
         value: serviceDateRange.value,
         valueTo: serviceDateRange.valueTo,
         type: "between",
-        matchCase: true,
+        matchCase: false,
       }),
     );
   }

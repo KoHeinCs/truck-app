@@ -87,6 +87,7 @@ export function ProposalAdvancedFilters({
                         onChangeText={(proposalNo) => onChange({proposalNo})}
                         style={style}
                         fullWidth={isCompact}
+                        autoCapitalize={'characters'}
                     />
                     <FilterInput
                         label={t.labels.plateNo}
@@ -97,6 +98,7 @@ export function ProposalAdvancedFilters({
                         onChangeText={(plateNo) => onChange({plateNo})}
                         style={style}
                         fullWidth={isCompact}
+                        autoCapitalize={'characters'}
                     />
                 </View>
 
@@ -222,6 +224,7 @@ type FilterInputProps = {
     onChangeText: (next: string) => void;
     style: any;
     fullWidth?: boolean;
+    autoCapitalize?:any;
 };
 
 function FilterInput({
@@ -233,6 +236,7 @@ function FilterInput({
                          onChangeText,
                          style,
                          fullWidth = false,
+                         autoCapitalize = 'none'
                      }: FilterInputProps) {
     return (
         <View className={`${fullWidth ? "w-full" : "min-w-0 flex-1"} gap-1`}>
@@ -250,6 +254,7 @@ function FilterInput({
                 placeholder={placeholder}
                 className={` ${mmLeading} ${COMPACT_ADVANCED_INPUT_CLASSNAME}`}
                 style={style}
+                autoCapitalize={autoCapitalize}
             />
         </View>
     );

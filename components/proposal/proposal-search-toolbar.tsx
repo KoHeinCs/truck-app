@@ -47,6 +47,7 @@ export function ProposalSearchToolbar({
             borderColor:APP_COLORS.border,
             borderWidth:1
         }]}
+          autoCapitalize={'characters'}
         />
 
         <Pressable
