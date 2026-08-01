@@ -118,8 +118,8 @@ export default function OwnerShip() {
     const openDetail = useThrottledCallback((item: OwnershipItem) => {
         if (!item.id) return;
         router.push({
-            pathname: "/(tabs)/ownership/detail",
-            params: {ownershipId: item.id,ownershipStatus:status,fromRoute:'ownership_master'},
+            pathname: "/ownership/detail",
+            params: {ownershipId: item.id,ownershipStatus:status},
         });
     }, 600);
 

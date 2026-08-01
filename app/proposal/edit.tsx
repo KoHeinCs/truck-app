@@ -22,7 +22,6 @@ import {Input, Select} from "heroui-native";
 import React, {useCallback, useEffect, useMemo} from "react";
 import {Controller, useForm,Control} from "react-hook-form";
 import {
-    ActivityIndicator,
     Alert,
     Pressable,
     ScrollView,

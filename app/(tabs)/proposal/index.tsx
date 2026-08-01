@@ -156,11 +156,10 @@ export default function ProposalScreen() {
 
     const handleCardDetailBtn = useThrottledCallback((item: ProposalItem) => {
         router.push({
-            pathname: "/(tabs)/proposal/detail",
+            pathname: "/proposal/detail",
             params: {
                 proposalNo: item.proposalNo,
-                ownershipId: item.ownershipId,
-                fromRoute:'proposal_master'
+                ownershipId: item.ownershipId
             },
         })
     }, 600);

@@ -35,6 +35,7 @@ const Home = () => {
 
   return (
     <SafeAreaView
+      edges={["top", "left", "right"]}
       className="flex-1"
       style={{ backgroundColor: APP_COLORS.background , flex : 1 }}
     >

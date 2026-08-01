@@ -59,9 +59,8 @@ export default function OwnershipDetailScreen() {
     const style = locale === "mm" ? mmTextStyle : undefined;
     const mmLeading = getMyanmarLeadingClass(locale);
 
-    const params = useLocalSearchParams<{ ownershipId?: string;ownershipStatus?:string,fromRoute?:string }>();
+    const params = useLocalSearchParams<{ ownershipId?: string;ownershipStatus?:string }>();
 
-    const fromRoute = String(params.fromRoute ?? "").trim();
     const ownershipId = String(params.ownershipId ?? "").trim();
     const ownershipStatus = String(params.ownershipStatus ?? "").trim().toUpperCase();
     const hasRequiredParams = !!ownershipId;
@@ -109,30 +108,18 @@ export default function OwnershipDetailScreen() {
     );
 
     const onBack = useCallback(() => {
-
-        switch (fromRoute) {
-            case 'ownership_master' : {
-                qc.invalidateQueries({queryKey: ["ownership", "infinite"]});
-                router.back();
-                break;
-            }
-            case 'dashboard' : {
-                router.replace("/");
-                //router.back();
-                break;
-            }
-            default: {
-                router.replace("/ownership")
-                break;
-            }
+        if (router.canGoBack()){
+            router.back();
+        }else {
+            // in the future , can open directly from notification center
+            router.replace('/ownership');
         }
-
-    }, [qc, router,fromRoute]);
+    }, [router]);
 
     const onEdit = useThrottledCallback(() => {
         if (!ownershipId) return;
         router.push({
-            pathname: "/(tabs)/ownership/edit/[id]",
+            pathname: "/ownership/edit/[id]",
             params: {
                 id: ownershipId,
                 detailStr : JSON.stringify(summaryItem)
@@ -143,7 +130,7 @@ export default function OwnershipDetailScreen() {
     const onSell = useThrottledCallback(() => {
         if (!ownershipId) return;
         router.push({
-            pathname: "/(tabs)/ownership/sell",
+            pathname: "/ownership/sell",
             params: {ownershipId},
         });
     }, 600);
@@ -151,11 +138,10 @@ export default function OwnershipDetailScreen() {
     const onPressProposal = useThrottledCallback((proposalNo: string) => {
         if (!ownershipId || !proposalNo) return;
         router.push({
-            pathname: "/(tabs)/proposal/detail",
+            pathname: "/proposal/detail",
             params: {
                 proposalNo,
-                ownershipId,
-                fromRoute
+                ownershipId
             },
         });
     }, 600);

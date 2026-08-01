@@ -118,8 +118,8 @@ const TopProfitTrucks = ({ selectedOwnerId }: TopProfitTrucksProps) => {
     const ownershipId = String(truck.id ?? "").trim();
     if (!ownershipId) return;
     router.push({
-      pathname: "/(tabs)/ownership/detail",
-      params: { ownershipId ,ownershipStatus:'SOLD_OUT',fromRoute:'dashboard'},
+      pathname: "/ownership/detail",
+      params: { ownershipId ,ownershipStatus:'SOLD_OUT'},
     });
   }, 600);
 

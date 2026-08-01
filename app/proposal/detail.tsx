@@ -5,7 +5,6 @@ import {useTranslation} from "@/hooks/use-translation";
 import {useThrottledCallback} from "@/hooks/use-throttled-callback";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useLocaleStore} from "@/stores/client/locale-store";
-import {useProposalListRefreshStore} from "@/stores/client/proposal-list-refresh-store";
 import {useApproveProposal} from "@/stores/server/proposal/approve-mutation";
 import {
     useProposalDetail,
@@ -82,9 +81,7 @@ function handleNotes(
 export default function ProposalDetailScreen() {
 
     const router = useRouter();
-    const markListRefreshPending = useProposalListRefreshStore(
-        (state) => state.markPending,
-    );
+
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const loginRole = useAuthStore((state) => state.role);
@@ -101,11 +98,9 @@ export default function ProposalDetailScreen() {
     const params = useLocalSearchParams<{
         proposalNo?: string;
         ownershipId?: string;
-        fromRoute?: string;
     }>();
     const proposalNo = String(params.proposalNo ?? "").trim();
     const ownershipId = String(params.ownershipId ?? "").trim();
-    const fromRoute = String(params.fromRoute ?? "").trim();
 
     const {data, isPending} = useProposalDetail(proposalNo, ownershipId);
     const {data: historyData} = useProposalHistory(proposalNo, ownershipId);
@@ -157,37 +152,18 @@ export default function ProposalDetailScreen() {
     );
 
     const onBack = useCallback(() => {
-        const status = detail?.truckStatus;
-        switch (fromRoute) {
-            case 'proposal_master': {
-                markListRefreshPending();
-                router.back();
-                break;
-            }
-            case 'ownership_master':
-            case 'dashboard': {
-                router.replace({
-                    pathname: '/ownership/detail',
-                    params: {ownershipId, status, fromRoute}
-                })
-                // router.back();
-                break;
-            }
-            default: {
-                router.replace('/proposal');
-                break;
-            }
-
+        if (router.canGoBack()){
+            router.back();
+        }else {
+            // in the future , can open directly from notification center
+            router.replace('/proposal');
         }
-
-
-
-    }, [markListRefreshPending, router,ownershipId,fromRoute,detail]);
+    }, [router]);
 
     const onEdit = useThrottledCallback(() => {
         if (!proposalNo || !detail) return;
         router.push({
-            pathname: "/(tabs)/proposal/edit",
+            pathname: "/proposal/edit",
             params: {
                 ownershipId: getOwnershipId(detail, ownershipId),
                 detailStr : JSON.stringify(detail)
