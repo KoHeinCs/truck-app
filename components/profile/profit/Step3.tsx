@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, Platform, Pressable, ScrollView } from 'react-native';
 import { Input } from 'heroui-native';
 import { APP_COLORS } from "@/constants/colors";
-import { getMyanmarLeadingClass } from "@/constants/myanmar-font";
 import { PersonRecord } from './Step2';
 import {useTranslation} from "@/hooks/use-translation";
 
@@ -50,7 +49,7 @@ export  function Step3({ totalCostAmount, peopleList, locale, style, onBack, onS
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View className="gap-4 pb-6">
+            <View className="gap-4 p-1">
 
                 {/* Profit Input Field */}
                 <View className="gap-1.5">
@@ -62,7 +61,7 @@ export  function Step3({ totalCostAmount, peopleList, locale, style, onBack, onS
                         onChangeText={(val) => { setProfitInput(val.replace(/[^0-9.]/g, '')); if (error) setError(null); }}
                         placeholder={t.placeholders.totalProfit}
                         placeholderTextColor={APP_COLORS.textMuted}
-                        keyboardType="decimal-pad"
+                        keyboardType="number-pad"
                         style={[{ backgroundColor: APP_COLORS.inputBackground, borderColor: APP_COLORS.border, borderWidth: 1, color: APP_COLORS.textPrimary }, style]}
                         className={`text-sm font-medium ${mmLeading}`}
                         {...(Platform.OS === "android" && locale === "mm" ? { includeFontPadding: false } : {})}

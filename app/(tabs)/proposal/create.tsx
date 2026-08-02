@@ -22,7 +22,7 @@ import {
     TextInput,
     View,
     KeyboardAvoidingView,
-    Platform
+    Platform, useWindowDimensions
 } from "react-native";
 import {
     SafeAreaView,
@@ -113,6 +113,9 @@ export default function CreateProposalScreen() {
     const mmLeading = getMyanmarLeadingClass(locale);
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
+
+    const {height: screenHeight} = useWindowDimensions();
+    const contentMaxHeight = Math.min(280, screenHeight * 0.4);
 
     const schema = useMemo(() => buildSchema(locale), [locale]);
     const {
@@ -431,34 +434,42 @@ export default function CreateProposalScreen() {
                                                             className={`mb-2 border py-0 h-11 ${mmLeading} `}
                                                             autoCapitalize={'characters'}
                                                         />
-                                                        {trucks.slice(0, 5).map((truck) => (
-                                                            <Pressable
-                                                                key={truck.id}
-                                                                onPress={() => {
-                                                                    setValue("truckId", truck.id, {
-                                                                        shouldDirty: true,
-                                                                        shouldValidate: true,
-                                                                    });
-                                                                    setTruckQuery(truck.plateNo);
-                                                                    setTruckPickerOpen(false);
-                                                                }}
-                                                                className="py-2"
+                                                        <ScrollView
+                                                            nestedScrollEnabled
+                                                            bounces={false}
+                                                            showsVerticalScrollIndicator
+                                                            style={{ maxHeight: contentMaxHeight }}
+                                                            keyboardShouldPersistTaps="handled"
+                                                        >
+                                                            {trucks.map((truck) => (
+                                                                <Pressable
+                                                                    key={truck.id}
+                                                                    onPress={() => {
+                                                                        setValue("truckId", truck.id, {
+                                                                            shouldDirty: true,
+                                                                            shouldValidate: true,
+                                                                        });
+                                                                        setTruckQuery(truck.plateNo);
+                                                                        setTruckPickerOpen(false);
+                                                                    }}
+                                                                    className="py-2"
+                                                                >
+                                                                    <Text
+                                                                        className={`text-sm font-semibold  ${mmLeading}`}
+                                                                        style={{color: APP_COLORS.textPrimary}}
+                                                                    >
+                                                                        {truck.plateNo}
+                                                                    </Text>
+                                                                    <Text
+                                                                        className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}
+                                                                    >
+                                                                        {getTruckSubtitle(truck)}
+                                                                    </Text>
+                                                                    <View className="my-2 h-[0.5px] bg-slate-200/60"/>
+                                                                </Pressable>
+                                                            ))}
 
-                                                            >
-                                                                <Text
-                                                                    className={`text-sm font-semibold  ${mmLeading}`}
-                                                                    style={{color: APP_COLORS.textPrimary}}
-                                                                >
-                                                                    {truck.plateNo}
-                                                                </Text>
-                                                                <Text
-                                                                    className={`mt-0.5 text-xs text-slate-500 ${mmLeading}`}
-                                                                >
-                                                                    {getTruckSubtitle(truck)}
-                                                                </Text>
-                                                                <View className="my-2 h-[0.5px] bg-slate-200/60"/>
-                                                            </Pressable>
-                                                        ))}
+                                                        </ScrollView>
                                                     </View>
                                                 ) : null}
                                             </View>
@@ -471,7 +482,7 @@ export default function CreateProposalScreen() {
                                         name="proposalAmount"
                                         label={t.labels.amount}
                                         placeholder={t.placeholders.amount}
-                                        keyboardType="decimal-pad"
+                                        keyboardType="number-pad"
                                         required
                                         error={errors.proposalAmount?.message}
                                         mmLeading={mmLeading}
@@ -519,8 +530,17 @@ export default function CreateProposalScreen() {
                                                                 borderWidth: 1
                                                             }}
                                                             presentation="popover"
+                                                            placement={'bottom'}
+                                                            align={'start'}
                                                             width="trigger"
                                                         >
+                                                            <ScrollView
+                                                                nestedScrollEnabled
+                                                                bounces={false}
+                                                                showsVerticalScrollIndicator
+                                                                style={{ maxHeight: contentMaxHeight }}
+                                                                keyboardShouldPersistTaps="handled"
+                                                            >
                                                             {serviceTypes.map((serviceType) => {
 
                                                                     const itemLabel = getServiceTypeLabel(serviceType, locale);
@@ -548,9 +568,8 @@ export default function CreateProposalScreen() {
                                                                             <Select.ItemIndicator/>
                                                                         </Select.Item>
                                                                     )
-                                                                }
-                                                            )
-                                                            }
+                                                                })}
+                                                            </ScrollView>
                                                         </Select.Content>
                                                     </Select.Portal>
                                                 </Select>
@@ -750,7 +769,7 @@ type FormInputProps = {
     name: keyof FormValues;
     label: string;
     placeholder: string;
-    keyboardType?: "decimal-pad";
+    keyboardType?: "number-pad";
     required?: boolean;
     error?: string;
     mmLeading: string;
@@ -788,7 +807,7 @@ function FormInput({
                         placeholder={placeholder}
                         placeholderTextColor={APP_COLORS.textMuted}
                         keyboardType={keyboardType}
-                        className={`  text-base font-medium  ${mmLeading}  `}
+                        className={`text-base font-medium  ${mmLeading}  `}
                         style={[{
                             backgroundColor: APP_COLORS.inputBackground,
                             borderColor: error ? APP_COLORS.error : APP_COLORS.border,

@@ -32,7 +32,7 @@ export function useCreateProposal() {
   return useMutation({
     mutationFn: createProposal,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["proposal"] });
+      qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
     },
   });
 }

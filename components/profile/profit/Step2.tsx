@@ -78,7 +78,7 @@ export  function Step2({ headcount, initialTotalCost, initialPeople, locale, sty
 
     return (
         <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-            <View className="gap-4 pb-6">
+            <View className="gap-4 p-1">
 
                 {/* Total Cost Input Row */}
                 <View className="gap-1.5">
@@ -90,7 +90,7 @@ export  function Step2({ headcount, initialTotalCost, initialPeople, locale, sty
                         onChangeText={(val) => { setTotalCost(val.replace(/[^0-9.]/g, '')); if (error) setError(null); }}
                         placeholder={t.placeholders.totalCost}
                         placeholderTextColor={APP_COLORS.textMuted}
-                        keyboardType="decimal-pad"
+                        keyboardType='number-pad'
                         style={[{ backgroundColor: APP_COLORS.inputBackground, borderColor: APP_COLORS.border, borderWidth: 1, color: APP_COLORS.textPrimary }, style]}
                         className={`text-sm font-medium ${mmLeading}`}
                         {...(Platform.OS === "android" && locale === "mm" ? { includeFontPadding: false } : {})}
