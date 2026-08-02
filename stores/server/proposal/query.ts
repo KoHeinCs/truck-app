@@ -109,9 +109,8 @@ export function useProposalsInfinite(
       }
       return lastPageParam + 1;
     },
-    staleTime: 0,
-    refetchOnWindowFocus: false,
-    refetchOnMount: "always",
+    staleTime: 1000 * 30 , // Keep data fresh for 30 sec to prevent spamming
+    gcTime: 1000 * 60 , // Keep in garbage collection cache for 1 minutes
   });
 }
 

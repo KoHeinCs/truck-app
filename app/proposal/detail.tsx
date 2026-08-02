@@ -299,12 +299,9 @@ export default function ProposalDetailScreen() {
                         disabled={!proposalNo}
                         className="h-11 w-11 items-center justify-center rounded-full"
                         style={({pressed}) => ({
-                            backgroundColor: pressed
-                                ? APP_COLORS.primarySoft
-                                : APP_COLORS.card,
+                            backgroundColor: pressed ? APP_COLORS.primary: APP_COLORS.card,
                             borderColor: APP_COLORS.border,
                             borderWidth: 1,
-                            opacity: proposalNo ? 1 : 0.5,
                         })}
                     >
                         <Ionicons name="create-outline" size={20} color="#475569"/>
