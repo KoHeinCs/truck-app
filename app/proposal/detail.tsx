@@ -401,9 +401,9 @@ export default function ProposalDetailScreen() {
                                         value={formatAmount(Number(detail?.proposalAmount ?? 0))}
                                         mmLeading={mmLeading}
                                         style={style}
-                                        valueClassName={`text-xl font-bold tracking-tight`}
+                                        valueClassName={`text-lg font-bold tracking-tight`}
                                         valueColor={APP_COLORS.textPrimary}
-                                        numberOfLines={1}
+                                        numberOfLines={2}
                                     />
 
                                     <View className="h-[0.5px]" style={{backgroundColor: APP_COLORS.border}}/>
