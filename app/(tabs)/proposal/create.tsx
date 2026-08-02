@@ -152,7 +152,11 @@ export default function CreateProposalScreen() {
 
     const createFromReview = (values: ReviewValues) => {
         const serviceDate = parseServiceDateDisplayToApi(values.serviceDate);
-        if (!serviceDate) return;
+        if (!serviceDate) {
+            Alert.alert('Error', 'Service date is required');
+            return;
+        }
+
 
         mutate(
             {
