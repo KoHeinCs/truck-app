@@ -24,11 +24,12 @@ import React, {useCallback, useMemo, useState} from "react";
 import {
     ActivityIndicator,
     Alert,
-    Modal,
+    Modal, Platform,
     Pressable,
     ScrollView,
     Text,
     View,
+    KeyboardAvoidingView
 } from "react-native";
 import {
     SafeAreaView,
@@ -239,6 +240,7 @@ export default function ProposalDetailScreen() {
                 id: detail.id,
                 ownershipId: getOwnershipId(detail, ownershipId),
                 remark: trimmedRemark,
+                version:detail?.version
             },
             {
                 onSuccess: () => {
@@ -342,7 +344,7 @@ export default function ProposalDetailScreen() {
                                 {/* proposal number && proposal status */}
                                 <View className="flex-row items-start justify-between gap-2">
                                     <Text
-                                        className={`min-w-0 flex-1 text-lg font-bold tracking-tight ${mmLeading}`}
+                                        className={`min-w-0 flex-1 text-base font-bold tracking-tight ${mmLeading}`}
                                         style={[style, {color: APP_COLORS.primary}]}
                                         numberOfLines={2}
                                     >
@@ -591,73 +593,80 @@ export default function ProposalDetailScreen() {
                 animationType="fade"
                 onRequestClose={closeApproveModal}
             >
-                <Pressable
-                    className="flex-1 items-center justify-center bg-black/40 px-6"
-                    onPress={closeApproveModal}
+                <KeyboardAvoidingView
+                    className="flex-1"
+                    style={{flex: 1}}
+                    behavior={Platform.OS === 'ios' ? 'padding' : "height"}
                 >
                     <Pressable
-                        className="w-full rounded-2xl bg-white p-5"
-                        onPress={(event) => event.stopPropagation()}
-                    >
-                        <Text className={`text-lg font-bold text-slate-900 ${mmLeading}`}>
-                            {detail?.proposalNo || "-"}
-                        </Text>
+                        className="flex-1 items-center justify-center bg-black/40 px-6"
+                        onPress={closeApproveModal}>
 
-                        <Text className={`mb-2 mt-4 text-xs font-medium text-warning ${mmLeading}`}>
-                            {t.labels.remark}{locale === 'mm' ? ' (မထည့်လည်းရ)' : ' (Optional)'}
-                        </Text>
-                        <CompactTextInput
-                            locale={locale}
-                            compactVariant="advanced"
-                            value={approveRemark}
-                            onChangeText={setApproveRemark}
-                            placeholder={t.placeholders.approvedRemark}
-                            multiline
-                            numberOfLines={4}
-                            className="min-h-[96px] border border-slate-200 bg-white px-3 py-2 text-sm"
-                        />
+                        <Pressable
+                            className="w-full rounded-2xl bg-white p-5"
+                            onPress={(event) => event.stopPropagation()}
+                        >
+                            <Text className={`text-lg font-bold text-slate-900 ${mmLeading}`}>
+                                {detail?.proposalNo || "-"}
+                            </Text>
 
-                        <View className="mt-4 flex-row gap-2">
-                            <Button
-                                isDisabled={isSubmitting}
-                                onPress={closeApproveModal}
-                                className="flex-1 items-center justify-center rounded-xl bg-slate-100"
-                                animation={{
-                                    highlight: {
-                                        backgroundColor: {
-                                            value: APP_COLORS.errorSoft,
-                                        }
-                                    },
-                                }}
-                            >
-                                <Text
-                                    className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
-                                    style={style}
+                            <Text className={`mb-2 mt-4 text-xs font-medium text-warning ${mmLeading}`}>
+                                {t.labels.remark}{locale === 'mm' ? ' (မထည့်လည်းရ)' : ' (Optional)'}
+                            </Text>
+                            <CompactTextInput
+                                locale={locale}
+                                compactVariant="advanced"
+                                value={approveRemark}
+                                onChangeText={setApproveRemark}
+                                placeholder={t.placeholders.approvedRemark}
+                                multiline
+                                numberOfLines={4}
+                                className="min-h-[96px] border border-slate-200 bg-white px-3 py-2 text-sm"
+                            />
+
+                            <View className="mt-4 flex-row gap-2">
+                                <Button
+                                    isDisabled={isSubmitting}
+                                    onPress={closeApproveModal}
+                                    className="flex-1 items-center justify-center rounded-xl bg-slate-100"
+                                    animation={{
+                                        highlight: {
+                                            backgroundColor: {
+                                                value: APP_COLORS.errorSoft,
+                                            }
+                                        },
+                                    }}
                                 >
-                                    {t.actions.cancel}
-                                </Text>
-                            </Button>
-
-                            <Pressable
-                                disabled={isSubmitting}
-                                onPress={handleApprove}
-                                className={`flex-1 items-center justify-center rounded-xl`}
-                                style={({ pressed }) => ({ backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary })}
-                            >
-                                {isApproving ? (
-                                    <ActivityIndicator color="#fff"/>
-                                ) : (
                                     <Text
-                                        className={`text-sm font-semibold text-white ${mmLeading}`}
+                                        className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
                                         style={style}
                                     >
-                                        {t.actions.approve}
+                                        {t.actions.cancel}
                                     </Text>
-                                )}
-                            </Pressable>
-                        </View>
+                                </Button>
+
+                                <Pressable
+                                    disabled={isSubmitting}
+                                    onPress={handleApprove}
+                                    className={`flex-1 items-center justify-center rounded-xl`}
+                                    style={({pressed}) => ({backgroundColor: pressed ? APP_COLORS.primaryPressed : APP_COLORS.primary})}
+                                >
+                                    {isApproving ? (
+                                        <ActivityIndicator color="#fff"/>
+                                    ) : (
+                                        <Text
+                                            className={`text-sm font-semibold text-white ${mmLeading}`}
+                                            style={style}
+                                        >
+                                            {t.actions.approve}
+                                        </Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </Pressable>
                     </Pressable>
-                </Pressable>
+                </KeyboardAvoidingView>
+
             </Modal>
 
             {/* terminate modal */}
@@ -667,82 +676,92 @@ export default function ProposalDetailScreen() {
                 animationType="fade"
                 onRequestClose={closeTerminateModal}
             >
-                <Pressable
-                    className="flex-1 items-center justify-center bg-black/40 px-6"
-                    onPress={closeTerminateModal}
+                <KeyboardAvoidingView
+                    className="flex-1"
+                    style={{flex: 1}}
+                    behavior={Platform.OS === 'ios' ? 'padding' : "height"}
                 >
                     <Pressable
-                        className="w-full overflow-hidden rounded-2xl bg-white"
-                        onPress={(event) => event.stopPropagation()}
+                        className="flex-1 items-center justify-center bg-black/40 px-6"
+                        onPress={closeTerminateModal}
                     >
-                        <View
-                            className="border-b px-5 py-4"
-                            style={{
-                                borderColor: APP_COLORS.errorSoft,
-                                backgroundColor: APP_COLORS.errorSoft,
-                            }}
+
+                        <Pressable
+                            className="w-full overflow-hidden rounded-2xl bg-white"
+                            onPress={(event) => event.stopPropagation()}
                         >
-                            <Text className={`text-lg font-bold text-[#dc4c4c] ${mmLeading}`}>
-                                {detail?.proposalNo || "-"}
-                            </Text>
-                        </View>
+                            <View
+                                className="border-b px-5 py-4"
+                                style={{
+                                    borderColor: APP_COLORS.errorSoft,
+                                    backgroundColor: APP_COLORS.errorSoft,
+                                }}
+                            >
+                                <Text className={`text-lg font-bold text-[#dc4c4c] ${mmLeading}`}>
+                                    {detail?.proposalNo || "-"}
+                                </Text>
+                            </View>
 
-                        <View className="p-5">
-                            <Text className={`mb-2 text-xs font-medium text-slate-500 ${mmLeading}`}>
-                                {t.labels.remark}
-                            </Text>
-                            <CompactTextInput
-                                locale={locale}
-                                compactVariant="advanced"
-                                value={terminateRemark}
-                                onChangeText={setTerminateRemark}
-                                placeholder={t.placeholders.terminatedRemark}
-                                multiline
-                                numberOfLines={4}
-                                className="min-h-[96px] border bg-white px-3 py-2 text-sm"
-                                style={{borderColor: APP_COLORS.errorSoft}}
-                            />
+                            <View className="p-5">
+                                <Text className={`mb-2 text-xs font-medium text-slate-500 ${mmLeading}`}>
+                                    {t.labels.remark}
+                                </Text>
+                                <CompactTextInput
+                                    locale={locale}
+                                    compactVariant="advanced"
+                                    value={terminateRemark}
+                                    onChangeText={setTerminateRemark}
+                                    placeholder={t.placeholders.terminatedRemark}
+                                    multiline
+                                    numberOfLines={4}
+                                    className="min-h-[96px] border bg-white px-3 py-2 text-sm"
+                                    style={{borderColor: APP_COLORS.errorSoft}}
+                                />
 
-                            <View className="mt-4 flex-row gap-2">
-                                <Pressable
-                                    disabled={isSubmitting}
-                                    onPress={closeTerminateModal}
-                                    className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
-                                    style={({pressed}) => ({
-                                        borderColor: APP_COLORS.border,
-                                        borderWidth:1,
-                                        backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent'
-                                    })}
-                                >
-                                    <Text
-                                        className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
-                                        style={style}
+                                <View className="mt-4 flex-row gap-2">
+                                    <Pressable
+                                        disabled={isSubmitting}
+                                        onPress={closeTerminateModal}
+                                        className="flex-1 items-center justify-center rounded-xl bg-slate-100 py-3"
+                                        style={({pressed}) => ({
+                                            borderColor: APP_COLORS.border,
+                                            borderWidth: 1,
+                                            backgroundColor: pressed ? APP_COLORS.errorSoft : 'transparent'
+                                        })}
                                     >
-                                        {t.actions.cancel}
-                                    </Text>
-                                </Pressable>
-
-                                <Pressable
-                                    disabled={isSubmitting}
-                                    onPress={handleTerminate}
-                                    className="flex-1 items-center justify-center rounded-xl py-3"
-                                    style={({ pressed }) => ({ borderColor: APP_COLORS.border, backgroundColor: pressed ? '#cf0707' : APP_COLORS.error })}
-                                >
-                                    {isTerminating ? (
-                                        <ActivityIndicator color="#fff"/>
-                                    ) : (
                                         <Text
-                                            className={`text-sm font-semibold text-white ${mmLeading}`}
+                                            className={`text-sm font-semibold text-slate-700 ${mmLeading}`}
                                             style={style}
                                         >
-                                            {t.actions.terminate}
+                                            {t.actions.cancel}
                                         </Text>
-                                    )}
-                                </Pressable>
+                                    </Pressable>
+
+                                    <Pressable
+                                        disabled={isSubmitting}
+                                        onPress={handleTerminate}
+                                        className="flex-1 items-center justify-center rounded-xl py-3"
+                                        style={({pressed}) => ({
+                                            borderColor: APP_COLORS.border,
+                                            backgroundColor: pressed ? '#cf0707' : APP_COLORS.error
+                                        })}
+                                    >
+                                        {isTerminating ? (
+                                            <ActivityIndicator color="#fff"/>
+                                        ) : (
+                                            <Text
+                                                className={`text-sm font-semibold text-white ${mmLeading}`}
+                                                style={style}
+                                            >
+                                                {t.actions.terminate}
+                                            </Text>
+                                        )}
+                                    </Pressable>
+                                </View>
                             </View>
-                        </View>
+                        </Pressable>
                     </Pressable>
-                </Pressable>
+                </KeyboardAvoidingView>
             </Modal>
 
 

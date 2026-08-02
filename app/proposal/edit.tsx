@@ -163,11 +163,11 @@ export default function EditProposalScreen() {
                 remark: values.remark.trim(),
             },
             {
-                onSuccess: () => {
+                onSuccess: async () => {
 
-                    qc.invalidateQueries({queryKey: ["proposal", "detail", detail?.proposalNo, ownershipId]});
-                    qc.invalidateQueries({queryKey: ["proposal", "history", detail?.proposalNo, ownershipId]});
-                    qc.invalidateQueries({queryKey: ["proposal", "infinite"]});
+                    await qc.invalidateQueries({queryKey: ["proposal", "detail", detail?.proposalNo, ownershipId]});
+                    await qc.invalidateQueries({queryKey: ["proposal", "history", detail?.proposalNo, ownershipId]});
+                    await qc.invalidateQueries({queryKey: ["proposal", "infinite"]});
                     markOwnershipRunningBalanceRefresh(ownershipId);
 
                     Alert.alert(t.dialog.successTitle, t.dialog.successBody, [

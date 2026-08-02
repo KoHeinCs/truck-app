@@ -6,11 +6,13 @@ export interface TerminateProposalPayload {
   id: string;
   ownershipId: string;
   remark: string;
+  version: number;
 }
 
 const terminateProposal = async (payload: TerminateProposalPayload) => {
   const { data } = await axios.post("/proposal/terminate-truck-cost", {
     id: payload.id,
+    version: payload.version,
     ownershipId: payload.ownershipId,
     remark: payload.remark.trim(),
   });
@@ -21,9 +23,9 @@ export function useTerminateProposal() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: terminateProposal,
-    onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
-      markOwnershipRunningBalanceRefresh(variables.ownershipId);
+    onSuccess: async (_data, variables) => {
+      await qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
+      //markOwnershipRunningBalanceRefresh(variables.ownershipId);
     },
   });
 }
