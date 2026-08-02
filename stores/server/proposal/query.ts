@@ -120,7 +120,7 @@ export function useProposalDetail(proposalNo: string, ownershipId: string) {
     queryKey: ["proposal", "detail", proposalNo, ownershipId],
     queryFn: () => fetchProposalDetail(proposalNo, ownershipId),
     staleTime: 1000 * 60 , // Keep data fresh for 1 mins to prevent spamming
-    gcTime: 1000 * 60 * 5, // Keep in garbage collection cache for 5 minutes
+    gcTime: 1000 * 60 * 3, // Keep in garbage collection cache for 3 minutes
     enabled: !!proposalNo && !!ownershipId,
   });
 }
@@ -130,7 +130,7 @@ export function useProposalHistory(proposalNo: string, ownershipId: string) {
     queryKey: ["proposal", "history", proposalNo, ownershipId],
     queryFn: () => fetchProposalHistory(proposalNo, ownershipId),
     staleTime: 1000 * 60 , // Keep data fresh for 1 mins to prevent spamming
-    gcTime: 1000 * 60 * 5, // Keep in garbage collection cache for 5 minutes
+    gcTime: 1000 * 60 * 3, // Keep in garbage collection cache for 3 minutes
     enabled: !!proposalNo && !!ownershipId,
   });
 }

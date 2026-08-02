@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { markOwnershipRunningBalanceRefresh } from "@/stores/client/ownership-running-balance-refresh-store";
 import { axios } from "../api";
 
 export interface TerminateProposalPayload {

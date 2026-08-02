@@ -31,8 +31,8 @@ export function useCreateProposal() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: createProposal,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
     },
   });
 }
