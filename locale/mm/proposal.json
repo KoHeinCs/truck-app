@@ -149,9 +149,9 @@
       },
       "dialog": {
         "terminateSuccessTitle": "အောင်မြင်သည်",
-        "terminateSuccessBody": "ဤအဆိုပြုချက်ကို ရပ်ဆိုင်းပြီးပါပြီ။",
+        "terminateSuccessBody": "ဤစာရင်းကို ပယ်ဖျက်ပြီးပါပြီ။",
         "approveSuccessTitle": "အောင်မြင်သည်",
-        "approveSuccessBody": "ဤအဆိုပြုလွှာအတွက် ငွေရှင်းပြီးပါပြီ။",
+        "approveSuccessBody": "ဤစာရင်းအတွက် ငွေရှင်းပြီးပါပြီ။",
         "errorTitle": "အမှားအယွင်း",
         "errorBody": "လုပ်ဆောင်ချက် မအောင်မြင်ပါ။"
       }
