@@ -538,13 +538,7 @@ export default function CreateProposalScreen() {
                                                             align={'start'}
                                                             width="trigger"
                                                         >
-                                                            <ScrollView
-                                                                nestedScrollEnabled
-                                                                bounces={false}
-                                                                showsVerticalScrollIndicator
-                                                                style={{ maxHeight: contentMaxHeight }}
-                                                                keyboardShouldPersistTaps="handled"
-                                                            >
+
                                                             {serviceTypes.map((serviceType) => {
 
                                                                     const itemLabel = getServiceTypeLabel(serviceType, locale);
@@ -573,7 +567,7 @@ export default function CreateProposalScreen() {
                                                                         </Select.Item>
                                                                     )
                                                                 })}
-                                                            </ScrollView>
+
                                                         </Select.Content>
                                                     </Select.Portal>
                                                 </Select>

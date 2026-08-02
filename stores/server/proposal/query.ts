@@ -29,7 +29,6 @@ type ProposalSearchPayload = {
 const searchProposals = async (
   payload: ProposalSearchPayload,
 ): Promise<ProposalListResponse> => {
-  console.log('payload query ', payload);
   const { data } = await axios.post("/proposal/search", payload);
   return data;
 };
