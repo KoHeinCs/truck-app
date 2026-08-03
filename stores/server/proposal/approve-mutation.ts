@@ -35,7 +35,10 @@ export function useApproveProposal() {
   return useMutation({
     mutationFn: approveProposal,
     onSuccess:async (_data, variables) => {
-      await qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
+      await qc.resetQueries({
+        queryKey: ["proposal", "infinite"] ,
+        exact:false
+      });
       markOwnershipRunningBalanceRefresh(variables.ownershipId);
     },
   });

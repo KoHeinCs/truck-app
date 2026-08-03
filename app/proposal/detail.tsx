@@ -20,7 +20,7 @@ import {normalizeServiceDateForApi} from "@/utils/service-date";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {Button} from "heroui-native";
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -38,6 +38,7 @@ import {
 import {formatDateTime,formatDate} from "@/utils/dateUtil"
 import {formatAmount} from "@/utils/amountUtil"
 import {useAuthStore} from "@/stores/auth-store";
+import {useQueryClient} from "@tanstack/react-query";
 
 
 function getOwnershipId(
@@ -82,6 +83,7 @@ function handleNotes(
 export default function ProposalDetailScreen() {
 
     const router = useRouter();
+    const qc = useQueryClient();
 
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
@@ -115,6 +117,23 @@ export default function ProposalDetailScreen() {
     const [terminateModalOpen, setTerminateModalOpen] = useState(false);
     const [approveRemark, setApproveRemark] = useState("");
     const [terminateRemark, setTerminateRemark] = useState("");
+    const shouldClearCacheRef = useRef(false);
+
+    useEffect(() => {
+        return () => {
+            if (!shouldClearCacheRef.current) return;
+
+            qc.removeQueries({
+                queryKey: ["proposal", "detail", proposalNo, ownershipId],
+                exact: true,
+            });
+
+            qc.removeQueries({
+                queryKey: ["proposal", "history", proposalNo, ownershipId],
+                exact: true,
+            });
+        };
+    }, [proposalNo, ownershipId, qc]);
 
     const permissions = useMemo(()=>{
 
@@ -197,6 +216,7 @@ export default function ProposalDetailScreen() {
             },
             {
                 onSuccess: () => {
+                    shouldClearCacheRef.current = true;
                     closeApproveModal();
                     Alert.alert(t.dialog.approveSuccessTitle, t.dialog.approveSuccessBody, [
                         {text: t.labels.done, onPress: () => router.back()},
@@ -244,6 +264,7 @@ export default function ProposalDetailScreen() {
             },
             {
                 onSuccess: () => {
+                    shouldClearCacheRef.current = true;
                     closeTerminateModal();
                     Alert.alert(t.dialog.terminateSuccessTitle, t.dialog.terminateSuccessBody, [
                         {text: t.labels.done, onPress: () => router.back()},

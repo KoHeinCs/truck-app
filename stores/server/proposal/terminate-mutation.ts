@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axios } from "../api";
+import { markOwnershipRunningBalanceRefresh } from "@/stores/client/ownership-running-balance-refresh-store";
 
 export interface TerminateProposalPayload {
   id: string;
@@ -23,8 +24,11 @@ export function useTerminateProposal() {
   return useMutation({
     mutationFn: terminateProposal,
     onSuccess: async (_data, variables) => {
-      await qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
-      //markOwnershipRunningBalanceRefresh(variables.ownershipId);
+      await qc.resetQueries({
+        queryKey: ["proposal", "infinite"] ,
+        exact:false
+      });
+      markOwnershipRunningBalanceRefresh(variables.ownershipId);
     },
   });
 }
