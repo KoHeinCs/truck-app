@@ -1,9 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import { axios } from "../api";
 
 export interface UpdateProposalPayload {
   id: string;
   version: number;
+  proposalNo:string;
   ownershipId: string;
   proposalAmount: number;
   serviceType: string;
@@ -29,7 +30,22 @@ const updateProposal = async (payload: UpdateProposalPayload) => {
 };
 
 export function useUpdateProposal() {
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: updateProposal
+    mutationFn: updateProposal,
+    onSuccess: async (data,variables) =>{
+      const { proposalNo, ownershipId } = variables;
+
+      await qc.invalidateQueries({
+        queryKey: ["proposal", "detail", proposalNo, ownershipId],
+        exact: true,
+      });
+
+      await qc.invalidateQueries({
+        queryKey: ["proposal", "history", proposalNo, ownershipId],
+        exact: true,
+      });
+
+    }
   });
 }

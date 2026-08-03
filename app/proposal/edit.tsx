@@ -37,7 +37,6 @@ import {
 } from "react-native-safe-area-context";
 import {useQueryClient} from "@tanstack/react-query";
 import {z} from "zod";
-import {markOwnershipRunningBalanceRefresh} from "@/stores/client/ownership-running-balance-refresh-store";
 
 
 function buildSchema(locale: "en" | "mm") {
@@ -154,6 +153,7 @@ export default function EditProposalScreen() {
             {
                 id: detail.id,
                 version: detail.version,
+                proposalNo: detail.proposalNo,
                 ownershipId: getOwnershipId(detail, ownershipId),
                 proposalAmount: Number(values.proposalAmount),
                 serviceType: values.serviceType,
@@ -163,12 +163,12 @@ export default function EditProposalScreen() {
                 remark: values.remark.trim(),
             },
             {
-                onSuccess: async () => {
+                onSuccess:  async () => {
 
-                    await qc.invalidateQueries({queryKey: ["proposal", "detail", detail?.proposalNo, ownershipId]});
-                    await qc.invalidateQueries({queryKey: ["proposal", "history", detail?.proposalNo, ownershipId]});
-                    await qc.invalidateQueries({queryKey: ["proposal", "infinite"]});
-                    markOwnershipRunningBalanceRefresh(ownershipId);
+                    await qc.resetQueries({
+                        queryKey: ["proposal", "infinite"] ,
+                        exact:false
+                    });
 
                     Alert.alert(t.dialog.successTitle, t.dialog.successBody, [
                         {text: t.actions.done, onPress: () => router.back()},
