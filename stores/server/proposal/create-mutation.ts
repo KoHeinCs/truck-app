@@ -32,7 +32,11 @@ export function useCreateProposal() {
   return useMutation({
     mutationFn: createProposal,
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["proposal", "infinite"] });
+      await qc.resetQueries({
+        queryKey: ["proposal", "infinite"] ,
+        exact:false
+
+      });
     },
   });
 }
