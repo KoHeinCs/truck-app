@@ -124,8 +124,8 @@ const buildServiceDateRange = (
 export function proposalFiltersKey(
   status: ProposalTabStatus,
   f: ProposalListFilters,
-): string {
-  return JSON.stringify({
+) {
+  return {
     status,
     quickQuery: f.quickQuery.trim(),
     proposalNo: f.proposalNo.trim(),
@@ -137,7 +137,7 @@ export function proposalFiltersKey(
     serviceDateFrom: f.serviceDateFrom.trim(),
     serviceDateTo: f.serviceDateTo.trim(),
     createdByCsv: f.createdByCsv.trim(),
-  });
+  };
 }
 
 export function buildProposalSearchColumns(

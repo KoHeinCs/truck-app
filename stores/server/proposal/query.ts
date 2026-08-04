@@ -87,7 +87,7 @@ export function useProposalsInfinite(
     ProposalListResponse,
     Error,
     InfiniteData<ProposalListResponse>,
-    (string | number)[],
+    (string | number | ProposalListFilters)[],
     number
   >({
     queryKey: ["proposal", "infinite", status, PROPOSAL_PAGE_SIZE, filterKey],

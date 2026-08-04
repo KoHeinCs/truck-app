@@ -1,5 +1,6 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import { axios } from "../api";
+import {markOwnershipRunningBalanceRefresh} from "@/stores/client/ownership-running-balance-refresh-store";
 
 export interface UpdateProposalPayload {
   id: string;
@@ -45,6 +46,8 @@ export function useUpdateProposal() {
         queryKey: ["proposal", "history", proposalNo, ownershipId],
         exact: true,
       });
+
+      markOwnershipRunningBalanceRefresh(variables.ownershipId);
 
     }
   });

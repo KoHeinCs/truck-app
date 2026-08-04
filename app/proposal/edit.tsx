@@ -4,8 +4,8 @@ import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-fo
 import {useTranslation} from "@/hooks/use-translation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useLocaleStore, type AppLocale} from "@/stores/client/locale-store";
-import type {ProposalDetail} from "@/stores/server/proposal/typed";
-import {useUpdateProposal} from "@/stores/server/proposal/update-mutation";
+import type {ProposalDetail, ProposalListResponse} from "@/stores/server/proposal/typed";
+import {UpdateProposalPayload, useUpdateProposal} from "@/stores/server/proposal/update-mutation";
 import {useServiceTypeLookup} from "@/stores/server/service-type/lookup-query";
 import {
     getSelectedServiceType,
@@ -35,7 +35,7 @@ import {
     SafeAreaView,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import {useQueryClient} from "@tanstack/react-query";
+import {useQueryClient, InfiniteData} from "@tanstack/react-query";
 import {z} from "zod";
 
 
@@ -143,6 +143,41 @@ export default function EditProposalScreen() {
         router.back();
     }, [ router]);
 
+    const updateProposalListCache = (
+        request: UpdateProposalPayload,
+    ) => {
+        qc.setQueriesData<InfiniteData<ProposalListResponse>>(
+            {
+                queryKey: ["proposal", "infinite"],
+            },
+            (oldData) => {
+                if (!oldData) return oldData;
+
+                return {
+                    ...oldData,
+                    pages: oldData.pages.map((page) => ({
+                        ...page,
+                        data: {
+                            ...page.data,
+                            data: page.data.data.map((item) =>
+                                item.proposalNo === request.proposalNo
+                                    ? {
+                                        ...item,
+                                        proposalAmount: request.proposalAmount,
+                                        serviceType: request.serviceType,
+                                        serviceDate: request.serviceDate,
+                                        serviceShop: request.serviceShop,
+                                        description: request.description,
+                                    }
+                                    : item,
+                            ),
+                        },
+                    })),
+                };
+            },
+        );
+    };
+
     const onSubmit = (values: FormValues) => {
         if (!detail?.id || !detail?.proposalNo) return;
 
@@ -163,13 +198,9 @@ export default function EditProposalScreen() {
                 remark: values.remark.trim(),
             },
             {
-                onSuccess:  async () => {
+                onSuccess:  async (data , request:UpdateProposalPayload) => {
 
-                    await qc.resetQueries({
-                        queryKey: ["proposal", "infinite"] ,
-                        exact:false
-                    });
-
+                    updateProposalListCache(request)
                     Alert.alert(t.dialog.successTitle, t.dialog.successBody, [
                         {text: t.actions.done, onPress: () => router.back()},
                     ]);
