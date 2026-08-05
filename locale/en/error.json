@@ -34,7 +34,7 @@
     "MSG5004": { "title": "ERROR", "content": "System is under maintenance. Please try again later" },
     "MSG5005": { "title": "ERROR", "content": "Method not allowed" },
     "MSG5006": { "title": "ERROR", "content": "Invalid request data" },
-    "MSG5007": { "title": "ERROR", "content": "Data outdated. Please refresh and try again" },
+    "MSG5007": { "title": "ERROR", "content": "This data has been modified by another user. Please review and try again." },
     "MSG6000": { "title": "ERROR", "content": "Invalid username or password" },
     "MSG6001": { "title": "SUCCESS", "content": "Login successful" },
     "MSG6002": { "title": "ERROR", "content": "Invalid token. Please log in again" },
