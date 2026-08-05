@@ -621,14 +621,24 @@ export default function ProposalDetailScreen() {
                         onPress={closeApproveModal}>
 
                         <Pressable
-                            className="w-full rounded-2xl bg-white p-5"
+                            className="w-full overflow-hidden rounded-2xl bg-white"
                             onPress={(event) => event.stopPropagation()}
                         >
-                            <Text className={`text-lg font-bold text-slate-900 ${mmLeading}`}>
-                                {detail?.proposalNo || "-"}
-                            </Text>
+                            <View
+                                className="border-b px-5 py-4"
+                                style={{
+                                    borderColor: APP_COLORS.border,
+                                    backgroundColor: APP_COLORS.primarySoft,
+                                }}
+                            >
+                                <Text className={`text-lg font-bold ${mmLeading}`} style={{color:APP_COLORS.primary}}>
+                                    {detail?.proposalNo || "-"}
+                                </Text>
+                            </View>
 
-                            <Text className={`mb-2 mt-4 text-xs font-medium text-warning ${mmLeading}`}>
+                            <View className="p-5">
+
+                            <Text className={`mb-2 text-xs font-medium text-warning ${mmLeading}`}>
                                 {t.labels.remark}{locale === 'mm' ? ' (မထည့်လည်းရ)' : ' (Optional)'}
                             </Text>
                             <CompactTextInput
@@ -681,6 +691,8 @@ export default function ProposalDetailScreen() {
                                     )}
                                 </Pressable>
                             </View>
+                            </View>
+
                         </Pressable>
                     </Pressable>
                 </KeyboardAvoidingView>
