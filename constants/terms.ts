@@ -15,6 +15,6 @@ export async function fetchTermsMarkdown(): Promise<string> {
     if (!text) throw new Error("Empty terms markdown");
     return text;
   } catch {
-    return TERMS_MARKDOWN_FALLBACK;
+    //return TERMS_MARKDOWN_FALLBACK;
   }
 }
