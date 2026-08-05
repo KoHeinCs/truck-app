@@ -1,27 +1,27 @@
-import {APP_COLORS} from "@/constants/colors";
-import {getMyanmarLeadingClass, myanmarUITextStyle} from "@/constants/myanmar-font";
-import {useDebouncedValue} from "@/hooks/use-debounced-value";
-import {useTimeBasedGreeting} from "@/hooks/use-time-based-greeting";
-import {useAuthStore} from "@/stores/auth-store";
-import {useLocaleStore} from "@/stores/client/locale-store";
-import {useOwnershipsInfinite} from "@/stores/server/ownership/query";
+import { OwnershipAdvancedFilters } from "@/components/ownership/ownership-advanced-filters";
+import { OwnershipCard } from "@/components/ownership/ownership-card";
+import { OwnershipHeader } from "@/components/ownership/ownership-header";
+import { OwnershipSearchToolbar } from "@/components/ownership/ownership-search-toolbar";
+import { OwnershipTabs } from "@/components/ownership/ownership-tabs";
+import { APP_COLORS } from "@/constants/colors";
+import { getMyanmarLeadingClass, myanmarUITextStyle } from "@/constants/myanmar-font";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useThrottledCallback } from "@/hooks/use-throttled-callback";
+import { useTimeBasedGreeting } from "@/hooks/use-time-based-greeting";
+import { useTranslation } from "@/hooks/use-translation";
+import { useAuthStore } from "@/stores/auth-store";
+import { useLocaleStore } from "@/stores/client/locale-store";
+import { useOwnerLookupOptions } from "@/stores/server/ownership/owner-lookup-query";
+import { useOwnershipsInfinite } from "@/stores/server/ownership/query";
 import type {
     OwnershipAdvancedFilters as OwnershipAdvancedFilterValues,
     OwnershipTruckStatus,
 } from "@/stores/server/ownership/search-columns";
-import type {OwnershipItem} from "@/stores/server/ownership/typed";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {ActivityIndicator, FlatList, Text, View} from "react-native";
-import {type Href, useLocalSearchParams, useRouter} from "expo-router";
-import {useThrottledCallback} from "@/hooks/use-throttled-callback";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {OwnershipAdvancedFilters} from "@/components/ownership/ownership-advanced-filters";
-import {OwnershipCard} from "@/components/ownership/ownership-card";
-import {OwnershipHeader} from "@/components/ownership/ownership-header";
-import {OwnershipSearchToolbar} from "@/components/ownership/ownership-search-toolbar";
-import {OwnershipTabs} from "@/components/ownership/ownership-tabs";
-import {useOwnerLookupOptions} from "@/stores/server/ownership/owner-lookup-query";
-import {useTranslation} from "@/hooks/use-translation";
+import type { OwnershipItem } from "@/stores/server/ownership/typed";
+import { type Href, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type OwnershipListUiState = OwnershipAdvancedFilterValues & {
     quickQuery: string;
@@ -64,6 +64,7 @@ export default function OwnerShip() {
 
     const [status, setStatus] = useState<OwnershipTruckStatus>("ACTIVE");
     const [ui, setUi] = useState<OwnershipListUiState>(initialOwnershipListUi);
+    const [ownerSelectOpen, setOwnerSelectOpen] = useState(false);
     const [appliedAdvanced, setAppliedAdvanced] =
         useState<OwnershipAdvancedFilterValues>(() => ({
             ...emptyOwnershipAdvancedApplied,
@@ -136,6 +137,9 @@ export default function OwnerShip() {
                 data={items}
                 className="px-4"
                 style={{flex: 1}}
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+                scrollEnabled={!ownerSelectOpen}
                 keyExtractor={(item, index) => item.id || `${item.truckPlateNo}-${index}`}
                 renderItem={({item}) => (
                     // ownership card
@@ -217,6 +221,7 @@ export default function OwnerShip() {
                                 }}
                                 mmLeading={mmLeading}
                                 ownerSelectOptions={ownerOptions}
+                                onOwnerSelectOpenChange={setOwnerSelectOpen}
                             />
                         ) : null}
                     </View>

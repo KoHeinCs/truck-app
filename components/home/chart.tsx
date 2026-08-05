@@ -15,7 +15,7 @@ import {
   type ChartPoint,
 } from "@/utils/sales-performance-chart";
 import { formatAmount } from "@/utils/amountUtil";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -29,6 +29,8 @@ import { LineChart } from "react-native-gifted-charts";
 
 type ChartComponentProps = {
   selectedOwnerId?: string | null;
+  /** Increment from parent when user taps outside the chart to hide the tooltip. */
+  dismissToken?: number;
 };
 
 type ChartFocusTooltipProps = {
@@ -112,7 +114,10 @@ function ChartFocusTooltip({
   );
 }
 
-const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
+const ChartComponent = ({
+  selectedOwnerId,
+  dismissToken = 0,
+}: ChartComponentProps) => {
   const role = useAuthStore((state) => state.role);
   const upperRole = (role || "").toUpperCase();
   const locale = useLocaleStore((state) => state.locale);
@@ -121,9 +126,80 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [yearPickerVisible, setYearPickerVisible] = useState(false);
+  const [chartKey, setChartKey] = useState(0);
+  const pointerActiveRef = useRef(false);
+  const focusedIndexRef = useRef(-1);
+  const justGrantedRef = useRef(false);
+  const skipResetRef = useRef(true);
 
   const showChart = upperRole === "ADMIN" || upperRole === "OWNER" || upperRole === "VIEWER";
   const { data, isPending, isError } = useSalesPerformance(selectedYear, selectedOwnerId);
+
+  const dismissPointer = useCallback(() => {
+    if (!pointerActiveRef.current) return;
+    pointerActiveRef.current = false;
+    focusedIndexRef.current = -1;
+    justGrantedRef.current = false;
+    setChartKey((key) => key + 1);
+  }, []);
+
+  const markPointerGrant = useCallback(() => {
+    justGrantedRef.current = true;
+  }, []);
+
+  const handlePointerProps = useCallback(
+    ({
+      pointerIndex,
+      pointerX,
+    }: {
+      pointerIndex: number;
+      pointerX: number;
+    }) => {
+      if (!(pointerX > 0) || pointerIndex < 0) {
+        return;
+      }
+
+      // Finger still down / dragging — just track the active month.
+      if (!justGrantedRef.current) {
+        if (pointerActiveRef.current) {
+          focusedIndexRef.current = pointerIndex;
+        }
+        return;
+      }
+
+      justGrantedRef.current = false;
+
+      // Same month tapped again → close tooltip.
+      if (
+        pointerActiveRef.current &&
+        focusedIndexRef.current === pointerIndex
+      ) {
+        queueMicrotask(() => {
+          dismissPointer();
+        });
+        return;
+      }
+
+      pointerActiveRef.current = true;
+      focusedIndexRef.current = pointerIndex;
+    },
+    [dismissPointer],
+  );
+
+  useEffect(() => {
+    if (skipResetRef.current) {
+      skipResetRef.current = false;
+      return;
+    }
+    pointerActiveRef.current = false;
+    focusedIndexRef.current = -1;
+    justGrantedRef.current = false;
+    setChartKey((key) => key + 1);
+  }, [selectedOwnerId, selectedYear]);
+
+  useEffect(() => {
+    dismissPointer();
+  }, [dismissPointer, dismissToken]);
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const textStyle = locale === "mm" ? mmTextStyle : undefined;
@@ -205,14 +281,19 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
       }}
     >
       <View className="flex-row items-center justify-between gap-3">
-        <Text
-          className={`flex-1 text-base font-bold text-slate-900 ${mmLeading}`}
-          style={textStyle}
-        >
-          {t.monthlyProfitTitle}
-        </Text>
+        <Pressable onPress={dismissPointer} className="flex-1">
+          <Text
+            className={`text-base font-bold text-slate-900 ${mmLeading}`}
+            style={textStyle}
+          >
+            {t.monthlyProfitTitle}
+          </Text>
+        </Pressable>
         <Pressable
-          onPress={() => setYearPickerVisible(true)}
+          onPress={() => {
+            dismissPointer();
+            setYearPickerVisible(true);
+          }}
           className="rounded-full px-3 py-1"
           style={{ backgroundColor: APP_COLORS.inputBackground }}
         >
@@ -244,6 +325,7 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
           </Text>
         ) : (
           <LineChart
+            key={chartKey}
             data={chartPoints}
             areaChart
             curved
@@ -269,6 +351,7 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
             initialSpacing={8}
             endSpacing={24}
             disableScroll
+            getPointerProps={handlePointerProps}
             pointerConfig={{
               pointerStripHeight: 160,
               pointerStripColor: APP_COLORS.primary,
@@ -278,8 +361,10 @@ const ChartComponent = ({ selectedOwnerId }: ChartComponentProps) => {
               pointerLabelWidth: 176,
               pointerLabelHeight: 88,
               activatePointersInstantlyOnTouch: true,
+              persistPointer: true,
               autoAdjustPointerLabelPosition: true,
               pointerLabelComponent: renderPointerTooltip,
+              onResponderGrant: markPointerGrant,
             }}
           />
         )}

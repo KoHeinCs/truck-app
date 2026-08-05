@@ -22,6 +22,7 @@ type OwnershipAdvancedFiltersProps = {
     onApply: () => void;
     mmLeading: any;
     ownerSelectOptions: any;
+    onOwnerSelectOpenChange?: (open: boolean) => void;
 };
 
 export function OwnershipAdvancedFilters({
@@ -33,7 +34,8 @@ export function OwnershipAdvancedFilters({
                                              onReset,
                                              onApply,
                                              mmLeading,
-                                             ownerSelectOptions
+                                             ownerSelectOptions,
+                                             onOwnerSelectOpenChange,
                                          }: OwnershipAdvancedFiltersProps) {
 
 
@@ -103,6 +105,7 @@ export function OwnershipAdvancedFilters({
                         locale={locale}
                         placeholder={t.placeholders.ownerIdCsv}
                         options={ownerSelectOptions}
+                        onOpenChange={onOwnerSelectOpenChange}
                     />
                 ) : null}
 

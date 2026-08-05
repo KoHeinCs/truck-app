@@ -20,6 +20,7 @@ const Home = () => {
   const upperRole = (role || "").toUpperCase();
   const isAdmin = upperRole === "ADMIN";
   const [selectedOwnerId, setSelectedOwnerId] = useState("");
+  const [chartDismissToken, setChartDismissToken] = useState(0);
 
   const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
   const style = locale === "mm" ? mmTextStyle : undefined;
@@ -28,6 +29,9 @@ const Home = () => {
   const {tabs:t} = useTranslation('common')
   const home = useTranslation("home");
 
+  const dismissChartPointer = () => {
+    setChartDismissToken((token) => token + 1);
+  };
 
   const { data: options = [] ,isPending } = useOwnerLookupOptions("",isAdmin);
 
@@ -43,9 +47,13 @@ const Home = () => {
         className="flex-1"
         contentContainerClassName="px-4 py-4 gap-4"
         showsVerticalScrollIndicator={false}
+        onScrollBeginDrag={dismissChartPointer}
       >
         {/* header */}
-        <View className="flex-row items-center justify-between">
+        <View
+          className="flex-row items-center justify-between"
+          onTouchStart={dismissChartPointer}
+        >
         <View className="max-w-[72%]">
           <Text
               className={`text-sm ${mmLeading}`}
@@ -71,11 +79,11 @@ const Home = () => {
         {/* owner select box */}
         {isAdmin ? (
             isPending ? (
-                <View className="items-center py-8">
+                <View className="items-center py-8" onTouchStart={dismissChartPointer}>
                   <ActivityIndicator color={APP_COLORS.primary} size="small" />
                 </View>
             ) : (
-                <View>
+                <View onTouchStart={dismissChartPointer}>
                   <CompactSelect
                       label={home.ownerIdLabel}
                       value={selectedOwnerId}
@@ -90,7 +98,7 @@ const Home = () => {
 
 
 
-        <View>
+        <View onTouchStart={dismissChartPointer}>
           <SummaryCard
             selectedOwnerId={isAdmin ? selectedOwnerId : null}
           />
@@ -98,9 +106,10 @@ const Home = () => {
         <View>
           <ChartComponent
             selectedOwnerId={isAdmin ? selectedOwnerId : null}
+            dismissToken={chartDismissToken}
           />
         </View>
-        <View>
+        <View onTouchStart={dismissChartPointer}>
           <TopProfitTrucks
             selectedOwnerId={isAdmin ? selectedOwnerId : null}
           />
