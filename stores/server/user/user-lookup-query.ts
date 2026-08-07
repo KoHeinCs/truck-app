@@ -1,5 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import {axios} from "@/stores/server/api";
+import {LOOKUP_QUERY} from '@/constants/query-times'
 
 type UserLookupResponse = {
     data?: {
@@ -52,8 +53,8 @@ export function useUserLookupOptions(query: string, enabled = true) {
         queryKey: ["all-users-lookup", query.trim()],
         queryFn: () => lookupUsers(query),
         select: normalizeUserOptions,
-        staleTime: 1000 * 60 * 10, // 10 mins
-        gcTime: 1000 * 60 * 15, // 15 mins
+        staleTime: LOOKUP_QUERY.LOOKUP,
+        gcTime: LOOKUP_QUERY.LOOKUP_GC,
         enabled:enabled
     })
 }

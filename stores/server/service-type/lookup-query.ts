@@ -6,27 +6,16 @@ import {
   resolveServiceTypeLabel as resolveLabel,
 } from "@/utils/service-type-label";
 import { axios } from "../api";
-import { buildServiceTypeSearchColumns } from "./search-columns";
-import type { ServiceTypeItem, ServiceTypeListResponse } from "./typed";
+import type { ServiceTypeItem,ServiceTypeSearchResponse } from "./typed";
+import {LOOKUP_QUERY} from '@/constants/query-times'
 
-const lookupColumns = buildServiceTypeSearchColumns({
-  quickQuery: "",
-  active: true,
-  langEng: "",
-  langMy: "",
-});
+
 
 const fetchServiceTypeLookup = async (): Promise<ServiceTypeItem[]> => {
-  const { data } = await axios.post<ServiceTypeListResponse>(
-    "/service-type/search",
-    {
-      page: 1,
-      pageSize: -1,
-      columns: lookupColumns,
-    },
+  const { data } = await axios.get<ServiceTypeSearchResponse>(
+    "/service-type/search"
   );
-
-  return data?.data?.data ?? [];
+  return data?.data ?? [];
 };
 
 const toServiceTypeByCode = (
@@ -46,8 +35,8 @@ export function useServiceTypeLookup() {
   const query = useQuery({
     queryKey: ["service-type-lookup"],
     queryFn: fetchServiceTypeLookup,
-    staleTime: 1000 * 60 * 10, // 10 mins
-    gcTime: 1000 * 60 * 15, // 15 mins
+    staleTime: LOOKUP_QUERY.LOOKUP,
+    gcTime:LOOKUP_QUERY.LOOKUP_GC,
     refetchOnWindowFocus: false,
   });
 

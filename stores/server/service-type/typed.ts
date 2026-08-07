@@ -1,5 +1,12 @@
+
 export interface ServiceTypeListResponse {
   data: ServiceTypeData;
+  httpStatus: number;
+  message: string;
+}
+
+export interface ServiceTypeSearchResponse {
+  data: ServiceTypeItem[];
   httpStatus: number;
   message: string;
 }

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { axios } from "../api";
+import {LOOKUP_QUERY} from '@/constants/query-times'
 
 type OwnerLookupResponse = {
   data?: {
@@ -50,8 +51,8 @@ export function useOwnerLookupOptions(query: string,enabled = true) {
     queryKey: ["owner-lookup", query.trim()],
     queryFn: () => lookupOwners(query),
     select: normalizeOwnerOptions,
-    staleTime: 1000 * 60 * 10, // 10 mins
-    gcTime: 1000 * 60 * 15, // 15 mins
+    staleTime: LOOKUP_QUERY.LOOKUP,
+    gcTime: LOOKUP_QUERY.LOOKUP_GC,
     enabled:enabled
   });
 }

@@ -5,12 +5,13 @@ import {HeroUINativeProvider} from "heroui-native";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import "react-native-reanimated";
 import "../global.css";
+import {DEFAULT_QUERY} from '@/constants/query-times'
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            staleTime: 1000 * 60 * 5 , // Keep data fresh for 5 mins to prevent spamming
-            gcTime: 1000 * 60 * 10, // Keep in garbage collection cache for 10 minutes
+            staleTime:DEFAULT_QUERY.DEFAULT , // Keep data fresh for 5 mins to prevent spamming
+            gcTime: DEFAULT_QUERY.DEFAULT_GC, // Keep in garbage collection cache for 10 minutes
             refetchOnMount: true,
             refetchOnWindowFocus: true,
         },

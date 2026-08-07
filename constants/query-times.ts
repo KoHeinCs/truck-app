@@ -2,8 +2,11 @@
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
-// LOOKUP: Infinity,
-// SHORT: 30 * 1000,
+
+export const DEFAULT_QUERY = {
+    DEFAULT : 5 * MINUTE,
+    DEFAULT_GC : 10 * MINUTE
+} as const ;
 
 export const PROPOSAL_QUERY = {
     LIST: 5 * MINUTE,
@@ -12,4 +15,13 @@ export const PROPOSAL_QUERY = {
     DETAIL_GC: 10 * MINUTE,
     HISTORY: 5 * MINUTE,
     HISTORY_GC: 10 * MINUTE,
+} as const;
+
+export const SERVICE_QUERY = {
+
+}
+
+export const LOOKUP_QUERY = {
+    LOOKUP: 30 * MINUTE,
+    LOOKUP_GC: 30 * MINUTE,
 } as const;
