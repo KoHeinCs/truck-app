@@ -17,6 +17,7 @@ import type {
   ProposalHistoryResponse,
   ProposalListResponse,
 } from "./typed";
+import {PROPOSAL_QUERY} from '@/constants/query-times'
 
 const PROPOSAL_PAGE_SIZE = 10;
 
@@ -109,8 +110,8 @@ export function useProposalsInfinite(
       }
       return lastPageParam + 1;
     },
-    staleTime: 1000 * 30 , // Keep data fresh for 30 sec to prevent spamming
-    gcTime: 1000 * 60 , // Keep in garbage collection cache for 1 minutes
+    staleTime: PROPOSAL_QUERY.LIST , // Keep data fresh for 5 min to prevent spamming
+    gcTime: PROPOSAL_QUERY.LIST_GC , // Keep in garbage collection cache for 5 minutes
   });
 }
 
@@ -118,8 +119,8 @@ export function useProposalDetail(proposalNo: string, ownershipId: string) {
   return useQuery({
     queryKey: ["proposal", "detail", proposalNo, ownershipId],
     queryFn: () => fetchProposalDetail(proposalNo, ownershipId),
-    staleTime: 1000 * 60 , // Keep data fresh for 1 mins to prevent spamming
-    gcTime: 1000 * 60 * 3, // Keep in garbage collection cache for 3 minutes
+    staleTime: PROPOSAL_QUERY.DETAIL , // Keep data fresh for 5 mins to prevent spamming
+    gcTime: PROPOSAL_QUERY.DETAIL_GC, // Keep in garbage collection cache for 10 minutes
     enabled: !!proposalNo && !!ownershipId,
   });
 }
@@ -128,8 +129,8 @@ export function useProposalHistory(proposalNo: string, ownershipId: string) {
   return useQuery({
     queryKey: ["proposal", "history", proposalNo, ownershipId],
     queryFn: () => fetchProposalHistory(proposalNo, ownershipId),
-    staleTime: 1000 * 60 , // Keep data fresh for 1 mins to prevent spamming
-    gcTime: 1000 * 60 * 3, // Keep in garbage collection cache for 3 minutes
+    staleTime: PROPOSAL_QUERY.HISTORY , // Keep data fresh for 5 mins to prevent spamming
+    gcTime: PROPOSAL_QUERY.HISTORY_GC, // Keep in garbage collection cache for 10 minutes
     enabled: !!proposalNo && !!ownershipId,
   });
 }
