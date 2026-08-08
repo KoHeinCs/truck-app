@@ -8,7 +8,8 @@
       "title": "Ownerships",
       "searchPlaceholder": "Search by plate no...",
       "empty_ACTIVE": "No active vehicles found.",
-      "empty_SOLD_OUT": "No sold vehicles found."
+      "empty_SOLD_OUT": "No sold vehicles found.",
+      "empty": "No data available"
     },
     "card": {
       "ownership": "Ownership Duration",

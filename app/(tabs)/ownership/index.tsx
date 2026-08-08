@@ -19,7 +19,7 @@ import type {
 } from "@/stores/server/ownership/search-columns";
 import type { OwnershipItem } from "@/stores/server/ownership/typed";
 import { type Href, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React,{ useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -97,7 +97,7 @@ export default function OwnerShip() {
         [debouncedQuickQuery, appliedAdvanced],
     );
 
-    const {data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending} = useOwnershipsInfinite(status, filters, role);
+    const {data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending,isError} = useOwnershipsInfinite(status, filters, role);
 
     const items = useMemo(
         () =>
@@ -231,6 +231,13 @@ export default function OwnerShip() {
                         <View className="items-center py-10">
                             <ActivityIndicator color={APP_COLORS.primary}/>
                         </View>
+                    ) :isError ? (
+                        <Text
+                            className={`px-6 py-8 text-center text-slate-500 ${mmLeading}`}
+                            style={style}
+                        >
+                            {t.master.error}
+                        </Text>
                     ) : (
                         <Text
                             className="px-6 py-8 text-center text-slate-500"

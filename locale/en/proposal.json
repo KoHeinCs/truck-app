@@ -10,7 +10,8 @@
       "searchPlaceholder": "Search by proposal no...",
       "empty_INFORM": "No pending records found.",
       "empty_APPROVED": "No approved records found.",
-      "empty_TERMINATED": "No error records found."
+      "empty_TERMINATED": "No error records found.",
+      "empty": "No data available"
     },
     "card": {
       "amount": "Amount",

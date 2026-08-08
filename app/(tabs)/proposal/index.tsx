@@ -130,8 +130,7 @@ export default function ProposalScreen() {
         [debouncedQuickQuery, appliedAdvanced],
     );
 
-    const {data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending} =
-        useProposalsInfinite(status, filters, role, true);
+    const {data, fetchNextPage, hasNextPage, isFetchingNextPage, isPending,isError} = useProposalsInfinite(status, filters, role, true);
 
     const items = useMemo(
         () =>
@@ -275,6 +274,13 @@ export default function ProposalScreen() {
                         <View className="items-center py-10">
                             <ActivityIndicator color={APP_COLORS.primary}/>
                         </View>
+                    ): isError ? (
+                            <Text
+                                className={`px-6 py-8 text-center text-slate-500 ${mmLeading}`}
+                                style={style}
+                            >
+                                {t.master.error}
+                            </Text>
                     ) : (
                         <Text
                             className={`px-6 py-8 text-center text-slate-500 ${mmLeading}`}
