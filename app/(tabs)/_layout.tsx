@@ -33,12 +33,20 @@ export default function TabLayout() {
   }, [queryClient]);
 
   const refreshOwnership = useCallback(() => {
-    void queryClient.resetQueries({ queryKey: ["ownership", "infinite"] });
+    void Promise.all([
+        queryClient.resetQueries({ queryKey: ["ownership", "infinite"]}),
+        queryClient.resetQueries({ queryKey: ["ownership", "find"]}),
+        queryClient.resetQueries({ queryKey: ["ownership", "runningBalance"]}),
+    ])
   }, [queryClient]);
 
-  const refreshProposal = useCallback(() => {
-    void queryClient.resetQueries({ queryKey: ["proposal", "infinite"] });
-  }, [queryClient]);
+    const refreshProposal = useCallback(() => {
+        void Promise.all([
+            queryClient.resetQueries({queryKey: ["proposal", "infinite"]}),
+            queryClient.resetQueries({queryKey: ["proposal", "detail"]}),
+            queryClient.resetQueries({queryKey: ["proposal", "history"]}),
+        ]);
+    }, [queryClient]);
 
   if (!token) {
     return <Redirect href="/(auth)/login" />;
