@@ -29,9 +29,8 @@ export function useUpdateOwnership() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: updateOwnership,
-    onSuccess: (_data, variables) => {
-      qc.invalidateQueries({queryKey: ["ownership", "find", variables.ownershipId],});
-      qc.invalidateQueries({queryKey: ["ownership", "runningBalance", variables.ownershipId],});
+    onSuccess:async (_data, variables) => {
+      await qc.invalidateQueries({queryKey: ["ownership", "find", variables.ownershipId],});
     },
   });
 }

@@ -92,8 +92,8 @@ export function useOwnershipRunningBalance(
     queryKey: ["ownership", "runningBalance", normalizedId],
     queryFn: () => fetchOwnershipRunningBalance(normalizedId),
     enabled: enabled && !!normalizedId,
-    staleTime: 0,
-    refetchOnWindowFocus: false,
+    staleTime: OWNERSHIP_QUERY.RUNNING_BALANCE,
+    gcTime: OWNERSHIP_QUERY.RUNNING_BALANCE_GC
   });
 }
 
@@ -113,8 +113,8 @@ export function useOwnershipDetail(ownershipId: string, enabled = true) {
     queryKey: ["ownership", "find", normalizedId],
     queryFn: () => fetchOwnershipById(normalizedId),
     enabled: enabled && !!normalizedId,
-    staleTime: 0,
-    refetchOnWindowFocus: false,
+    staleTime: OWNERSHIP_QUERY.DETAIL,
+    gcTime:OWNERSHIP_QUERY.DETAIL_GC,
   });
 }
 

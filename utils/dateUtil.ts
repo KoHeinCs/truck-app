@@ -131,6 +131,39 @@ export function formatLocalDateTime(value: string | null | undefined): string {
     return `${dd.padStart(2, "0")}/${mm.padStart(2, "0")}/${yyyy} ${hh}:${min.padStart(2, "0")} ${ampm}`;
 }
 
+export const calculateOwnershipDays = (
+    buyDate: string | null | undefined,
+    sellDate: string | null | undefined,
+): number => {
+
+    if (!buyDate) {
+        return 0;
+    }
+
+    const [buyYear, buyMonth, buyDay] = buyDate.split("-").map(Number);
+
+    const start = Date.UTC(buyYear, buyMonth - 1, buyDay);
+
+    let end: number;
+
+    if (sellDate) {
+        const [sellYear, sellMonth, sellDay] = sellDate.split("-").map(Number);
+
+        end = Date.UTC(sellYear, sellMonth - 1, sellDay);
+    } else {
+        const today = new Date();
+
+        end = Date.UTC(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate(),
+        );
+    }
+
+    return Math.floor(
+        (end - start) / (1000 * 60 * 60 * 24),
+    ) + 1;
+}
 
 
 

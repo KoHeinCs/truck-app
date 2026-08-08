@@ -8,8 +8,8 @@ import {useTranslation} from "@/hooks/use-translation";
 import {getApiErrorAlertCopy} from "@/lib/api-error-alert";
 import {useAuthStore} from "@/stores/auth-store";
 import {useLocaleStore} from "@/stores/client/locale-store";
-import {useUpdateOwnership} from "@/stores/server/ownership/update-mutation";
-import {formatDate, toIsoDate} from "@/utils/dateUtil";
+import {UpdateOwnershipPayload, useUpdateOwnership} from "@/stores/server/ownership/update-mutation";
+import {formatDate, toIsoDate,calculateOwnershipDays} from "@/utils/dateUtil";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useLocalSearchParams, useRouter} from "expo-router";
@@ -31,7 +31,8 @@ import {
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import {z} from "zod";
-import {OwnershipItem} from "@/stores/server/ownership/typed";
+import {OwnershipItem,OwnershipListResponse} from "@/stores/server/ownership/typed";
+import {InfiniteData, useQueryClient} from "@tanstack/react-query";
 
 const DATE_MSG = {
     en: "Use dd/mm/yyyy",
@@ -88,6 +89,7 @@ type DateFieldKey = "buyDate" | "licenseEndDate";
 
 export default function OwnershipEditScreen() {
     const router = useRouter();
+    const qc = useQueryClient();
     const insets = useSafeAreaInsets();
     const locale = useLocaleStore((state) => state.locale);
     const role = useAuthStore((state) => state.role);
@@ -161,6 +163,43 @@ export default function OwnershipEditScreen() {
         router.back();
     }, [router]);
 
+
+    const updateOwnershipListCache = (
+        request: UpdateOwnershipPayload,
+    ) => {
+        qc.setQueriesData<InfiniteData<OwnershipListResponse>>(
+            {
+                queryKey: ["ownership", "infinite"],
+            },
+            (oldData) => {
+                if (!oldData) return oldData;
+
+                return {
+                    ...oldData,
+                    pages: oldData.pages.map((page) => ({
+                        ...page,
+                        data: {
+                            ...page.data,
+                            data: page.data.data.map((item:OwnershipItem) =>
+                                item.id === request.ownershipId
+                                    ? {
+                                        ...item,
+                                        equipmentName: request.equipmentName,
+                                        buyDate: request.buyDate,
+                                        totalOwnershipDays:calculateOwnershipDays(request.buyDate,item.sellDate),
+                                        licenseCity: request.licenseCity,
+                                        licenseEndDate: request.licenseEndDate,
+                                        estimatedSellAmt: request.estimatedSellAmt,
+                                    }
+                                    : item,
+                            ),
+                        },
+                    })),
+                };
+            },
+        );
+    };
+
     const onSubmit = (values: FormValues) => {
         if (!canSubmit) {
             Alert.alert(t.dialog.unauthorizedTitle, t.dialog.unauthorizedBody);
@@ -192,7 +231,8 @@ export default function OwnershipEditScreen() {
                 notes: values.notes?.trim() || undefined,
             },
             {
-                onSuccess: () => {
+                onSuccess: (data , request:UpdateOwnershipPayload) => {
+                    updateOwnershipListCache(request)
                     Alert.alert(t.dialog.successTitle, t.dialog.successBody);
                     router.back();
                 },

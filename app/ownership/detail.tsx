@@ -73,9 +73,11 @@ export default function OwnershipDetailScreen() {
             if (!ownershipId || !takePendingRunningBalanceRefresh(ownershipId)) {
                 return;
             }
-            void qc.invalidateQueries({
-                queryKey: ["ownership", "runningBalance", ownershipId],
-            });
+            void Promise.all([
+                qc.invalidateQueries({queryKey: ["ownership","find",ownershipId]}),
+                qc.invalidateQueries({queryKey: ["ownership", "runningBalance", ownershipId]})
+            ])
+
         }, [qc, ownershipId, takePendingRunningBalanceRefresh]),
     );
 
