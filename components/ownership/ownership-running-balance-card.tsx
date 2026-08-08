@@ -11,7 +11,6 @@ type RunningBalanceLabels = {
     debit: string;
     credit: string;
     balance: string;
-    currencySuffix: string;
 };
 
 type OwnershipRunningBalanceCardProps = {
@@ -24,12 +23,6 @@ type OwnershipRunningBalanceCardProps = {
     onPressProposal?: (proposalNo: string) => void;
 };
 
-function formatLocalizedAmount(
-    value: number | null | undefined,
-    suffix: string,
-): string {
-    return formatAmount(value ?? 0).replace(/\s*Ks$/, ` ${suffix}`);
-}
 
 export function OwnershipRunningBalanceCard({
                                                 item,
@@ -102,22 +95,23 @@ export function OwnershipRunningBalanceCard({
                 </View>
             </View>
 
-            <View className="mt-2 flex-row gap-2">
+            {/* debit , credit , balance amount */}
+            <View className="mt-2 flex-row gap-1">
                 <BalanceMetric
                     label={labels.debit}
-                    value={formatLocalizedAmount(item.debit, labels.currencySuffix)}
+                    value={formatAmount(Number(item.debit ?? 0))}
                     mmLeading={mmLeading}
                     style={style}
                 />
                 <BalanceMetric
                     label={labels.credit}
-                    value={formatLocalizedAmount(item.credit, labels.currencySuffix)}
+                    value={formatAmount(Number(item.credit ?? 0))}
                     mmLeading={mmLeading}
                     style={style}
                 />
                 <BalanceMetric
                     label={labels.balance}
-                    value={formatLocalizedAmount(balance, labels.currencySuffix)}
+                    value={formatAmount(Number(balance ?? 0))}
                     mmLeading={mmLeading}
                     style={style}
                     valueClassName={balanceClassName}
@@ -143,7 +137,7 @@ function BalanceMetric({
                            mmLeading
                        }: BalanceMetricProps) {
     return (
-        <View className="flex-1 rounded-xl p-1.5"
+        <View className="flex-1 rounded-xl p-1"
               style={{
                   backgroundColor: APP_COLORS.card,
                   borderColor: APP_COLORS.border,
@@ -157,7 +151,7 @@ function BalanceMetric({
                 {label}
             </Text>
             <Text
-                className={`text-xs font-bold ${valueClassName} ${mmLeading}`}
+                className={`py-0.5 text-xs font-bold ${valueClassName} ${mmLeading}` }
                 style={style}
             >
                 {value}

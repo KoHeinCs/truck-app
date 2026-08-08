@@ -171,6 +171,7 @@
     },
     "detailOwnership": {
       "title": "ပိုင်ဆိုင်မှုအသေးစိတ်",
+      "error": "ဒေတာဖတ်ယူ၍မရပါ",
       "details": {
         "labels": {
           "profitLoss": "အမြတ်/အရှုံး",
@@ -183,7 +184,6 @@
           "purchasePlace": "ဝယ်ယူသည့်နေရာ",
           "sellDate": "ရောင်းချသည့်ရက်",
           "soldPlace": "ရောင်းချသည့်နေရာ",
-          "currencySuffix": "ကျပ်",
           "daySuffix": "ရက်",
           "notes": "အသေးစိတ် အချက်အလက်"
         }
@@ -194,8 +194,7 @@
           "debit": "ကုန်ကျငွေ",
           "credit": "ဝင်ငွေ",
           "balance": "စုစုပေါင်းငွေ",
-          "itemCount": "{count} ခု",
-          "currencySuffix": "ကျပ်"
+          "itemCount": "{count} ခု"
         }
       },
       "empty": {

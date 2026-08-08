@@ -171,6 +171,7 @@
     },
     "detailOwnership": {
       "title": "Ownership Details",
+      "error": "No data available",
       "details": {
         "labels": {
           "profitLoss": "Profit / Loss",
@@ -183,7 +184,6 @@
           "purchasePlace": "Purchase Location",
           "sellDate": "Sell Date",
           "soldPlace": "Sell Place",
-          "currencySuffix": "Ks",
           "daySuffix": "Days",
           "notes": "Notes"
         }
@@ -194,8 +194,7 @@
           "debit": "Expense",
           "credit": "Income",
           "balance": "Balance",
-          "itemCount": "{count} items",
-          "currencySuffix": "Ks"
+          "itemCount": "{count} items"
         }
       },
       "empty": {

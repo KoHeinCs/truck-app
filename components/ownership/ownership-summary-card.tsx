@@ -18,7 +18,6 @@ type OwnershipSummaryLabels = {
     purchasePlace:string;
     sellDate:string;
     soldPlace:string;
-    currencySuffix: string;
     daySuffix:string;
     notes: string;
 };
@@ -30,22 +29,11 @@ type OwnershipSummaryCardProps = {
     mmLeading: any;
 };
 
-function formatLocalizedAmount(
-    value: number | null | undefined,
-    suffix: string,
-): string {
-    return formatAmount(value ?? 0).replace(/\s*Ks$/, ` ${suffix}`);
-}
-
 function valueText(value: unknown): string {
     if (value === null || value === undefined || value === "") return "-";
     return String(value);
 }
 
-function formatDays(value: number | undefined, daySuffix: string): string {
-    if (typeof value !== "number" || !Number.isFinite(value)) return "-";
-    return `${value} ${daySuffix}`;
-}
 
 export function OwnershipSummaryCard({
                                          item,
@@ -95,7 +83,7 @@ export function OwnershipSummaryCard({
                         className={`text-sm font-bold ${profitClassName} ${mmLeading}`}
                         style={[style,{color:APP_COLORS.textPrimary}]}
                     >
-                        {formatLocalizedAmount(profit, labels.currencySuffix)}
+                        {formatAmount(Number(profit ?? 0))}
                     </Text>
                 </View>
             </View>
@@ -104,13 +92,13 @@ export function OwnershipSummaryCard({
             <View className="flex-row mt-2 pt-3 gap-x-3 border-t border-slate-200 ">
                 <InfoCell
                     label={labels.totalCost}
-                    value={formatLocalizedAmount(item?.totalCost, labels.currencySuffix)}
+                    value={formatAmount(Number(item?.totalCost ?? 0))}
                     style={style}
                     mmLeading={mmLeading}
                 />
                 <InfoCell
                     label={labels.totalIncome}
-                    value={formatLocalizedAmount(item?.totalIncome, labels.currencySuffix)}
+                    value={formatAmount(Number(item?.totalIncome ?? 0))}
                     style={style}
                     mmLeading={mmLeading}
                 />

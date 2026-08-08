@@ -19,7 +19,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {useFocusEffect} from "expo-router/react-navigation";
 import {useThrottledCallback} from "@/hooks/use-throttled-callback";
-import {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -79,12 +79,13 @@ export default function OwnershipDetailScreen() {
         }, [qc, ownershipId, takePendingRunningBalanceRefresh]),
     );
 
-    const {data: detailResponse, isPending: isDetailPending} = useOwnershipDetail(ownershipId, hasRequiredParams);
-    const {data: runningBalanceData, isPending: isRunningBalancePending} = useOwnershipRunningBalance(ownershipId, hasRequiredParams);
+    const {data: detailResponse, isPending: isDetailPending , isError:isDetailError} = useOwnershipDetail(ownershipId, hasRequiredParams);
+    const {data: runningBalanceData, isPending: isRunningBalancePending , isError:isRunningBalanceError} = useOwnershipRunningBalance(ownershipId, hasRequiredParams);
 
-    const summaryItem = detailResponse?.data;
+    const ownershipData = detailResponse?.data;
     const records = runningBalanceData?.data ?? [];
     const isPending = isDetailPending || isRunningBalancePending;
+    const isError = isDetailError || isRunningBalanceError;
 
     const permissions = useMemo(()=> {
         if (isPending || !detailResponse)
@@ -122,7 +123,7 @@ export default function OwnershipDetailScreen() {
             pathname: "/ownership/edit/[id]",
             params: {
                 id: ownershipId,
-                detailStr : JSON.stringify(summaryItem)
+                detailStr : JSON.stringify(ownershipData)
             },
         });
     }, 600);
@@ -147,11 +148,11 @@ export default function OwnershipDetailScreen() {
     }, 600);
 
     const openDeleteModal = useCallback(() => {
-        const existingSellDate = formatDate(summaryItem?.sellDate);
+        const existingSellDate = formatDate(ownershipData?.sellDate);
         setDeleteSellDate(existingSellDate === "-" ? "" : existingSellDate);
         setDeleteSellDateError("");
         setDeleteModalOpen(true);
-    }, [summaryItem?.sellDate]);
+    }, [ownershipData?.sellDate]);
 
     const closeDeleteModal = useCallback(() => {
         if (isDeleting) return;
@@ -185,7 +186,7 @@ export default function OwnershipDetailScreen() {
         }
 
         const sellDateIso = toIsoDate(deleteSellDate.trim());
-        const version = summaryItem?.version;
+        const version = ownershipData?.version;
         if (!ownershipId || sellDateIso === null || version === undefined || version === null) {
             Alert.alert(t.delete.dialog.errorTitle, t.delete.dialog.errorBody);
             return;
@@ -227,12 +228,12 @@ export default function OwnershipDetailScreen() {
         ownershipId,
         qc,
         router,
-        summaryItem?.version,
+        ownershipData?.version,
         t.delete,
         validateDeleteSellDate,
     ]);
 
-    const deleteTitle = summaryItem?.equipmentName || summaryItem?.truckPlateNo || "-";
+    const deleteTitle = ownershipData?.equipmentName || ownershipData?.truckPlateNo || "-";
 
     return (
         <SafeAreaView
@@ -316,6 +317,13 @@ export default function OwnershipDetailScreen() {
                 >
                     <ActivityIndicator color={APP_COLORS.primary}/>
                 </View>
+            ) : isError ? (
+                <Text
+                    className={`px-6 py-8 text-center text-slate-500 ${mmLeading}`}
+                    style={style}
+                >
+                    {t.error}
+                </Text>
             ) : (
                 <View
                     className="flex-1"
@@ -331,20 +339,12 @@ export default function OwnershipDetailScreen() {
                     >
                         {/* ownership details */}
                         <OwnershipSummaryCard
-                            item={summaryItem}
+                            item={ownershipData}
                             labels={t.details.labels}
                             style={style}
                             mmLeading={mmLeading}
                         />
 
-                        {!summaryItem ? (
-                            <Text
-                                className={`mt-4 text-center text-slate-500 ${mmLeading}`}
-                                style={[style]}
-                            >
-                                {t.empty.summary}
-                            </Text>
-                        ) : null}
 
                         {/* running balance title , count */}
                         <View className="mt-5 flex-row items-center justify-between">

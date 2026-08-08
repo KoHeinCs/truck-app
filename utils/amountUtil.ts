@@ -9,6 +9,8 @@ export function formatAmount(value: number | string | null | undefined): string 
         numericValue = 0;
     }
 
+    numericValue = Math.abs(numericValue);
+
     // 3. Apply safe React Native string formatting regex
     const parts = numericValue.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
