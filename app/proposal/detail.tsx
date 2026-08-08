@@ -105,10 +105,12 @@ export default function ProposalDetailScreen() {
     const proposalNo = String(params.proposalNo ?? "").trim();
     const ownershipId = String(params.ownershipId ?? "").trim();
 
-    const {data, isPending} = useProposalDetail(proposalNo, ownershipId);
-    const {data: historyData} = useProposalHistory(proposalNo, ownershipId);
+    const {data, isPending:isDetailPending, isError:isDetailError} = useProposalDetail(proposalNo, ownershipId);
+    const {data: historyData,isPending:isHistoryPending, isError:isHistoryError} = useProposalHistory(proposalNo, ownershipId);
     const detail:ProposalDetail|undefined = data?.data;
     const histories = historyData?.data ?? [];
+    const isPending = isDetailPending || isHistoryPending;
+    const isError = isDetailError || isHistoryError;
 
     const {mutate: approveProposal, isPending: isApproving} = useApproveProposal();
     const {mutate: terminateProposal, isPending: isTerminating} = useTerminateProposal();
@@ -339,7 +341,14 @@ export default function ProposalDetailScreen() {
                         <View className="flex-1 items-center justify-center">
                             <ActivityIndicator color={APP_COLORS.primary}/>
                         </View>
-                    ) :
+                    ) : isError ? (
+                            <Text
+                                className={`px-6 py-8 text-center text-slate-500 ${mmLeading}`}
+                                style={style}
+                            >
+                                {t.error}
+                            </Text>
+                        ) :
                     (
                         <ScrollView
                             className="px-4"
