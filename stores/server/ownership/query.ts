@@ -17,6 +17,7 @@ import type {
   OwnershipListResponse,
   OwnershipRunningBalanceResponse,
 } from "./typed";
+import {OWNERSHIP_QUERY} from '@/constants/query-times'
 
 const OWNERSHIP_PAGE_SIZE = 10;
 
@@ -67,8 +68,8 @@ export function useOwnershipsInfinite(
       }
       return lastPageParam + 1;
     },
-    staleTime: 0,
-    refetchOnWindowFocus: false,
+    staleTime: OWNERSHIP_QUERY.LIST,
+    gcTime:OWNERSHIP_QUERY.LIST_GC
   });
 }
 

@@ -83,7 +83,7 @@ export default function OwnerShip() {
     const patchUi = useCallback((next: Partial<OwnershipListUiState>) => {
         setUi((prev) => ({...prev, ...next}));
     }, []);
-    const debouncedQuickQuery = useDebouncedValue(ui.quickQuery, 500);
+    const debouncedQuickQuery = useDebouncedValue(ui.quickQuery, 1000);
 
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;

@@ -38,6 +38,7 @@ export function OwnershipSearchToolbar({
                     onChangeText={onChangeQuickQuery}
                     placeholder={placeholder}
                     placeholderTextColor={APP_COLORS.textMuted}
+                    autoCapitalize={'characters'}
                     className={`flex-1 border h-11 py-0 text-sm font-medium ${mmLeading}`}
                     style={[style, {
                         paddingRight: 44,

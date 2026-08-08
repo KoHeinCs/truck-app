@@ -17,6 +17,15 @@ export const PROPOSAL_QUERY = {
     HISTORY_GC: 10 * MINUTE,
 } as const;
 
+export const OWNERSHIP_QUERY = {
+    LIST: 5 * MINUTE,
+    LIST_GC: 5 * MINUTE,
+    DETAIL: 5 * MINUTE,
+    DETAIL_GC: 10 * MINUTE,
+    RUNNING_BALANCE: 5 * MINUTE,
+    RUNNING_BALANCE_GC: 10 * MINUTE,
+} as const;
+
 export const SERVICE_QUERY = {
 
 }
