@@ -101,7 +101,7 @@ export default function ProposalScreen() {
     const mmLeading = getMyanmarLeadingClass(locale);
     const upperRole = (role || "").toUpperCase();
     const showOwnerId = upperRole === "ADMIN";
-    const showCreatedBy = upperRole === "ADMIN";
+    const showCreatedBy = upperRole === "ADMIN" || upperRole === 'OWNER' || upperRole === 'VIEWER';
     const mmTextStyle = useMemo(() => myanmarUITextStyle(), []);
     const style = locale === "mm" ? mmTextStyle : undefined;
 
@@ -114,7 +114,7 @@ export default function ProposalScreen() {
         }, [qc, takePendingRefresh]),
     );
 
-    const { data: userOptions = [] } = useUserLookupOptions("", upperRole === "ADMIN");
+    const { data: userOptions = [] } = useUserLookupOptions("", showCreatedBy);
 
 
     const getServiceTypeDisplayLabel = useCallback(

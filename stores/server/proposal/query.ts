@@ -75,7 +75,7 @@ export function useProposalsInfinite(
 ): UseInfiniteQueryResult<InfiniteData<ProposalListResponse>, Error> {
   const upperRole = (role || "").toUpperCase();
   const allowOwnerId = upperRole === "ADMIN";
-  const allowCreatedBy = upperRole === "ADMIN" || upperRole === "OWNER";
+  const allowCreatedBy = upperRole === "ADMIN" || upperRole === "OWNER" || upperRole === 'VIEWER';
   const columns = buildProposalSearchColumns(
     status,
     filters,
