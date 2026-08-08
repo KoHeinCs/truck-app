@@ -33,19 +33,11 @@ export default function TabLayout() {
   }, [queryClient]);
 
   const refreshOwnership = useCallback(() => {
-    void Promise.all([
-        queryClient.resetQueries({ queryKey: ["ownership", "infinite"]}),
-        queryClient.resetQueries({ queryKey: ["ownership", "find"]}),
-        queryClient.resetQueries({ queryKey: ["ownership", "runningBalance"]}),
-    ])
+    void queryClient.resetQueries({ queryKey: ["ownership"] });
   }, [queryClient]);
 
     const refreshProposal = useCallback(() => {
-        void Promise.all([
-            queryClient.resetQueries({queryKey: ["proposal", "infinite"]}),
-            queryClient.resetQueries({queryKey: ["proposal", "detail"]}),
-            queryClient.resetQueries({queryKey: ["proposal", "history"]}),
-        ]);
+        void queryClient.resetQueries({queryKey: ["proposal"]})
     }, [queryClient]);
 
   if (!token) {
