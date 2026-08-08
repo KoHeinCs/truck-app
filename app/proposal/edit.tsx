@@ -201,9 +201,8 @@ export default function EditProposalScreen() {
                 onSuccess:  async (data , request:UpdateProposalPayload) => {
 
                     updateProposalListCache(request)
-                    Alert.alert(t.dialog.successTitle, t.dialog.successBody, [
-                        {text: t.actions.done, onPress: () => router.back()},
-                    ]);
+                    Alert.alert(t.dialog.successTitle, t.dialog.successBody);
+                    router.back();
                 },
                 onError: (err: unknown) => {
                     const {title, message} = getApiErrorAlertCopy(err, errorCatalog, {
